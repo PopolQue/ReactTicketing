@@ -1,6 +1,6 @@
 import { StorageAdapter } from '../types/adapter.types';
 import { TicketTypeConfig, IssuedTicket, Order } from '../types/ticket.types';
-import { PromoCode } from '../types/promo.types';
+import { PromoCode, PromoBatch } from '../types/promo.types';
 import { ScanEvent } from '../types/scan.types';
 import { ScanAccount } from '../types/scanAccount.types';
 
@@ -46,6 +46,9 @@ export class RestAdapter implements StorageAdapter {
       body: JSON.stringify(type),
     });
   }
+  async deleteTicketType(eventId: string, ticketTypeId: string): Promise<void> {
+    await this.request(`/events/${eventId}/ticket-types/${ticketTypeId}`, { method: 'DELETE' });
+  }
 
   // Orders
   async createOrder(order: Order): Promise<void> {
@@ -71,6 +74,9 @@ export class RestAdapter implements StorageAdapter {
   async getTicketsByOrder(orderId: string): Promise<IssuedTicket[]> {
     return this.request<IssuedTicket[]>(`/orders/${orderId}/tickets`);
   }
+  async getIssuedTickets(): Promise<IssuedTicket[]> {
+    return this.request<IssuedTicket[]>(`/tickets`);
+  }
   async saveTicket(ticket: IssuedTicket): Promise<void> {
     await this.request(`/tickets`, {
       method: 'POST',
@@ -92,17 +98,17 @@ export class RestAdapter implements StorageAdapter {
   async getPromoCode(code: string): Promise<PromoCode | null> {
     return this.request<PromoCode>(`/promo-codes/${code}`);
   }
-  async savePromoCode(promo: PromoCode): Promise<void> {
-    await this.request('/promo-codes', {
+  async savePromoBatch(batch: PromoBatch): Promise<void> {
+    await this.request('/promo-batches', {
       method: 'POST',
-      body: JSON.stringify(promo),
+      body: JSON.stringify(batch),
     });
+  }
+  async listPromoBatches(): Promise<PromoBatch[]> {
+    return this.request<PromoBatch[]>(`/promo-batches`);
   }
   async incrementPromoUsage(code: string): Promise<void> {
     await this.request(`/promo-codes/${code}/increment`, { method: 'POST' });
-  }
-  async listPromoCodes(eventId: string): Promise<PromoCode[]> {
-    return this.request<PromoCode[]>(`/events/${eventId}/promo-codes`);
   }
 
   // Scan Events

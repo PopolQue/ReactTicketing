@@ -22,8 +22,11 @@ export const useScanSession = (eventId: string) => {
       throw new Error('Not authenticated');
     }
     const accountId = (authSession as any).accountId;
-    // Pass the payload as the qrPayload
-    return await scanService.validateTicket('', accountId, payload);
+    const { result, ticket } = await scanService.checkTicket(payload);
+    if (result === 'admitted' && ticket) {
+        await scanService.admitTicket(ticket.id, accountId);
+    }
+    return result;
   }, [scanService, authSession]);
 
   return {

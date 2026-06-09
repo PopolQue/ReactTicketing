@@ -1,27 +1,23 @@
 import { useReactTicket } from './useReactTicket';
-import { useMemo, useCallback } from 'react';
-import { PromoService } from '../services/PromoService';
-import { PromoGenerateOptions } from '../types/promo.types';
+import { useCallback } from 'react';
 
 export const usePromo = () => {
-  const { adapter, promoCodes, dispatch } = useReactTicket();
-  const promoService = useMemo(() => new PromoService(adapter), [adapter]);
+  const { adapter, dispatch } = useReactTicket();
 
-  const generate = useCallback(async (options: PromoGenerateOptions) => {
-    // Implement generation logic using PromoService or Adapter
+  const generate = useCallback(async (options: any) => {
+    // Placeholder implementation for generate
     return [];
-  }, []);
+  }, [adapter]);
 
   const deactivate = useCallback(async (code: string) => {
-    // Implement deactivation
-  }, []);
+    // Placeholder implementation for deactivate
+  }, [adapter]);
 
   const exportCSV = useCallback((batchId?: string) => {
-    return '';
+    return "";
   }, []);
 
   return {
-    codes: promoCodes,
     generate,
     deactivate,
     exportCSV

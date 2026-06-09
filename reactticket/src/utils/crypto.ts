@@ -9,7 +9,7 @@ export async function deriveKey(pin: Uint8Array, salt: Uint8Array): Promise<Cryp
   const bits = await crypto.subtle.deriveBits(
     {
       name: "PBKDF2",
-      salt: salt,
+      salt: salt as any,
       iterations: 100000,
       hash: "SHA-256",
     },

@@ -1,5 +1,5 @@
 import { TicketTypeConfig, IssuedTicket, Order } from './ticket.types';
-import { PromoCode } from './promo.types';
+import { PromoCode, PromoBatch } from './promo.types';
 import { ScanEvent } from './scan.types';
 import { ScanAccount } from './scanAccount.types';
 
@@ -13,23 +13,26 @@ export interface StorageAdapter {
   createOrder(order: Order): Promise<void>;
   getOrder(orderId: string): Promise<Order | null>;
   updateOrderStatus(orderId: string, status: Order["status"]): Promise<void>;
-// Tickets
-getTicket(ticketId: string): Promise<IssuedTicket | null>;
-getTicketsByOrder(orderId: string): Promise<IssuedTicket[]>;
-getIssuedTickets(): Promise<IssuedTicket[]>;
-saveTicket(ticket: IssuedTicket): Promise<void>;
 
+  // Tickets
+  getTicket(ticketId: string): Promise<IssuedTicket | null>;
+  getTicketsByOrder(orderId: string): Promise<IssuedTicket[]>;
+  getIssuedTickets(): Promise<IssuedTicket[]>;
+  saveTicket(ticket: IssuedTicket): Promise<void>;
   updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void>;
   countIssuedTickets(ticketTypeId: string): Promise<number>;
 
+  // Promo Codes
   getPromoCode(code: string): Promise<PromoCode | null>;
-  savePromoCode(promo: PromoCode): Promise<void>;
+  savePromoBatch(batch: PromoBatch): Promise<void>;
+  listPromoBatches(): Promise<PromoBatch[]>;
   incrementPromoUsage(code: string): Promise<void>;
-  listPromoCodes(eventId: string): Promise<PromoCode[]>;
 
+  // Scan Events
   saveScanEvent(scan: ScanEvent): Promise<void>;
   getScanEvents(eventId: string): Promise<ScanEvent[]>;
 
+  // Scan Accounts
   getScanAccount(accountId: string): Promise<ScanAccount | null>;
   getScanAccountByUsername(eventId: string, username: string): Promise<ScanAccount | null>;
   listScanAccounts(eventId: string): Promise<ScanAccount[]>;
