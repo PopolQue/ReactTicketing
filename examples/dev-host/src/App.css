@@ -1,0 +1,15 @@
+:root {
+  --bg: #fdfdfd;
+  --panel: #ffffff;
+  --text: #334155;
+  --accent: #0f172a;
+  --border: #e2e8f0;
+}
+
+body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); padding: 40px; }
+.demo-container { max-width: 900px; margin: 0 auto; }
+.tabs { display: flex; gap: 10px; border-bottom: 2px solid var(--border); margin-bottom: 30px; }
+.tab { padding: 10px 20px; cursor: pointer; border-radius: 8px 8px 0 0; font-weight: 600; }
+.tab.active { background: var(--accent); color: white; }
+.content-area { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 24px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+.inspector { margin-top: 30px; background: #1e293b; color: #f8fafc; padding: 20px; border-radius: 12px; font-family: monospace; font-size: 13px; overflow-x: auto; }

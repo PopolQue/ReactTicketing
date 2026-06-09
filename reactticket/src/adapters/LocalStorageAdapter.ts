@@ -1,0 +1,184 @@
+import { StorageAdapter } from '../types/adapter.types';
+import { TicketTypeConfig, IssuedTicket, Order } from '../types/ticket.types';
+import { PromoCode, PromoBatch } from '../types/promo.types';
+import { ScanEvent } from '../types/scan.types';
+import { ScanAccount } from '../types/scanAccount.types';
+
+export class LocalStorageAdapter implements StorageAdapter {
+  readonly name = 'LocalStorageAdapter';
+
+  private getStorageKey(eventId: string, key: string): string {
+    return `tf_${eventId}_${key}`;
+  }
+
+  // Ticket Types
+  async getTicketTypes(eventId: string): Promise<TicketTypeConfig[]> {
+    const data = localStorage.getItem(this.getStorageKey(eventId, 'ticketTypes'));
+    return data ? JSON.parse(data) : [];
+  }
+  async saveTicketType(eventId: string, type: TicketTypeConfig): Promise<void> {
+    const types = await this.getTicketTypes(eventId);
+    const index = types.findIndex((t) => t.id === type.id);
+    if (index > -1) {
+      types[index] = type;
+    } else {
+      types.push(type);
+    }
+    localStorage.setItem(this.getStorageKey(eventId, 'ticketTypes'), JSON.stringify(types));
+  }
+
+  async deleteTicketType(eventId: string, ticketTypeId: string): Promise<void> {
+    const types = await this.getTicketTypes(eventId);
+    const updated = types.filter(t => t.id !== ticketTypeId);
+    localStorage.setItem(this.getStorageKey(eventId, 'ticketTypes'), JSON.stringify(updated));
+  }
+
+  // Orders
+  async createOrder(order: Order): Promise<void> {
+    const orders = await this.getAllOrders(order.eventId);
+    orders.push(order);
+    localStorage.setItem(this.getStorageKey(order.eventId, 'orders'), JSON.stringify(orders));
+  }
+  async getOrder(orderId: string): Promise<Order | null> {
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.endsWith('_orders')) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                const orders: Order[] = JSON.parse(data);
+                const found = orders.find(o => o.id === orderId);
+                if (found) return found;
+            }
+        }
+    }
+    return null;
+  }
+  private async getAllOrders(eventId: string): Promise<Order[]> {
+    const data = localStorage.getItem(this.getStorageKey(eventId, 'orders'));
+    return data ? JSON.parse(data) : [];
+  }
+  async updateOrderStatus(orderId: string, status: Order["status"]): Promise<void> {
+    // FIXME
+  }
+
+  // Tickets
+  async getTicket(ticketId: string): Promise<IssuedTicket | null> {
+    const tickets = await this.getIssuedTickets();
+    return tickets.find(t => t.id === ticketId) || null;
+  }
+  async getTicketsByOrder(orderId: string): Promise<IssuedTicket[]> {
+    return []; // FIXME
+  }
+  async getIssuedTickets(): Promise<IssuedTicket[]> {
+    const data = localStorage.getItem('tf_all_tickets');
+    return data ? JSON.parse(data) : [];
+  }
+  async saveTicket(ticket: IssuedTicket): Promise<void> {
+    const tickets = await this.getIssuedTickets();
+    tickets.push(ticket);
+    localStorage.setItem('tf_all_tickets', JSON.stringify(tickets));
+  }
+  async updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void> {
+    const tickets = await this.getIssuedTickets();
+    const index = tickets.findIndex(t => t.id === ticketId);
+    if (index > -1) {
+        tickets[index].status = status;
+        localStorage.setItem('tf_all_tickets', JSON.stringify(tickets));
+    }
+  }
+  async countIssuedTickets(ticketTypeId: string): Promise<number> {
+    return 0; // FIXME
+  }
+
+  // Promo Codes
+  async getPromoCode(code: string): Promise<PromoCode | null> {
+    const batches = await this.listPromoBatches();
+    for (const batch of batches) {
+      const codeFound = batch.codes.find(c => c.code === code);
+      if (codeFound) return codeFound;
+    }
+    return null;
+  }
+  async savePromoBatch(batch: PromoBatch): Promise<void> {
+    const data = localStorage.getItem('tf_promo_batches');
+    const batches: PromoBatch[] = data ? JSON.parse(data) : [];
+    const index = batches.findIndex(b => b.id === batch.id);
+    if (index > -1) {
+      batches[index] = batch;
+    } else {
+      batches.push(batch);
+    }
+    localStorage.setItem('tf_promo_batches', JSON.stringify(batches));
+  }
+  async incrementPromoUsage(code: string): Promise<void> {
+    const batches = await this.listPromoBatches();
+    let updated = false;
+    for (const batch of batches) {
+      const codeFound = batch.codes.find(c => c.code === code);
+      if (codeFound) {
+        codeFound.usedCount++;
+        updated = true;
+        break;
+      }
+    }
+    if (updated) {
+      localStorage.setItem('tf_promo_batches', JSON.stringify(batches));
+    }
+  }
+  async listPromoBatches(): Promise<PromoBatch[]> {
+    const data = localStorage.getItem('tf_promo_batches');
+    return data ? JSON.parse(data) : [];
+  }
+
+  // Scan Events
+  async saveScanEvent(scan: ScanEvent): Promise<void> {
+    const data = localStorage.getItem('tf_scan_events');
+    const events: ScanEvent[] = data ? JSON.parse(data) : [];
+    events.push(scan);
+    localStorage.setItem('tf_scan_events', JSON.stringify(events));
+  }
+  async getScanEvents(eventId: string): Promise<ScanEvent[]> {
+    const data = localStorage.getItem('tf_scan_events');
+    const events: ScanEvent[] = data ? JSON.parse(data) : [];
+    return events.filter(e => e.id.startsWith('scan_')); // FIXME: EventId filtering
+  }
+
+  // Scan Accounts
+  async getScanAccount(accountId: string): Promise<ScanAccount | null> {
+    const accounts = await this.listAllScanAccounts();
+    return accounts.find(a => a.id === accountId) || null;
+  }
+  async getScanAccountByUsername(eventId: string, username: string): Promise<ScanAccount | null> {
+    const accounts = await this.listScanAccounts(eventId);
+    return accounts.find(a => a.username === username) || null;
+  }
+  async listScanAccounts(eventId: string): Promise<ScanAccount[]> {
+    const accounts = await this.listAllScanAccounts();
+    return accounts.filter(a => a.eventId === eventId);
+  }
+  private async listAllScanAccounts(): Promise<ScanAccount[]> {
+    const data = localStorage.getItem('tf_scan_accounts');
+    return data ? JSON.parse(data) : [];
+  }
+  async saveScanAccount(account: ScanAccount): Promise<void> {
+    const accounts = await this.listAllScanAccounts();
+    const index = accounts.findIndex(a => a.id === account.id);
+    if (index > -1) {
+      accounts[index] = account;
+    } else {
+      accounts.push(account);
+    }
+    localStorage.setItem('tf_scan_accounts', JSON.stringify(accounts));
+  }
+  async updateScanAccount(accountId: string, patch: Partial<ScanAccount>): Promise<void> {
+    // FIXME
+  }
+  async deleteScanAccount(accountId: string): Promise<void> {
+    const accounts = await this.listAllScanAccounts();
+    const updated = accounts.filter(a => a.id !== accountId);
+    localStorage.setItem('tf_scan_accounts', JSON.stringify(updated));
+  }
+  async incrementScanAccountLoginTimestamp(accountId: string, at: Date): Promise<void> {
+    // FIXME
+  }
+}

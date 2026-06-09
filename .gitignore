@@ -1,0 +1,32 @@
+# .gitignore
+
+design/
+
+# Dependencies
+node_modules/
+
+# Build artifacts
+dist/
+build/
+.output/
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
