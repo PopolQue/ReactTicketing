@@ -17,10 +17,9 @@ jobs:
           node-version: 22
       
       - name: Install and Build
-        working-directory: examples/dev-host
         run: |
-          npm install
-          npm run build
+          cd reactticket && npm install
+          cd ../examples/dev-host && npm install && npm run build
       
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
