@@ -63,31 +63,63 @@ export class LocalStorageAdapter implements StorageAdapter {
 
   // Tickets
   async getTicket(ticketId: string): Promise<IssuedTicket | null> {
-    const tickets = await this.getIssuedTickets();
-    return tickets.find(t => t.id === ticketId) || null;
+    // This is tricky without a mapping of ticketId -> eventId
+    // We'll search all events for now
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                const tickets: IssuedTicket[] = JSON.parse(data);
+                const found = tickets.find(t => t.id === ticketId);
+                if (found) return found;
+            }
+        }
+    }
+    return null;
   }
   async getTicketsByOrder(orderId: string): Promise<IssuedTicket[]> {
     return []; // FIXME
   }
-  async getIssuedTickets(): Promise<IssuedTicket[]> {
-    const data = localStorage.getItem('tf_all_tickets');
+  async getIssuedTickets(eventId: string): Promise<IssuedTicket[]> {
+    const key = this.getStorageKey(eventId, 'tickets');
+    const data = localStorage.getItem(key);
+    console.log(`Debug: getIssuedTickets for key: ${key}, data found: ${!!data}, rawData: ${data}`);
     return data ? JSON.parse(data) : [];
   }
   async saveTicket(ticket: IssuedTicket): Promise<void> {
-    const tickets = await this.getIssuedTickets();
+    const key = this.getStorageKey(ticket.eventId, 'tickets');
+    console.log(`Debug: Saving ticket to key: ${key}`);
+    const tickets = await this.getIssuedTickets(ticket.eventId);
+    console.log(`Debug: Current tickets in storage for ${key}:`, tickets);
     tickets.push(ticket);
-    localStorage.setItem('tf_all_tickets', JSON.stringify(tickets));
+    localStorage.setItem(key, JSON.stringify(tickets));
+    console.log(`Debug: Successfully saved to ${key}`);
   }
   async updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void> {
-    const tickets = await this.getIssuedTickets();
-    const index = tickets.findIndex(t => t.id === ticketId);
-    if (index > -1) {
-        tickets[index].status = status;
-        localStorage.setItem('tf_all_tickets', JSON.stringify(tickets));
+    // Need to find which event this ticket belongs to
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                const tickets: IssuedTicket[] = JSON.parse(data);
+                const index = tickets.findIndex(t => t.id === ticketId);
+                if (index > -1) {
+                    tickets[index].status = status;
+                    localStorage.setItem(key, JSON.stringify(tickets));
+                    return;
+                }
+            }
+        }
     }
   }
-  async countIssuedTickets(ticketTypeId: string): Promise<number> {
-    return 0; // FIXME
+  async countIssuedTickets(ticketTypeId: string, eventId: string): Promise<number> {
+    const key = this.getStorageKey(eventId, 'tickets');
+    console.log(`Counting tickets from key: ${key}`);
+    const tickets = await this.getIssuedTickets(eventId);
+    console.log(`Retrieved ${tickets.length} tickets for key: ${key}`);
+    return tickets.filter(t => t.ticketTypeId === ticketTypeId && t.status !== 'cancelled').length;
   }
 
   // Promo Codes

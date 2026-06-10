@@ -1,0 +1,6 @@
+{
+  "appId": "com.example.mobilescanner",
+  "appName": "mobile-scanner",
+  "webDir": "dist",
+  "bundledWebRuntime": false
+}

@@ -76,7 +76,7 @@ export class ScanService {
   }
 
   async getAnalytics(eventId: string): Promise<AnalyticsSummary> {
-    const tickets = await this.adapter.getIssuedTickets();
+    const tickets = await this.adapter.getIssuedTickets(eventId);
     const eventTickets = tickets; // Assuming filter is done by adapter or not needed for now
     const scans = await this.adapter.getScanEvents(eventId);
 

@@ -96,26 +96,33 @@ export const useCart = () => {
         console.log("Calling onCheckout...");
         const result = await onCheckout(order);
         console.log("onCheckout result:", result);
+        
         if (result === 'confirmed') {
-            await adapter.updateOrderStatus(orderId, 'confirmed');
+            try {
+                const authService = new AuthService(adapter, event.settings);
+                const ticketService = new TicketService(adapter, authService);
+                const issuedTickets = await ticketService.issueTickets(order.id);
 
-            const authService = new AuthService(adapter, event.settings);
-            const ticketService = new TicketService(adapter, authService);
-            const issuedTickets = await ticketService.issueTickets(order.id);
+                await adapter.updateOrderStatus(orderId, 'confirmed');
 
-            if (onTicketIssued) {
-                for (const ticket of issuedTickets) {
-                    const blob = await PDFRenderer.render(ticket.id, event.name);
-                    onTicketIssued(ticket, { png: blob });
+                if (onTicketIssued) {
+                    for (const ticket of issuedTickets) {
+                        const blob = await PDFRenderer.render(ticket.id, event.name);
+                        onTicketIssued(ticket, { png: blob });
+                    }
                 }
-            }
 
-            if (cart.promoCode) {
-                await adapter.incrementPromoUsage(cart.promoCode);
-                dispatch({ type: 'CLEAR_PROMO' });
-                dispatch({ type: 'SET_PROMO_DETAILS', payload: null });
+                if (cart.promoCode) {
+                    await adapter.incrementPromoUsage(cart.promoCode);
+                    dispatch({ type: 'CLEAR_PROMO' });
+                    dispatch({ type: 'SET_PROMO_DETAILS', payload: null });
+                }
+                alert('Checkout successful!');
+            } catch (err: any) {
+                console.error("Ticket issuance failed:", err);
+                alert(`Checkout failed: ${err.message}`);
+                // TODO: Revert order status to failed/cancelled if needed
             }
-            alert('Checkout successful!');
         } else {
             console.warn("Checkout not confirmed");
         }

@@ -9,15 +9,25 @@ interface ScanResultProps {
 }
 
 export const ScanResult: React.FC<ScanResultProps> = ({ result, onDismiss }) => {
-  const { adapter } = useReactTicket();
+  const { adapter, event } = useReactTicket();
   const [ticket, setTicket] = useState<IssuedTicket | null>(null);
+  const [ticketTypeName, setTicketTypeName] = useState<string>('');
 
   useEffect(() => {
-    if (result.ticketId !== 'unknown') {
-      adapter.getTicket(result.ticketId).then(setTicket);
-    }
-    
-    // Haptic and audio feedback
+    const loadData = async () => {
+        if (result.ticketId !== 'unknown') {
+          const t = await adapter.getTicket(result.ticketId);
+          if (t) {
+            setTicket(t);
+            const types = await adapter.getTicketTypes(event.id);
+            const type = types.find(tt => tt.id === t.ticketTypeId);
+            setTicketTypeName(type ? type.name : 'Unknown');
+          }
+        }
+    };
+    loadData();
+
+    // ... (keep audio/haptic feedback)
     if (navigator.vibrate) {
       if (result.result === 'admitted') {
         navigator.vibrate([100]);
@@ -52,10 +62,7 @@ export const ScanResult: React.FC<ScanResultProps> = ({ result, onDismiss }) => 
     } catch(e) {
       console.warn("Audio feedback failed", e);
     }
-
-    const timer = setTimeout(onDismiss, 4000);
-    return () => clearTimeout(timer);
-  }, [result, onDismiss, adapter]);
+  }, [result, adapter]);
 
   const getBackgroundColor = () => {
     switch (result.result) {
@@ -84,6 +91,7 @@ export const ScanResult: React.FC<ScanResultProps> = ({ result, onDismiss }) => 
       {ticket && (
         <div>
           <p>Ticket ID: {ticket.id}</p>
+          <p>Type: {ticketTypeName}</p>
           <p>Buyer: {ticket.personalization?.name} {ticket.personalization?.surname}</p>
         </div>
       )}

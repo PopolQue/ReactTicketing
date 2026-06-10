@@ -4,12 +4,12 @@ import { IssuedTicket } from '../../types/ticket.types';
 import { QRGenerator } from '../../services/QRGenerator';
 
 export const TicketOverview: React.FC = () => {
-  const { adapter } = useReactTicket();
+  const { adapter, event } = useReactTicket();
   const [tickets, setTickets] = useState<IssuedTicket[]>([]);
 
   useEffect(() => {
-    adapter.getIssuedTickets().then(setTickets);
-  }, [adapter]);
+    adapter.getIssuedTickets(event.id).then(setTickets);
+  }, [adapter, event.id]);
 
   return (
     <section style={{ marginTop: '20px' }}>

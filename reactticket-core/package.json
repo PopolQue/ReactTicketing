@@ -1,0 +1,7 @@
+{
+  "name": "reactticket-core",
+  "version": "1.0.0",
+  "description": "Core ticketing business logic",
+  "main": "src/index.ts",
+  "type": "module"
+}

@@ -3,12 +3,12 @@ import { useReactTicket } from '../../hooks/useReactTicket';
 import { IssuedTicket } from '../../types/ticket.types';
 
 export const CapacityOverview: React.FC = () => {
-  const { ticketTypes, adapter } = useReactTicket();
+  const { ticketTypes, adapter, event } = useReactTicket();
   const [issuedTickets, setIssuedTickets] = useState<IssuedTicket[]>([]);
 
   useEffect(() => {
-    adapter.getIssuedTickets().then(setIssuedTickets);
-  }, [adapter]);
+    adapter.getIssuedTickets(event.id).then(setIssuedTickets);
+  }, [adapter, event.id]);
 
   const totalPotentialIncome = ticketTypes.reduce((sum, type) => {
     const price = type.pricing.kind === 'paid' ? type.pricing.priceInCents : 0;

@@ -1,14 +1,14 @@
 import React from 'react';
 import { ReactTicketProvider } from '../context/ReactTicketContext';
-import { StorageAdapter } from '../types/adapter.types';
-import { EventConfig } from '../types/event.types';
-import { Order, IssuedTicket } from '../types/ticket.types';
-import { ScanEvent } from '../types/scan.types';
+import { StorageAdapter } from '../../../reactticket-core/src/types/adapter.types';
+import { EventConfig } from '../../../reactticket-core/src/types/event.types';
+import { Order, IssuedTicket } from '../../../reactticket-core/src/types/ticket.types';
+import { ScanEvent } from '../../../reactticket-core/src/types/scan.types';
 import { TicketTypeList } from './storefront/TicketTypeList';
 import { AdminPanel } from './admin/AdminPanel';
 import { ScannerView } from './scanner/ScannerView';
 import { TicketOverview } from './admin/TicketOverview';
-import { validateAdapterSettings } from '../utils/validation';
+import { validateAdapterSettings } from '../../../reactticket-core/src/utils/validation';
 
 declare const process: any;
 

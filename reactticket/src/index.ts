@@ -8,5 +8,5 @@ export * from './hooks/useScanAccounts';
 export * from './hooks/useScanSession';
 export * from './hooks/useAnalytics';
 export * from './utils/formatCurrency';
-export * from './adapters/LocalStorageAdapter';
-export * from './adapters/RestAdapter';
+export * from '../../reactticket-core/src/adapters/LocalStorageAdapter';
+export * from '../../reactticket-core/src/adapters/RestAdapter';

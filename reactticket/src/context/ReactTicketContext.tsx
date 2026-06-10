@@ -1,10 +1,10 @@
 import React, { createContext, useReducer, ReactNode } from 'react';
-import { EventConfig } from '../types/event.types';
-import { StorageAdapter } from '../types/adapter.types';
-import { AdminSession, ScanSession } from '../types/auth.types';
-import { TicketTypeConfig, Order, TicketPersonalization, IssuedTicket } from '../types/ticket.types';
-import { ScanAccount, ScanEvent } from '../types/scanAccount.types';
-import { PromoCode } from '../types/promo.types';
+import { EventConfig } from '../../../reactticket-core/src/types/event.types';
+import { StorageAdapter } from '../../../reactticket-core/src/types/adapter.types';
+import { AdminSession, ScanSession } from '../../../reactticket-core/src/types/auth.types';
+import { TicketTypeConfig, Order, TicketPersonalization, IssuedTicket } from '../../../reactticket-core/src/types/ticket.types';
+import { ScanAccount, ScanEvent } from '../../../reactticket-core/src/types/scanAccount.types';
+import { PromoCode } from '../../../reactticket-core/src/types/promo.types';
 import { reducer } from './reducer';
 
 export interface CartItem {

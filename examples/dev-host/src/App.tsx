@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import jsQR from 'jsqr';
-import { ReactTicket, LocalStorageAdapter } from '@ReactTicket/index';
+import { ReactTicket } from '@ReactTicket/index';
+import { LocalStorageAdapter } from 'reactticket-core/adapters/LocalStorageAdapter';
 import { TicketService } from '@ReactTicket/services/TicketService';
 import { AuthService } from '@ReactTicket/services/AuthService';
 import { ScanAccountService } from '@ReactTicket/services/ScanAccountService';
@@ -21,7 +22,7 @@ const eventConfig = {
     maxOrderSize: 10,
     requireBuyerEmail: true,
     // Hash for 'password' with salt 'salt' and 100000 iterations
-    adminKey: "pbkdf2-sha256$100000$c2FsdA==$7Z7qO9mP9Y3H+fK9+3Z7qO9mP9Y3H+fK9+3Z7qO9mP8=", 
+    adminKey: "pbkdf2-sha256$100000$c2FsdA==$A5Si7eMyyaE+uC6bJGMWBMMd+Xi04vD70sVJlE+deaU=", 
     scanSessionSecret: "dummy-secret-at-least-32-chars-long!!!!!!!!!!",
   }
 };
@@ -91,7 +92,7 @@ export default function App() {
             return code ? { data: code.data } : null;
           }}
           onCheckout={async (order: any) => {
-            await ticketService.issueTickets(order.id);
+            // await ticketService.issueTickets(order.id); // Removed to prevent double issuance
             inspectStorage();
             return "confirmed";
           }}

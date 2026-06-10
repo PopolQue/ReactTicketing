@@ -8,6 +8,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@ReactTicket': path.resolve(__dirname, '../../reactticket/src'),
+      'reactticket-core': path.resolve(__dirname, '../../reactticket-core/src'),
     },
   },
 });
