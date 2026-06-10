@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import jsQR from 'jsqr';
+import jsQR from '../../../reactticket/src/utils/jsQR';
 import { ReactTicket } from '@ReactTicket/index';
 import { LocalStorageAdapter } from 'reactticket-core/adapters/LocalStorageAdapter';
 import { SupabaseAdapter } from 'reactticket-core/adapters/SupabaseAdapter';
