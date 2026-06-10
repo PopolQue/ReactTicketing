@@ -1,16 +1,41 @@
 import { useReactTicket } from './useReactTicket';
-import { useCallback } from 'react';
+import { useCallback, useState, useEffect, useMemo } from 'react';
+import { AnalyticsSummary } from '../types/scan.types';
+import { ScanService } from '../services/ScanService';
+import { AuthService } from '../services/AuthService';
 
 export const useAnalytics = (eventId: string) => {
-  const { dispatch } = useReactTicket();
+  const { adapter, event } = useReactTicket();
+  const [summary, setSummary] = useState<AnalyticsSummary | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const authService = useMemo(() => new AuthService(adapter, event.settings), [adapter, event.settings]);
+  const scanService = useMemo(() => new ScanService(adapter, authService), [adapter, authService]);
 
   const refresh = useCallback(async () => {
-    // Implement refresh
-  }, []);
+    setIsLoading(true);
+    setError(null);
+    try {
+      const data = await scanService.getAnalytics(eventId);
+      setSummary(data);
+    } catch (e: any) {
+      setError(e.message || "Failed to load analytics");
+    } finally {
+      setIsLoading(false);
+    }
+  }, [scanService, eventId]);
+
+  useEffect(() => {
+    refresh();
+    const interval = setInterval(refresh, 30000); // refresh every 30s
+    return () => clearInterval(interval);
+  }, [refresh]);
 
   return {
-    data: {} as any,
+    summary,
     refresh,
-    isLoading: false
+    isLoading,
+    error
   };
 };

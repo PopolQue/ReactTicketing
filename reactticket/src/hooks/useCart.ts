@@ -1,11 +1,12 @@
 import { useReactTicket } from './useReactTicket';
-import { useCallback, useMemo, useState, useEffect } from 'react';
-import { PromoService } from '../services/PromoService';
-import { PromoCode } from '../types/promo.types';
+import { useCallback, useMemo } from 'react';
 import { Order } from '../types/ticket.types';
+import { AuthService } from '../services/AuthService';
+import { TicketService } from '../services/TicketService';
+import { PDFRenderer } from '../services/PDFRenderer';
 
 export const useCart = () => {
-  const { cart, dispatch, ticketTypes, adapter, event, onCheckout } = useReactTicket();
+  const { cart, dispatch, ticketTypes, adapter, event, onCheckout, promoDetails, onTicketIssued } = useReactTicket();
 
   const addItem = useCallback((ticketTypeId: string, quantity: number) => {
     dispatch({ type: 'ADD_ITEM', payload: { ticketTypeId, quantity } });
@@ -15,73 +16,45 @@ export const useCart = () => {
     dispatch({ type: 'REMOVE_ITEM', payload: { ticketTypeId } });
   }, [dispatch]);
 
-  const setPromoCode = useCallback(async (code: string) => {
-    // Prevent applying the same code if it's already in the cart
-    if (cart.promoCode === code) {
-        alert("Promo code already applied");
-        return { valid: false };
-    }
-
-    const promo = await adapter.getPromoCode(code);
-    // Enforce active and maxUses
-    if (!promo || !promo.active || (promo.maxUses !== undefined && promo.usedCount >= promo.maxUses)) {
-        alert("Promo code invalid or expired");
-        return { valid: false };
-    }
-
-    dispatch({ type: 'SET_PROMO_CODE', payload: code });
-    
-    if (promo.discount.kind === 'free' && promo.appliesTo && promo.appliesTo.length > 0) {
-        const type = ticketTypes.find(t => t.id === promo.appliesTo![0]);
-        if (type) {
-            addItem(type.id, 1);
-        }
-    }
-    return { valid: true };
-  }, [dispatch, adapter, addItem, ticketTypes, cart.promoCode]);
-
-  const clearPromo = useCallback(() => {
-    dispatch({ type: 'CLEAR_PROMO' });
-  }, [dispatch]);
-
-  const [promoDetails, setPromoDetails] = useState<PromoCode | null>(null);
-
-  useEffect(() => {
-    if (cart.promoCode) {
-      adapter.getPromoCode(cart.promoCode).then(setPromoDetails);
-    } else {
-      setPromoDetails(null);
-    }
-  }, [cart.promoCode, adapter]);
-
   const cartTotals = useMemo(() => {
     let subtotal = 0;
-    let discount = 0;
-    let promoApplied = false;
-
     cart.items.forEach(item => {
         const type = ticketTypes.find(t => t.id === item.ticketTypeId);
         if (type && type.pricing.kind === 'paid') {
-            const itemTotal = type.pricing.priceInCents * item.quantity;
-            subtotal += itemTotal;
-            
-            if (promoDetails && promoDetails.active && !promoApplied) {
-                if (promoDetails.discount.kind === 'percent_off') {
-                    discount = itemTotal * (promoDetails.discount.percent / 100);
-                } else if (promoDetails.discount.kind === 'amount_off') {
-                    discount = promoDetails.discount.amountCents;
-                }
-                promoApplied = true;
-            }
+            subtotal += type.pricing.priceInCents * item.quantity;
         }
     });
+
+    let discount = 0;
+    if (promoDetails && promoDetails.active) {
+        const applicableItems = (promoDetails.appliesTo && promoDetails.appliesTo.length > 0)
+            ? cart.items.filter(item => promoDetails.appliesTo!.includes(item.ticketTypeId))
+            : cart.items;
+
+        const applicableSubtotal = applicableItems.reduce((acc, item) => {
+            const type = ticketTypes.find(t => t.id === item.ticketTypeId);
+            if (type && type.pricing.kind === 'paid') {
+                return acc + type.pricing.priceInCents * item.quantity;
+            }
+            return acc;
+        }, 0);
+        
+        if (promoDetails.discount.kind === 'percent_off') {
+            discount = applicableSubtotal * (promoDetails.discount.percent / 100);
+        } else if (promoDetails.discount.kind === 'amount_off') {
+            // Cap discount at the applicable subtotal
+            discount = Math.min(promoDetails.discount.amountCents, applicableSubtotal);
+        }
+    }
+    
+    const total = subtotal - discount;
 
     return {
         subtotal: (subtotal / 100).toFixed(2),
         discount: (discount / 100).toFixed(2),
-        total: ((subtotal - discount) / 100).toFixed(2)
+        total: (total > 0 ? total / 100 : 0).toFixed(2)
     };
-  }, [cart, ticketTypes, promoDetails]);
+  }, [cart.items, ticketTypes, promoDetails]);
 
   const checkout = useCallback(async () => {
     console.log("Checkout initiated, cart items:", cart.items);
@@ -93,13 +66,19 @@ export const useCart = () => {
     const order: Order = {
         id: orderId,
         eventId: event.id,
-        items: cart.items.map(i => ({
-            ticketTypeId: i.ticketTypeId,
-            quantity: i.quantity,
-            unitPriceBeforeDiscountCents: 0,
-            unitPriceCents: 0,
-            personalizations: cart.personalizations[i.ticketTypeId] || []
-        })),
+        // TODO: The pricing per item does not reflect the discount.
+        // This should be handled by the backend based on the promo code.
+        items: cart.items.map(i => {
+            const type = ticketTypes.find(t => t.id === i.ticketTypeId);
+            const price = (type && type.pricing.kind === 'paid') ? type.pricing.priceInCents : 0;
+            return {
+                ticketTypeId: i.ticketTypeId,
+                quantity: i.quantity,
+                unitPriceBeforeDiscountCents: price,
+                unitPriceCents: price, // This is not correct if a discount is applied
+                personalizations: cart.personalizations[i.ticketTypeId] || []
+            }
+        }),
         buyerEmail: cart.personalizations[cart.items[0]?.ticketTypeId]?.[0]?.email || '', // Simplified: take email from first ticket
         promoCode: cart.promoCode,
         subtotalCents: parseInt(cartTotals.subtotal) * 100,
@@ -120,9 +99,21 @@ export const useCart = () => {
         if (result === 'confirmed') {
             await adapter.updateOrderStatus(orderId, 'confirmed');
 
+            const authService = new AuthService(adapter, event.settings);
+            const ticketService = new TicketService(adapter, authService);
+            const issuedTickets = await ticketService.issueTickets(order.id);
+
+            if (onTicketIssued) {
+                for (const ticket of issuedTickets) {
+                    const blob = await PDFRenderer.render(ticket.id, event.name);
+                    onTicketIssued(ticket, { png: blob });
+                }
+            }
+
             if (cart.promoCode) {
                 await adapter.incrementPromoUsage(cart.promoCode);
-                clearPromo();
+                dispatch({ type: 'CLEAR_PROMO' });
+                dispatch({ type: 'SET_PROMO_DETAILS', payload: null });
             }
             alert('Checkout successful!');
         } else {
@@ -131,16 +122,14 @@ export const useCart = () => {
     } else {
         console.error("onCheckout prop missing");
     }
-  }, [cart, adapter, onCheckout, event.id, cartTotals, clearPromo]);
+  }, [cart, ticketTypes, adapter, onCheckout, event, cartTotals, dispatch, onTicketIssued]);
 
 
   return {
     items: cart.items,
     addItem,
     removeItem,
-    setPromoCode,
-    clearPromo,
     checkout,
-    totals: cartTotals
+    totals: cartTotals,
   };
 };

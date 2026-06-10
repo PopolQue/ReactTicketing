@@ -16,14 +16,14 @@ interface ReactTicketProps {
   onCheckout: (order: Order) => Promise<"confirmed" | "cancelled">;
   onTicketIssued?: (ticket: IssuedTicket, assets: any) => void;
   onScanEvent?: (scan: ScanEvent, ticket: IssuedTicket) => void;
-  qrParser?: (imageData: ImageData) => string | null;
+  qrParser?: (data: Uint8ClampedArray, width: number, height: number) => { data: string } | null;
   theme?: any;
   adminKey?: string;
   className?: string;
   style?: React.CSSProperties;
 }
 
-const renderMode = (mode: string | undefined, qrParser?: (imageData: ImageData) => string | null) => {
+const renderMode = (mode: string | undefined, qrParser?: (data: Uint8ClampedArray, width: number, height: number) => { data: string } | null) => {
   switch (mode) {
     case 'storefront': return <TicketTypeList />;
     case 'admin': return <AdminPanel />;
@@ -34,8 +34,29 @@ const renderMode = (mode: string | undefined, qrParser?: (imageData: ImageData) 
 };
 
 export const ReactTicket = (props: ReactTicketProps) => {
+  if (
+    process.env.NODE_ENV === 'production' &&
+    props.adapter.name === 'LocalStorageAdapter' &&
+    (props.mode === 'scanner' || props.mode === 'admin')
+  ) {
+    throw new Error(
+      `LocalStorageAdapter is not supported in production for '${props.mode}' mode. ` +
+      `Please use RestAdapter or another production-ready adapter.`
+    );
+  }
+
+  if (
+    process.env.NODE_ENV === 'development' &&
+    props.adapter.name === 'LocalStorageAdapter' &&
+    (props.mode === 'scanner' || props.mode === 'admin')
+  ) {
+    console.warn(
+        `Using LocalStorageAdapter in '${props.mode}' mode. This is not suitable for production.`
+    );
+  }
+
   return (
-    <ReactTicketProvider event={props.event} adapter={props.adapter} onCheckout={props.onCheckout}>
+    <ReactTicketProvider event={props.event} adapter={props.adapter} onCheckout={props.onCheckout} onTicketIssued={props.onTicketIssued}>
       <div className={`ReactTicket-root ${props.className || ''}`} style={props.style}>
         {renderMode(props.mode, props.qrParser)}
       </div>

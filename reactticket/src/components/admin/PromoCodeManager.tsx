@@ -89,6 +89,21 @@ export const PromoCodeManager: React.FC = () => {
     setBatches(await adapter.listPromoBatches());
   };
 
+  const exportCSV = (batch: PromoBatch) => {
+    const headers = ['code'];
+    const csvContent = "data:text/csv;charset=utf-8," 
+      + headers.join(",") + "\n" 
+      + batch.codes.map(c => c.code).join("\n");
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `${batch.name}_codes.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <section style={{ marginTop: '20px' }}>
       <h3>Promo Code Batches</h3>
@@ -139,6 +154,9 @@ export const PromoCodeManager: React.FC = () => {
           >
             <span style={{ textDecoration: batch.archived ? 'line-through' : 'none' }}>{batch.name}</span>
             <div onClick={(e) => e.stopPropagation()} style={{display: 'flex', gap: '10px'}}>
+                <button style={{ padding: '2px 6px', fontSize: '10px' }} onClick={() => exportCSV(batch)}>
+                    Export CSV
+                </button>
                 <button style={{ padding: '2px 6px', fontSize: '10px' }} onClick={() => toggleBatchActive(batch.id)}>
                     {batch.codes.every(c => !c.active) ? 'Reactivate' : 'Deprecate'}
                 </button>
