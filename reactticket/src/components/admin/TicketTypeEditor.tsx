@@ -81,6 +81,10 @@ export const TicketTypeEditor: React.FC = () => {
     }).format(d);
   };
 
+  const getPrice = (pricing: any) => {
+    return pricing?.priceInCents ?? 0;
+  };
+
   return (
     <section style={{ marginTop: '20px' }}>
       <h3>Ticket Types Configuration</h3>
@@ -107,7 +111,7 @@ export const TicketTypeEditor: React.FC = () => {
                 {editingId === type.id ? <input style={{ width: '100%' }} value={editValues.name ?? type.name} onChange={e => setEditValues({ ...editValues, name: e.target.value })} /> : type.name}
               </td>
               <td style={{ padding: '10px' }}>
-                {editingId === type.id ? <input style={{ width: '100%' }} type="number" value={(editValues.pricing as any)?.priceInCents ?? (type.pricing as any).priceInCents} onChange={e => setEditValues({ ...editValues, pricing: { kind: 'paid', priceInCents: parseInt(e.target.value) || 0, currency: 'EUR' } })} /> : (type.pricing as any).priceInCents}
+                {editingId === type.id ? <input style={{ width: '100%' }} type="number" value={getPrice(editValues.pricing)} onChange={e => setEditValues({ ...editValues, pricing: { kind: 'paid', priceInCents: parseInt(e.target.value) || 0, currency: 'EUR' } })} /> : getPrice(type.pricing)}
               </td>
               <td style={{ padding: '10px' }}>
                 {editingId === type.id ? (
