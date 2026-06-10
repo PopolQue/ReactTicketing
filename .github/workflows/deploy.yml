@@ -18,7 +18,8 @@ jobs:
       
       - name: Install and Build
         run: |
-          cd reactticket && npm install
+          cd reactticket-core && npm install
+          cd ../reactticket && npm install
           cd ../examples/demo-local && npm install && npm run build
       
       - name: Deploy
