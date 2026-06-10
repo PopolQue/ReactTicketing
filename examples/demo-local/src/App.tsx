@@ -2,12 +2,19 @@ import React, { useState, useEffect } from 'react';
 import jsQR from 'jsqr';
 import { ReactTicket } from '@ReactTicket/index';
 import { LocalStorageAdapter } from 'reactticket-core/adapters/LocalStorageAdapter';
+import { SupabaseAdapter } from 'reactticket-core/adapters/SupabaseAdapter';
 import { TicketService } from '@ReactTicket/services/TicketService';
 import { AuthService } from '@ReactTicket/services/AuthService';
 import { ScanAccountService } from '@ReactTicket/services/ScanAccountService';
 import './App.css';
 
 const adapter = new LocalStorageAdapter();
+
+// Supabase Test Adapter
+const supabaseAdapter = new SupabaseAdapter(
+  import.meta.env.VITE_SUPABASE_URL || 'https://your-project-id.supabase.co',
+  import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || 'your-anon-key'
+);
 
 const eventConfig = {
   id: "evt_test_001",
@@ -35,6 +42,20 @@ const ticketService = new TicketService(adapter, authService);
 export default function App() {
   const [activeTab, setActiveTab] = useState<'admin' | 'storefront' | 'scanner' | 'tickets'>('storefront');
   const [storage, setStorage] = useState<string>('');
+
+  useEffect(() => {
+    const testSupabase = async () => {
+      try {
+        console.log('Testing Supabase connection to:', import.meta.env.VITE_SUPABASE_URL);
+        const types = await supabaseAdapter.getTicketTypes(eventConfig.id);
+        console.log('Successfully connected to Supabase! Ticket Types:', types);
+      } catch (err) {
+        console.error('Supabase connection failed:', err);
+      }
+    };
+    testSupabase();
+  }, []);
+
 
   const seedData = async () => {
     const accountService = new ScanAccountService(adapter);
