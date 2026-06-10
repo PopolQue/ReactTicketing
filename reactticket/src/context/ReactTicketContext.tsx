@@ -1,10 +1,11 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useReducer, ReactNode } from 'react';
 import { EventConfig } from '../types/event.types';
 import { StorageAdapter } from '../types/adapter.types';
 import { AdminSession, ScanSession } from '../types/auth.types';
 import { TicketTypeConfig, Order, TicketPersonalization, IssuedTicket } from '../types/ticket.types';
 import { ScanAccount, ScanEvent } from '../types/scanAccount.types';
 import { PromoCode } from '../types/promo.types';
+import { reducer } from './reducer';
 
 export interface CartItem {
   ticketTypeId: string;
@@ -67,7 +68,6 @@ export const ReactTicketProvider = ({
       const storedCart = sessionStorage.getItem(`tf_cart_${event.id}`);
       if (storedCart) {
         const parsedCart = JSON.parse(storedCart);
-        // Basic validation to ensure it's a cart object
         if (parsedCart && Array.isArray(parsedCart.items)) {
           initialState.cart = parsedCart;
         }
@@ -78,46 +78,7 @@ export const ReactTicketProvider = ({
     return initialState;
   };
 
-  const [state, dispatch] = useReducer((state: any, action: any) => {
-    switch (action.type) {
-      case 'SET_AUTH_SESSION':
-        return { ...state, authSession: action.payload };
-      case 'SET_TICKET_TYPES':
-        return { ...state, ticketTypes: action.payload };
-      case 'ADD_ITEM': {
-        const { ticketTypeId, quantity } = action.payload;
-        const existingItem = state.cart.items.find((i: CartItem) => i.ticketTypeId === ticketTypeId);
-        const items = existingItem
-          ? state.cart.items.map((i: CartItem) => i.ticketTypeId === ticketTypeId ? { ...i, quantity: i.quantity + quantity } : i)
-          : [...state.cart.items, { ticketTypeId, quantity }];
-        return { ...state, cart: { ...state.cart, items } };
-      }
-      case 'REMOVE_ITEM': {
-        const { ticketTypeId } = action.payload;
-        const items = state.cart.items.filter((i: CartItem) => i.ticketTypeId !== ticketTypeId);
-        return { ...state, cart: { ...state.cart, items } };
-      }
-      case 'SET_PROMO_CODE':
-        return { ...state, cart: { ...state.cart, promoCode: action.payload } };
-      case 'CLEAR_PROMO':
-        return { ...state, cart: { ...state.cart, promoCode: undefined } };
-      case 'SET_PROMO_DETAILS':
-        return { ...state, promoDetails: action.payload };
-      case 'SET_PERSONALIZATION':
-        return {
-          ...state,
-          cart: {
-            ...state.cart,
-            personalizations: {
-              ...state.cart.personalizations,
-              [action.payload.ticketTypeId]: action.payload.personalizations
-            }
-          }
-        };
-      default:
-        return state;
-    }
-  }, getInitialState());
+  const [state, dispatch] = useReducer(reducer, getInitialState());
 
   React.useEffect(() => {
     try {

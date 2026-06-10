@@ -8,6 +8,7 @@ import { TicketTypeList } from './storefront/TicketTypeList';
 import { AdminPanel } from './admin/AdminPanel';
 import { ScannerView } from './scanner/ScannerView';
 import { TicketOverview } from './admin/TicketOverview';
+import { validateAdapterSettings } from '../utils/validation';
 
 interface ReactTicketProps {
   event: EventConfig;
@@ -34,25 +35,18 @@ const renderMode = (mode: string | undefined, qrParser?: (data: Uint8ClampedArra
 };
 
 export const ReactTicket = (props: ReactTicketProps) => {
-  if (
-    process.env.NODE_ENV === 'production' &&
-    props.adapter.name === 'LocalStorageAdapter' &&
-    (props.mode === 'scanner' || props.mode === 'admin')
-  ) {
-    throw new Error(
-      `LocalStorageAdapter is not supported in production for '${props.mode}' mode. ` +
-      `Please use RestAdapter or another production-ready adapter.`
-    );
+  const validation = validateAdapterSettings(
+    props.adapter.name,
+    props.mode,
+    process.env.NODE_ENV || 'development'
+  );
+
+  if (validation?.type === 'error') {
+    throw new Error(validation.message);
   }
 
-  if (
-    process.env.NODE_ENV === 'development' &&
-    props.adapter.name === 'LocalStorageAdapter' &&
-    (props.mode === 'scanner' || props.mode === 'admin')
-  ) {
-    console.warn(
-        `Using LocalStorageAdapter in '${props.mode}' mode. This is not suitable for production.`
-    );
+  if (validation?.type === 'warn') {
+    console.warn(validation.message);
   }
 
   return (

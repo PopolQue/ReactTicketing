@@ -24,9 +24,6 @@ export class ScanAccountService {
     const salt = crypto.getRandomValues(new Uint8Array(16));
     const pinHash = await this.hashPin(pin, salt);
     
-    console.log("Created Account Hash:", pinHash);
-    console.log("Created Account Salt:", btoa(String.fromCharCode(...salt)));
-    
     const account: ScanAccount = {
         id: `acc_${Math.random().toString(36).substring(7)}`,
         eventId,
@@ -41,5 +38,37 @@ export class ScanAccountService {
     };
     await this.adapter.saveScanAccount(account);
     return account;
+  }
+
+  async resetPin(accountId: string, newPin: string): Promise<void> {
+    const account = await this.adapter.getScanAccount(accountId);
+    if (!account) throw new Error("Account not found");
+
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const pinHash = await this.hashPin(newPin, salt);
+
+    await this.adapter.updateScanAccount(accountId, {
+        pinHash,
+        pinSalt: btoa(String.fromCharCode(...salt)),
+        credentialVersion: account.credentialVersion + 1
+    });
+  }
+
+  async deactivate(accountId: string): Promise<void> {
+    await this.adapter.updateScanAccount(accountId, { active: false });
+  }
+
+  async reactivate(accountId: string): Promise<void> {
+    await this.adapter.updateScanAccount(accountId, { active: true });
+  }
+
+  async delete(accountId: string): Promise<void> {
+    await this.adapter.deleteScanAccount(accountId);
+  }
+
+  async list(eventId: string): Promise<ScanAccount[]> {
+    const accounts = await this.adapter.listScanAccounts(eventId);
+    // Never return pinHash or pinSalt in the list
+    return accounts.map(({ pinHash, pinSalt, ...rest }) => rest as ScanAccount);
   }
 }
