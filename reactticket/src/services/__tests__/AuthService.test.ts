@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { AuthService } from '../AuthService';
-import { StorageAdapter } from '../../../../reactticket-core/src/types/adapter.types';
+import { StorageAdapter } from 'reactticket-core/types/adapter.types';
 
 const mockAdapter = {
   getScanAccount: vi.fn(),

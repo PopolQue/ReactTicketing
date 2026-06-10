@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useReactTicket } from '../../hooks/useReactTicket';
-import { PromoBatch, PromoCode } from '../../types/promo.types';
+import { PromoBatch, PromoCode } from 'reactticket-core/types/promo.types';
 
 export const PromoCodeManager: React.FC = () => {
   const { adapter, event, dispatch, ticketTypes } = useReactTicket();

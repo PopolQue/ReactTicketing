@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useReactTicket } from '../../hooks/useReactTicket';
-import { IssuedTicket } from '../../types/ticket.types';
-import { QRGenerator } from '../../services/QRGenerator';
+import { IssuedTicket } from 'reactticket-core/types/ticket.types';
+import { QRGenerator } from 'reactticket-core/services/QRGenerator';
 
 export const TicketOverview: React.FC = () => {
   const { adapter, event } = useReactTicket();

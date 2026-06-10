@@ -1,7 +1,7 @@
 import { CartItem, CartState } from './ReactTicketContext';
-import { TicketTypeConfig, TicketPersonalization } from '../../../reactticket-core/src/types/ticket.types';
-import { AdminSession, ScanSession } from '../../../reactticket-core/src/types/auth.types';
-import { PromoCode } from '../../../reactticket-core/src/types/promo.types';
+import { TicketTypeConfig, TicketPersonalization } from 'reactticket-core/types/ticket.types';
+import { AdminSession, ScanSession } from 'reactticket-core/types/auth.types';
+import { PromoCode } from 'reactticket-core/types/promo.types';
 
 export type Action =
   | { type: 'SET_AUTH_SESSION'; payload: AdminSession | ScanSession | null }

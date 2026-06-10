@@ -1,9 +1,9 @@
 import React, { useMemo, useCallback, useRef, useState, useEffect } from 'react';
 import { useReactTicket } from './useReactTicket';
-import { ScanService } from '../services/ScanService';
-import { AuthService } from '../services/AuthService';
+import { ScanService } from 'reactticket-core/services/ScanService';
+import { AuthService } from 'reactticket-core/services/AuthService';
 import jsQR from '../utils/jsQR';
-import { ScanEvent } from '../types/scan.types';
+import { ScanEvent } from 'reactticket-core/types/scan.types';
 
 type QRParser = (data: Uint8ClampedArray, width: number, height: number) => { data: string } | null;
 

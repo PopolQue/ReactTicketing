@@ -1,18 +1,27 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useCart } from '../../hooks/useCart';
 
 export const CheckoutButton = () => {
   const { checkout } = useCart();
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  const handleCheckout = async () => {
+    setIsProcessing(true);
+    await checkout();
+    setIsProcessing(false);
+  };
+
   return (
     <button 
-      onClick={checkout}
+      onClick={handleCheckout}
+      disabled={isProcessing}
       style={{
         width: '100%', padding: '16px', borderRadius: '8px', border: 'none',
-        background: '#0f172a', color: 'white', fontSize: '16px', fontWeight: 'bold',
-        cursor: 'pointer', marginTop: '20px'
+        background: isProcessing ? '#64748b' : '#0f172a', color: 'white', fontSize: '16px', fontWeight: 'bold',
+        cursor: isProcessing ? 'not-allowed' : 'pointer', marginTop: '20px'
       }}
     >
-      Complete Purchase
+      {isProcessing ? 'Processing...' : 'Complete Purchase'}
     </button>
   );
 };

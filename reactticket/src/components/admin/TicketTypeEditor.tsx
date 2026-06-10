@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useReactTicket } from '../../hooks/useReactTicket';
-import { TicketTypeConfig } from '../../types/ticket.types';
+import { TicketTypeConfig } from 'reactticket-core/types/ticket.types';
 
 export const TicketTypeEditor: React.FC = () => {
   const { ticketTypes, adapter, event, dispatch } = useReactTicket();
@@ -92,14 +92,43 @@ export const TicketTypeEditor: React.FC = () => {
         <tbody>
           {ticketTypes.filter(t => showArchived || !t.archived).map((type) => (
             <tr key={type.id} style={{ borderBottom: '1px solid #e2e8f0', textDecoration: type.archived ? 'line-through' : 'none', opacity: type.archived ? 0.6 : 1 }}>
-              <td style={{ padding: '10px' }}>{type.name}</td>
-              <td style={{ padding: '10px' }}>{(type.pricing as any).priceInCents}</td>
-              <td style={{ padding: '10px' }}>{formatDateTimeForTimezone(type.validFrom)}</td>
-              <td style={{ padding: '10px' }}>{formatDateTimeForTimezone(type.validUntil)}</td>
-              <td style={{ padding: '10px' }}>{type.capacity}</td>
-              <td style={{ padding: '10px' }}>{type.visible ? 'Visible' : 'Hidden'}</td>
               <td style={{ padding: '10px' }}>
-                <button onClick={() => toggleArchive(type)}>{type.archived ? 'Unarchive' : 'Archive'}</button>
+                {editingId === type.id ? <input style={{ width: '100%' }} value={editValues.name ?? type.name} onChange={e => setEditValues({ ...editValues, name: e.target.value })} /> : type.name}
+              </td>
+              <td style={{ padding: '10px' }}>
+                {editingId === type.id ? <input style={{ width: '100%' }} type="number" value={(editValues.pricing as any)?.priceInCents ?? (type.pricing as any).priceInCents} onChange={e => setEditValues({ ...editValues, pricing: { kind: 'paid', priceInCents: parseInt(e.target.value) || 0, currency: 'EUR' } })} /> : (type.pricing as any).priceInCents}
+              </td>
+              <td style={{ padding: '10px' }}>
+                {editingId === type.id ? (
+                  <>
+                    <input type="date" value={editValues.validFrom ? new Date(editValues.validFrom).toISOString().slice(0, 10) : (type.validFrom instanceof Date ? type.validFrom : new Date(type.validFrom || '')).toISOString().slice(0, 10)} onChange={e => setEditValues({ ...editValues, validFrom: new Date(e.target.value + 'T' + (editValues.validFrom ? new Date(editValues.validFrom).toISOString().slice(11, 16) : (type.validFrom instanceof Date ? type.validFrom : new Date(type.validFrom || '')).toISOString().slice(11, 16))) })} />
+                    <input type="time" value={editValues.validFrom ? new Date(editValues.validFrom).toISOString().slice(11, 16) : (type.validFrom instanceof Date ? type.validFrom : new Date(type.validFrom || '')).toISOString().slice(11, 16)} onChange={e => setEditValues({ ...editValues, validFrom: new Date((editValues.validFrom ? new Date(editValues.validFrom).toISOString().slice(0, 10) : (type.validFrom instanceof Date ? type.validFrom : new Date(type.validFrom || '')).toISOString().slice(0, 10)) + 'T' + e.target.value) })} />
+                  </>
+                ) : formatDateTimeForTimezone(type.validFrom)}
+              </td>
+              <td style={{ padding: '10px' }}>
+                {editingId === type.id ? (
+                  <>
+                    <input type="date" value={editValues.validUntil ? new Date(editValues.validUntil).toISOString().slice(0, 10) : (type.validUntil instanceof Date ? type.validUntil : new Date(type.validUntil || '')).toISOString().slice(0, 10)} onChange={e => setEditValues({ ...editValues, validUntil: new Date(e.target.value + 'T' + (editValues.validUntil ? new Date(editValues.validUntil).toISOString().slice(11, 16) : (type.validUntil instanceof Date ? type.validUntil : new Date(type.validUntil || '')).toISOString().slice(11, 16))) })} />
+                    <input type="time" value={editValues.validUntil ? new Date(editValues.validUntil).toISOString().slice(11, 16) : (type.validUntil instanceof Date ? type.validUntil : new Date(type.validUntil || '')).toISOString().slice(11, 16)} onChange={e => setEditValues({ ...editValues, validUntil: new Date((editValues.validUntil ? new Date(editValues.validUntil).toISOString().slice(0, 10) : (type.validUntil instanceof Date ? type.validUntil : new Date(type.validUntil || '')).toISOString().slice(0, 10)) + 'T' + e.target.value) })} />
+                  </>
+                ) : formatDateTimeForTimezone(type.validUntil)}
+              </td>
+              <td style={{ padding: '10px' }}>
+                {editingId === type.id ? <input style={{ width: '100%' }} type="number" value={editValues.capacity ?? type.capacity} onChange={e => setEditValues({ ...editValues, capacity: parseInt(e.target.value) })} /> : type.capacity}
+              </td>
+              <td style={{ padding: '10px' }}>
+                {editingId === type.id ? <input type="checkbox" checked={editValues.visible ?? type.visible} onChange={e => setEditValues({ ...editValues, visible: e.target.checked })} /> : (type.visible ? 'Visible' : 'Hidden')}
+              </td>
+              <td style={{ padding: '10px' }}>
+                {editingId === type.id ? (
+                  <button onClick={() => saveTicketType(type)}>Save</button>
+                ) : (
+                  <>
+                    <button onClick={() => { setEditingId(type.id); setEditValues({}); }}>Edit</button>
+                    <button onClick={() => toggleArchive(type)} style={{ marginLeft: '5px' }}>{type.archived ? 'Unarchive' : 'Archive'}</button>
+                  </>
+                )}
               </td>
             </tr>
           ))}

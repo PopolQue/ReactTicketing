@@ -1,7 +1,7 @@
-import { ScanSession } from "../types/auth.types";
-import { StorageAdapter } from "../types/adapter.types";
-import { EventSettings } from "../types/event.types";
-import { signToken, verifyToken } from "../utils/crypto";
+import { ScanSession } from "reactticket-core/types/auth.types";
+import { StorageAdapter } from "reactticket-core/types/adapter.types";
+import { EventSettings } from "reactticket-core/types/event.types";
+import { signToken, verifyToken } from "reactticket-core/utils/crypto";
 
 export class AuthService {
   private keyPromise: Promise<CryptoKey>;

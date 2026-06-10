@@ -5,7 +5,7 @@ import { PromoCodeManager } from './PromoCodeManager';
 import { CapacityOverview } from './CapacityOverview';
 import { ScanAccountManager } from './ScanAccountManager';
 import { ScanDashboard } from './ScanDashboard';
-import { AuthService } from '../../services/AuthService';
+import { AuthService } from 'reactticket-core/services/AuthService';
 import { useScanAuth } from '../../hooks/useScanAuth';
 
 export const AdminPanel: React.FC = () => {

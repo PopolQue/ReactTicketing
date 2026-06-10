@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { ScanEvent } from '../../types/scan.types';
+import { ScanEvent } from 'reactticket-core/types/scan.types';
 import { useReactTicket } from '../../hooks/useReactTicket';
-import { IssuedTicket } from '../../types/ticket.types';
+import { IssuedTicket } from 'reactticket-core/types/ticket.types';
 
 interface ScanResultProps {
   result: ScanEvent;

@@ -1,4 +1,4 @@
-import * as qrcodegen from '../utils/qrcodegen';
+import * as qrcodegen from 'reactticket-core/utils/qrcodegen';
 
 export const QRGenerator = {
   generate: (payload: string): string => {

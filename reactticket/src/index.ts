@@ -1,5 +1,4 @@
 export * from './components/ReactTicket';
-export * from './types';
 export * from './hooks/useReactTicket';
 export * from './hooks/useCart';
 export * from './hooks/usePromo';
@@ -8,5 +7,5 @@ export * from './hooks/useScanAccounts';
 export * from './hooks/useScanSession';
 export * from './hooks/useAnalytics';
 export * from './utils/formatCurrency';
-export * from '../../reactticket-core/src/adapters/LocalStorageAdapter';
-export * from '../../reactticket-core/src/adapters/RestAdapter';
+export * from 'reactticket-core/adapters/LocalStorageAdapter';
+export * from 'reactticket-core/adapters/RestAdapter';

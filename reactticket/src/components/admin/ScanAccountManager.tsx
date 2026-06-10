@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo, useCallback } from 'react';
 import { useReactTicket } from '../../hooks/useReactTicket';
-import { ScanAccount } from '../../types/scanAccount.types';
-import { ScanAccountService } from '../../services/ScanAccountService';
+import { ScanAccount } from 'reactticket-core/types/scanAccount.types';
+import { ScanAccountService } from 'reactticket-core/services/ScanAccountService';
 
 export const ScanAccountManager: React.FC = () => {
   const { adapter, event } = useReactTicket();

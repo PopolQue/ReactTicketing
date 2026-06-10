@@ -19,10 +19,10 @@ jobs:
       - name: Install and Build
         run: |
           cd reactticket && npm install
-          cd ../examples/dev-host && npm install && npm run build
+          cd ../examples/demo-local && npm install && npm run build
       
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./examples/dev-host/dist
+          publish_dir: ./examples/demo-local/dist

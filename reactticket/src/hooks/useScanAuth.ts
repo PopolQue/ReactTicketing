@@ -1,6 +1,6 @@
 import { useReactTicket } from './useReactTicket';
 import { useMemo, useCallback, useState, useEffect } from 'react';
-import { AuthService } from '../services/AuthService';
+import { AuthService } from 'reactticket-core/services/AuthService';
 
 const LOCKOUT_DURATION = 30 * 1000;
 const FAILURE_WINDOW = 60 * 1000;

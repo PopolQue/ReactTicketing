@@ -1,6 +1,6 @@
 import { useReactTicket } from './useReactTicket';
 import { useMemo, useCallback } from 'react';
-import { ScanAccountService } from '../services/ScanAccountService';
+import { ScanAccountService } from 'reactticket-core/services/ScanAccountService';
 
 export const useScanAccounts = (eventId: string) => {
   const { adapter, scanAccounts, dispatch } = useReactTicket();

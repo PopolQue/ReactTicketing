@@ -1,2 +1,2 @@
-export * from '../../../reactticket-core/src/adapters/LocalStorageAdapter';
-export * from '../../../reactticket-core/src/adapters/RestAdapter';
+export * from 'reactticket-core/adapters/LocalStorageAdapter';
+export * from 'reactticket-core/adapters/RestAdapter';

@@ -1,6 +1,6 @@
 import React from 'react';
 import { useReactTicket } from '../../hooks/useReactTicket';
-import { TicketPersonalization } from '../../../reactticket-core/src/types/ticket.types';
+import { TicketPersonalization } from 'reactticket-core/types/ticket.types';
 
 export const BuyerInfoForm: React.FC = () => {
   const { cart, dispatch, ticketTypes } = useReactTicket();

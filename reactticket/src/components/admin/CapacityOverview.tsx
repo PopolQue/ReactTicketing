@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useReactTicket } from '../../hooks/useReactTicket';
-import { IssuedTicket } from '../../types/ticket.types';
+import { IssuedTicket } from 'reactticket-core/types/ticket.types';
 
 export const CapacityOverview: React.FC = () => {
   const { ticketTypes, adapter, event } = useReactTicket();

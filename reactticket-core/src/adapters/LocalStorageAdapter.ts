@@ -111,7 +111,10 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
   async countIssuedTickets(ticketTypeId: string, eventId: string): Promise<number> {
     const tickets = await this.getIssuedTickets(eventId);
-    return tickets.filter(t => t.ticketTypeId === ticketTypeId && t.status !== 'cancelled').length;
+    console.log(`Debug: Counting tickets. Total in storage: ${tickets.length}, ticketTypeId: ${ticketTypeId}`);
+    const filtered = tickets.filter(t => t.ticketTypeId === ticketTypeId && t.status !== 'cancelled');
+    console.log(`Debug: Filtered tickets:`, filtered);
+    return filtered.length;
   }
 
   // Promo Codes

@@ -1,6 +1,6 @@
-import { StorageAdapter } from "../types/adapter.types";
-import { PromoCode } from "../types/promo.types";
-import { Order } from "../types/ticket.types";
+import { StorageAdapter } from "reactticket-core/types/adapter.types";
+import { PromoCode } from "reactticket-core/types/promo.types";
+import { Order } from "reactticket-core/types/ticket.types";
 
 export class PromoService {
   constructor(private adapter: StorageAdapter) {}

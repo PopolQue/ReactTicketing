@@ -1,9 +1,9 @@
 import { useReactTicket } from './useReactTicket';
 import { useCallback, useMemo } from 'react';
-import { Order } from '../types/ticket.types';
-import { AuthService } from '../services/AuthService';
-import { TicketService } from '../services/TicketService';
-import { PDFRenderer } from '../services/PDFRenderer';
+import { Order } from 'reactticket-core/types/ticket.types';
+import { AuthService } from 'reactticket-core/services/AuthService';
+import { TicketService } from 'reactticket-core/services/TicketService';
+import { PDFRenderer } from 'reactticket-core/services/PDFRenderer';
 
 export const useCart = () => {
   const { cart, dispatch, ticketTypes, adapter, event, onCheckout, promoDetails, onTicketIssued } = useReactTicket();
@@ -62,6 +62,18 @@ export const useCart = () => {
         alert("Cart is empty");
         return;
     }
+    // 1. Final Capacity Check
+    for (const item of cart.items) {
+        const ticketType = ticketTypes.find(t => t.id === item.ticketTypeId);
+        if (ticketType && ticketType.capacity !== undefined) {
+            const issuedCount = await adapter.countIssuedTickets(item.ticketTypeId, event.id);
+            if (issuedCount + item.quantity > ticketType.capacity) {
+                alert(`Sorry, ${ticketType.name} is now sold out or doesn't have enough capacity for your order.`);
+                return;
+            }
+        }
+    }
+
     const orderId = `ord_${Date.now()}`;
     const order: Order = {
         id: orderId,

@@ -1,17 +1,14 @@
 {
   "compilerOptions": {
     "target": "ESNext",
-    "lib": ["DOM", "DOM.Iterable", "ESNext"],
     "module": "ESNext",
     "moduleResolution": "Bundler",
-    "jsx": "react-jsx",
-    "esModuleInterop": true,
     "strict": true,
     "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
     "declaration": true,
     "paths": {
-      "reactticket-core/*": ["../reactticket-core/src/*"]
+      "reactticket-core/*": ["./src/*"]
     }
   },
   "include": ["src"]

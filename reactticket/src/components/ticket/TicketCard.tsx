@@ -1,5 +1,5 @@
 import React from 'react';
-import { IssuedTicket } from '../../types/ticket.types';
+import { IssuedTicket } from 'reactticket-core/types/ticket.types';
 import { QRCode } from './QRCode';
 import { TicketDownload } from './TicketDownload';
 

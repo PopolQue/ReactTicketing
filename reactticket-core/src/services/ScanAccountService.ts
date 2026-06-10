@@ -1,5 +1,5 @@
-import { StorageAdapter } from "../types/adapter.types";
-import { ScanAccount } from "../types/scanAccount.types";
+import { StorageAdapter } from "reactticket-core/types/adapter.types";
+import { ScanAccount } from "reactticket-core/types/scanAccount.types";
 
 export class ScanAccountService {
   constructor(private adapter: StorageAdapter) {}

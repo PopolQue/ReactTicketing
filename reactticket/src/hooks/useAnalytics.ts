@@ -1,8 +1,8 @@
 import { useReactTicket } from './useReactTicket';
 import { useCallback, useState, useEffect, useMemo } from 'react';
-import { AnalyticsSummary } from '../types/scan.types';
-import { ScanService } from '../services/ScanService';
-import { AuthService } from '../services/AuthService';
+import { AnalyticsSummary } from 'reactticket-core/types/scan.types';
+import { ScanService } from 'reactticket-core/services/ScanService';
+import { AuthService } from 'reactticket-core/services/AuthService';
 
 export const useAnalytics = (eventId: string) => {
   const { adapter, event } = useReactTicket();

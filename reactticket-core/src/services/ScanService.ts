@@ -1,8 +1,8 @@
-import { StorageAdapter } from "../types/adapter.types";
-import { ScanEvent, ScanResult, AnalyticsSummary } from "../types/scan.types";
+import { StorageAdapter } from "reactticket-core/types/adapter.types";
+import { ScanEvent, ScanResult, AnalyticsSummary } from "reactticket-core/types/scan.types";
 import { AuthService } from "./AuthService";
-import { IssuedTicket } from "../types/ticket.types";
-import { ScanSession } from "../types/auth.types";
+import { IssuedTicket } from "reactticket-core/types/ticket.types";
+import { ScanSession } from "reactticket-core/types/auth.types";
 
 export class ScanService {
   constructor(private adapter: StorageAdapter, private authService: AuthService) {}
@@ -47,13 +47,16 @@ export class ScanService {
 
         // 5. Check status + window
         const now = new Date();
+        const validFrom = ticket.validFrom ? new Date(ticket.validFrom) : null;
+        const validUntil = ticket.validUntil ? new Date(ticket.validUntil) : null;
+
         if (ticket.status === "used") {
             result = "already_used";
         } else if (ticket.status === "cancelled") {
             result = "cancelled";
-        } else if (ticket.validFrom && now.getTime() < ticket.validFrom.getTime()) {
+        } else if (validFrom && now.getTime() < validFrom.getTime()) {
             result = "invalid"; // Too early
-        } else if (ticket.validUntil && now.getTime() > ticket.validUntil.getTime()) {
+        } else if (validUntil && now.getTime() > validUntil.getTime()) {
             result = "expired";
         } else {
             result = "admitted";
@@ -81,7 +84,7 @@ export class ScanService {
   }
 
   async getAnalytics(eventId: string): Promise<AnalyticsSummary> {
-    const tickets = await this.adapter.getIssuedTickets();
+    const tickets = await this.adapter.getIssuedTickets(eventId);
     const eventTickets = tickets; // Assuming filter is done by adapter or not needed for now
     const scans = await this.adapter.getScanEvents(eventId);
 

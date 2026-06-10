@@ -1,5 +1,5 @@
-import { StorageAdapter } from "../types/adapter.types";
-import { IssuedTicket, TicketTypeConfig } from "../types/ticket.types";
+import { StorageAdapter } from "reactticket-core/types/adapter.types";
+import { IssuedTicket, TicketTypeConfig } from "reactticket-core/types/ticket.types";
 import { QRGenerator } from "./QRGenerator";
 import { AuthService } from "./AuthService";
 
@@ -50,7 +50,7 @@ async issueTickets(orderId: string): Promise<IssuedTicket[]> {
           eventId: order.eventId,
           ticketTypeId: item.ticketTypeId,
           orderId: order.id,
-          personalization: item.personalizations[i] || { name: 'Unknown', surname: 'Unknown', country: 'Unknown', city: 'Unknown' },
+          personalization: item.personalizations[i] || { name: 'Unknown', surname: 'Unknown', country: 'Unknown', city: 'Unknown', email: 'unknown@example.com' },
           buyerEmail: order.buyerEmail,
           issuedAt: new Date(),
           validFrom: ticketType?.validFrom ? new Date(ticketType.validFrom) : undefined,
