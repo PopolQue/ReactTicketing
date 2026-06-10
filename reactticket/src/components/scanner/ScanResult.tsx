@@ -92,7 +92,7 @@ export const ScanResult: React.FC<ScanResultProps> = ({ result, onDismiss }) => 
         <div>
           <p>Ticket ID: {ticket.id}</p>
           <p>Type: {ticketTypeName}</p>
-          <p>Buyer: {ticket.personalization?.name} {ticket.personalization?.surname}</p>
+          <p>Buyer: {typeof ticket.personalization?.name === 'string' ? ticket.personalization.name : 'Unknown'} {typeof ticket.personalization?.surname === 'string' ? ticket.personalization.surname : ''}</p>
         </div>
       )}
       <p>Scanned by: {result.scannedByAccountName}</p>

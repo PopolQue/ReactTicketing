@@ -37,6 +37,8 @@ export const AdminPanel: React.FC = () => {
       setIsAuthenticated(false);
   }
 
+  const safeString = (val: any) => typeof val === 'object' ? JSON.stringify(val) : String(val ?? '');
+
   if (!isAuthenticated) {
     return (
       <div className="admin-login" style={{padding: '20px'}}>
