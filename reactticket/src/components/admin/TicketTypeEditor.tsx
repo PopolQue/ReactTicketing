@@ -11,15 +11,11 @@ export const TicketTypeEditor: React.FC = () => {
   });
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editValues, setEditValues] = useState<Partial<TicketTypeConfig>>({});
+  const [editTimes, setEditTimes] = useState<{
+    validFromDate: string; validFromTime: string;
+    validUntilDate: string; validUntilTime: string;
+  }>({ validFromDate: '', validFromTime: '', validUntilDate: '', validUntilTime: '' });
   const [showArchived, setShowArchived] = useState(false);
-
-  useEffect(() => {
-    const loadTypes = async () => {
-      const types = await adapter.getTicketTypes(event.id);
-      dispatch({ type: 'SET_TICKET_TYPES', payload: types });
-    };
-    loadTypes();
-  }, [adapter, event.id, dispatch]);
 
   const toggleArchive = async (type: TicketTypeConfig) => {
     const updatedType = { ...type, archived: !type.archived };
@@ -28,8 +24,23 @@ export const TicketTypeEditor: React.FC = () => {
     dispatch({ type: 'SET_TICKET_TYPES', payload: updatedTypes });
   };
 
+  const startEdit = (type: TicketTypeConfig) => {
+    setEditingId(type.id);
+    setEditValues(type);
+    setEditTimes({
+      validFromDate: type.validFrom instanceof Date ? type.validFrom.toISOString().slice(0, 10) : (type.validFrom ? new Date(type.validFrom).toISOString().slice(0, 10) : ''),
+      validFromTime: type.validFrom instanceof Date ? type.validFrom.toISOString().slice(11, 16) : (type.validFrom ? new Date(type.validFrom).toISOString().slice(11, 16) : '00:00'),
+      validUntilDate: type.validUntil instanceof Date ? type.validUntil.toISOString().slice(0, 10) : (type.validUntil ? new Date(type.validUntil).toISOString().slice(0, 10) : ''),
+      validUntilTime: type.validUntil instanceof Date ? type.validUntil.toISOString().slice(11, 16) : (type.validUntil ? new Date(type.validUntil).toISOString().slice(11, 16) : '23:59'),
+    });
+  };
+
   const saveTicketType = async (type: TicketTypeConfig) => {
-    const updatedType = { ...type, ...editValues };
+    const updatedType: TicketTypeConfig = {
+      ...type, ...editValues,
+      validFrom: editTimes.validFromDate ? new Date(`${editTimes.validFromDate}T${editTimes.validFromTime}`) : type.validFrom,
+      validUntil: editTimes.validUntilDate ? new Date(`${editTimes.validUntilDate}T${editTimes.validUntilTime}`) : type.validUntil
+    };
     await adapter.saveTicketType(event.id, updatedType);
     const updatedTypes = await adapter.getTicketTypes(event.id);
     dispatch({ type: 'SET_TICKET_TYPES', payload: updatedTypes });
@@ -101,16 +112,16 @@ export const TicketTypeEditor: React.FC = () => {
               <td style={{ padding: '10px' }}>
                 {editingId === type.id ? (
                   <>
-                    <input type="date" value={editValues.validFrom ? new Date(editValues.validFrom).toISOString().slice(0, 10) : (type.validFrom instanceof Date ? type.validFrom : new Date(type.validFrom || '')).toISOString().slice(0, 10)} onChange={e => setEditValues({ ...editValues, validFrom: new Date(e.target.value + 'T' + (editValues.validFrom ? new Date(editValues.validFrom).toISOString().slice(11, 16) : (type.validFrom instanceof Date ? type.validFrom : new Date(type.validFrom || '')).toISOString().slice(11, 16))) })} />
-                    <input type="time" value={editValues.validFrom ? new Date(editValues.validFrom).toISOString().slice(11, 16) : (type.validFrom instanceof Date ? type.validFrom : new Date(type.validFrom || '')).toISOString().slice(11, 16)} onChange={e => setEditValues({ ...editValues, validFrom: new Date((editValues.validFrom ? new Date(editValues.validFrom).toISOString().slice(0, 10) : (type.validFrom instanceof Date ? type.validFrom : new Date(type.validFrom || '')).toISOString().slice(0, 10)) + 'T' + e.target.value) })} />
+                    <input type="date" value={editTimes.validFromDate} onChange={e => setEditTimes({...editTimes, validFromDate: e.target.value})} />
+                    <input type="time" value={editTimes.validFromTime} onChange={e => setEditTimes({...editTimes, validFromTime: e.target.value})} />
                   </>
                 ) : formatDateTimeForTimezone(type.validFrom)}
               </td>
               <td style={{ padding: '10px' }}>
                 {editingId === type.id ? (
                   <>
-                    <input type="date" value={editValues.validUntil ? new Date(editValues.validUntil).toISOString().slice(0, 10) : (type.validUntil instanceof Date ? type.validUntil : new Date(type.validUntil || '')).toISOString().slice(0, 10)} onChange={e => setEditValues({ ...editValues, validUntil: new Date(e.target.value + 'T' + (editValues.validUntil ? new Date(editValues.validUntil).toISOString().slice(11, 16) : (type.validUntil instanceof Date ? type.validUntil : new Date(type.validUntil || '')).toISOString().slice(11, 16))) })} />
-                    <input type="time" value={editValues.validUntil ? new Date(editValues.validUntil).toISOString().slice(11, 16) : (type.validUntil instanceof Date ? type.validUntil : new Date(type.validUntil || '')).toISOString().slice(11, 16)} onChange={e => setEditValues({ ...editValues, validUntil: new Date((editValues.validUntil ? new Date(editValues.validUntil).toISOString().slice(0, 10) : (type.validUntil instanceof Date ? type.validUntil : new Date(type.validUntil || '')).toISOString().slice(0, 10)) + 'T' + e.target.value) })} />
+                    <input type="date" value={editTimes.validUntilDate} onChange={e => setEditTimes({...editTimes, validUntilDate: e.target.value})} />
+                    <input type="time" value={editTimes.validUntilTime} onChange={e => setEditTimes({...editTimes, validUntilTime: e.target.value})} />
                   </>
                 ) : formatDateTimeForTimezone(type.validUntil)}
               </td>
@@ -125,7 +136,7 @@ export const TicketTypeEditor: React.FC = () => {
                   <button onClick={() => saveTicketType(type)}>Save</button>
                 ) : (
                   <>
-                    <button onClick={() => { setEditingId(type.id); setEditValues({}); }}>Edit</button>
+                    <button onClick={() => startEdit(type)}>Edit</button>
                     <button onClick={() => toggleArchive(type)} style={{ marginLeft: '5px' }}>{type.archived ? 'Unarchive' : 'Archive'}</button>
                   </>
                 )}
