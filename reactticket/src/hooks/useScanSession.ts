@@ -2,7 +2,6 @@ import React, { useMemo, useCallback, useRef, useState, useEffect } from 'react'
 import { useReactTicket } from './useReactTicket';
 import { ScanService } from '../services/ScanService';
 import { AuthService } from '../services/AuthService';
-// @ts-expect-error: Vendored JS library
 import jsQR from '../utils/jsQR';
 import { ScanEvent } from '../types/scan.types';
 
