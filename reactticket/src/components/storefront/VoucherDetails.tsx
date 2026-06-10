@@ -16,7 +16,7 @@ export const VoucherDetails: React.FC = () => {
       return `${promoDetails.discount.percent}% off`;
     }
     if (promoDetails.discount.kind === 'amount_off') {
-      return `${formatCurrency(promoDetails.discount.amountCents)} off`;
+      return `${formatCurrency(promoDetails.discount.amountCents, 'EUR')} off`;
     }
     if (promoDetails.discount.kind === 'free') {
       return 'Free';

@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { useCart } from '../../hooks/useCart';
+import { useVoucher } from '../../hooks/useVoucher';
 
 export const PromoCodeInput = () => {
   const [code, setCode] = useState('');
-  const { setPromoCode } = useCart();
+  const { applyVoucher } = useVoucher();
 
   const handleApply = async () => {
-    await setPromoCode(code);
+    await applyVoucher(code);
   };
 
   return (

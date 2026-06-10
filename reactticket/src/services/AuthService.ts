@@ -62,10 +62,10 @@ export class AuthService {
   private async hashWithSalt(passphrase: string, salt: Uint8Array, iterations: number): Promise<Uint8Array> {
     const enc = new TextEncoder();
     const passphraseBuffer = enc.encode(passphrase);
-    const baseKey = await crypto.subtle.importKey("raw", passphraseBuffer, "PBKDF2", false, ["deriveBits"]);
+    const baseKey = await crypto.subtle.importKey("raw", passphraseBuffer as any, "PBKDF2", false, ["deriveBits"]);
     const bits = await crypto.subtle.deriveBits({
       name: "PBKDF2",
-      salt: salt,
+      salt: salt as any,
       iterations: iterations,
       hash: "SHA-256"
     }, baseKey, 256);

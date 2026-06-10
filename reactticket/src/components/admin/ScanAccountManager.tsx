@@ -33,7 +33,7 @@ export const ScanAccountManager: React.FC = () => {
 
   const updateAccount = async (account: ScanAccount) => {
     const updatedAccount = { ...account, ...editValues };
-    await adapter.saveScanAccount(event.id, updatedAccount);
+    await adapter.saveScanAccount(updatedAccount);
     setEditingId(null);
     setEditValues({});
     await loadAccounts();

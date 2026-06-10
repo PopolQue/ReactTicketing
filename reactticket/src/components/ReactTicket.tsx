@@ -10,6 +10,8 @@ import { ScannerView } from './scanner/ScannerView';
 import { TicketOverview } from './admin/TicketOverview';
 import { validateAdapterSettings } from '../utils/validation';
 
+declare const process: any;
+
 interface ReactTicketProps {
   event: EventConfig;
   adapter: StorageAdapter;
