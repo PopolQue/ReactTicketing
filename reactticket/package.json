@@ -4,7 +4,7 @@
   "description": "A zero-dependency React + TypeScript ticketing module",
   "main": "src/index.ts",
   "scripts": {
-    "test": "vitest"
+    "test": "vitest run"
   },
   "devDependencies": {
     "@types/node": "^25.9.2",
