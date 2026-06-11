@@ -52,60 +52,62 @@ export const TicketOverview: React.FC = () => {
   return (
     <section style={{ marginTop: '20px', position: 'relative' }}>
       <h3>Ticket Overview</h3>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          <tr style={{ textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>
-            <th style={{ padding: '8px' }}>QR Code</th>
-            <th style={{ padding: '8px' }}>Ticket ID</th>
-            <th style={{ padding: '8px' }}>Buyer</th>
-            <th style={{ padding: '8px' }}>Status</th>
-            <th style={{ padding: '8px' }}>Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {tickets.map(ticket => (
-            <tr key={ticket.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
-              <td style={{ padding: '8px' }}>
-                {ticket.qrPayload ? (
-                  <img src={QRGenerator.generate(ticket.qrPayload)} alt="QR Code" style={{ width: '50px', height: '50px' }} />
-                ) : (
-                  <span style={{ fontSize: '0.8rem', color: '#666' }}>Pending Delivery</span>
-                )}
-              </td>
-              <td style={{ padding: '8px', fontFamily: 'monospace' }}>{ticket.id}</td>
-              <td style={{ padding: '8px' }}>
-                {ticket.personalization ? (
-                  `${ticket.personalization.name} ${ticket.personalization.surname} (${ticket.personalization.email})`
-                ) : (
-                  ticket.buyerEmail
-                )}
-                {ticket.transferHistory && ticket.transferHistory.length > 0 && (
-                  <div style={{ fontSize: '0.8rem', color: '#888' }}>
-                    (Transferred {ticket.transferHistory.length} times)
-                  </div>
-                )}
-              </td>
-              <td style={{ padding: '8px' }}>
-                <span style={{ fontSize: '12px', padding: '2px 6px', borderRadius: '4px', background: ticket.status === 'delivered' ? '#dcfce7' : '#fee2e2' }}>
-                  {ticket.status.toUpperCase()}
-                </span>
-              </td>
-              <td style={{ padding: '8px' }}>
-                {ticket.status === 'pending_delivery' && (
-                  <>
-                    <button onClick={() => handleDeliver(ticket.id)} style={{ marginRight: '8px', fontSize: '0.8rem', padding: '4px 8px', cursor: 'pointer' }}>
-                      Deliver QR
-                    </button>
-                    <button onClick={() => setTransferTicketId(ticket.id)} style={{ fontSize: '0.8rem', padding: '4px 8px', cursor: 'pointer' }}>
-                      Transfer
-                    </button>
-                  </>
-                )}
-              </td>
+      <div style={{ overflowX: 'auto', width: '100%' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+          <thead>
+            <tr style={{ textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>
+              <th style={{ padding: '8px' }}>QR Code</th>
+              <th style={{ padding: '8px' }}>Ticket ID</th>
+              <th style={{ padding: '8px' }}>Buyer</th>
+              <th style={{ padding: '8px' }}>Status</th>
+              <th style={{ padding: '8px' }}>Actions</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {tickets.map(ticket => (
+              <tr key={ticket.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                <td style={{ padding: '8px' }}>
+                  {ticket.qrPayload ? (
+                    <img src={QRGenerator.generate(ticket.qrPayload)} alt="QR Code" style={{ width: '50px', height: '50px' }} />
+                  ) : (
+                    <span style={{ fontSize: '0.8rem', color: '#666' }}>Pending Delivery</span>
+                  )}
+                </td>
+                <td style={{ padding: '8px', fontFamily: 'monospace' }}>{ticket.id}</td>
+                <td style={{ padding: '8px' }}>
+                  {ticket.personalization ? (
+                    `${ticket.personalization.name} ${ticket.personalization.surname} (${ticket.personalization.email})`
+                  ) : (
+                    ticket.buyerEmail
+                  )}
+                  {ticket.transferHistory && ticket.transferHistory.length > 0 && (
+                    <div style={{ fontSize: '0.8rem', color: '#888' }}>
+                      (Transferred {ticket.transferHistory.length} times)
+                    </div>
+                  )}
+                </td>
+                <td style={{ padding: '8px' }}>
+                  <span style={{ fontSize: '12px', padding: '2px 6px', borderRadius: '4px', background: ticket.status === 'delivered' ? '#dcfce7' : '#fee2e2' }}>
+                    {ticket.status.toUpperCase()}
+                  </span>
+                </td>
+                <td style={{ padding: '8px' }}>
+                  {ticket.status === 'pending_delivery' && (
+                    <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
+                      <button onClick={() => handleDeliver(ticket.id)} style={{ fontSize: '0.8rem', padding: '4px 8px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                        Deliver QR
+                      </button>
+                      <button onClick={() => setTransferTicketId(ticket.id)} style={{ fontSize: '0.8rem', padding: '4px 8px', cursor: 'pointer' }}>
+                        Transfer
+                      </button>
+                    </div>
+                  )}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
       {transferTicketId && (
         <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
