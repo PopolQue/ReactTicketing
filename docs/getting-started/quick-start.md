@@ -4,10 +4,18 @@ The quickest way to get started with ReactTicket is to deploy a simple storefron
 
 ## Installation
 
+Currently, ReactTicket is a collection of React components and core logic that you drop straight into your own project rather than installing via NPM.
+
 ```bash
-npm install reactticket reactticket-core
+# Clone the repository
+git clone https://github.com/PopolQue/ReactTicketing.git
+
+# Copy the reactticket and reactticket-core directories into your project
+cp -r ReactTicketing/reactticket ./src/
+cp -r ReactTicketing/reactticket-core ./src/
 ```
 
+*Tip: We highly recommend using the `examples/supabase-template` as a starting point if you want a production-ready backend!*
 ## Basic Setup
 
 Here is a minimal example of a storefront running with a LocalStorage adapter for testing purposes:
