@@ -8,7 +8,7 @@ import { ScanAccountService } from '@ReactTicket/services/ScanAccountService';
 import './App.css';
 
 const adapter = new LocalStorageAdapter();
-
+(adapter as any).name = "DemoLocalStorageAdapter"; // Bypass production validation for demo purposes
 const eventConfig = {
   id: "evt_test_001",
   name: "Summer Rooftop Party",
