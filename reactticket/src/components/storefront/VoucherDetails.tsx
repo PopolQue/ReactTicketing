@@ -12,11 +12,12 @@ export const VoucherDetails: React.FC = () => {
   }
 
   const renderDiscount = () => {
+    if (!promoDetails || !promoDetails.discount) return 'N/A';
     if (promoDetails.discount.kind === 'percent_off') {
-      return `${promoDetails.discount.percent}% off`;
+      return `${promoDetails.discount.percent || 0}% off`;
     }
     if (promoDetails.discount.kind === 'amount_off') {
-      return `${formatCurrency(promoDetails.discount.amountCents, 'EUR')} off`;
+      return `${formatCurrency(promoDetails.discount.amountCents || 0, 'EUR')} off`;
     }
     if (promoDetails.discount.kind === 'free') {
       return 'Free';
