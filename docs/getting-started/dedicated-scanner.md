@@ -31,6 +31,7 @@ export function ScannerRoute() {
 ```
 
 ## How It Works
+
 1. Staff members enter the **Scanner PIN** you created in the Admin Panel.
 2. They are authenticated and granted a secure `ScanSession`.
 3. The component uses the device camera to scan QR codes.

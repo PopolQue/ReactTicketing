@@ -15,9 +15,15 @@ const eventConfig = {
   organizerName: "Acme Events",
   startDate: new Date(),
   timezone: "Europe/Berlin",
-  ticketTypes: [
-    { id: "tt_gen", name: "General Admission", pricing: { kind: "paid", priceInCents: 1500, currency: "EUR" }, capacity: 100, visible: true, transferable: true }
-  ],
+  ticketTypes: (() => {
+    const now = new Date();
+    const nextWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    return [
+      { id: "tt_gen", name: "General Admission", pricing: { kind: "paid", priceInCents: 1500, currency: "EUR" }, capacity: 100, visible: true, transferable: true, validFrom: now, validUntil: nextWeek },
+      { id: "tt_vip", name: "VIP Pass", pricing: { kind: "paid", priceInCents: 5000, currency: "EUR" }, capacity: 20, visible: true, transferable: true, validFrom: now, validUntil: nextWeek },
+      { id: "tt_early", name: "Early Bird", pricing: { kind: "paid", priceInCents: 1000, currency: "EUR" }, capacity: 50, visible: true, transferable: true, validFrom: now, validUntil: nextWeek }
+    ];
+  })(),
   settings: {
     maxOrderSize: 10,
     requireBuyerEmail: true,
@@ -39,15 +45,33 @@ export default function App() {
 
   const seedData = async () => {
     const accountService = new ScanAccountService(adapter);
+    let seeded = false;
+
     // Seed scanner account: crew / 1234
     const accounts = await adapter.listScanAccounts(eventConfig.id);
     if (!accounts.find(a => a.username === 'crew')) {
         await accountService.createAccount(eventConfig.id, 'crew', '1234', 'Main Entrance');
-        alert("Seeded scanner account: crew / 1234");
-    } else {
-        alert("Demo data already seeded.");
+        seeded = true;
     }
+
+    // Seed ticket types from config
+    const existingTypes = await adapter.getTicketTypes(eventConfig.id);
+    if (existingTypes.length === 0) {
+        for (const tt of eventConfig.ticketTypes) {
+            await adapter.saveTicketType(eventConfig.id, tt as any);
+        }
+        seeded = true;
+    }
+
+    if (seeded) {
+        alert("Demo data successfully seeded!\n\nCredentials:\n- Admin Password: password\n- Scanner Username: crew\n- Scanner PIN: 1234");
+    } else {
+        alert("Demo data already seeded.\n\nCredentials:\n- Admin Password: password\n- Scanner Username: crew\n- Scanner PIN: 1234");
+    }
+    
     inspectStorage();
+    // Force a small reload so the Storefront picks up the new types immediately
+    if (seeded) window.location.reload();
   };
 
   const inspectStorage = () => {
@@ -101,7 +125,11 @@ export default function App() {
       </div>
 
       <div className="inspector">
-        <h3>System State (tf_ prefix)</h3>
+        <h3>Demo Credentials</h3>
+        <p style={{ margin: '5px 0' }}><strong>Admin Password:</strong> password</p>
+        <p style={{ margin: '5px 0' }}><strong>Scanner Account:</strong> crew / 1234</p>
+        
+        <h3 style={{ marginTop: '20px' }}>System State (tf_ prefix)</h3>
         <pre>{storage}</pre>
       </div>
     </div>

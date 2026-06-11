@@ -13,6 +13,7 @@ A fully functional interactive demo of the complete ticketing lifecycle is avail
 **[ReactTicket Live Demo](https://popolque.github.io/ReactTicketing/)**
 
 ### How to Use the Demo
+
 The demo runs entirely in your browser using `LocalStorage` (no backend required). It features a tabbed interface to explore the different modules:
 
 1. **Storefront**: Simulate a customer buying tickets. Add tickets to your cart, fill in buyer info, and "checkout" (payment is simulated).

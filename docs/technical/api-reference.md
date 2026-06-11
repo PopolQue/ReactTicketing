@@ -3,9 +3,11 @@
 ## Components
 
 ### `<ReactTicket />`
+
 The primary component for integrating the ticketing system.
 
 **Props:**
+
 * `event` (EventConfig): The static configuration for the event.
 * `adapter` (StorageAdapter): The backend integration instance.
 * `mode` ("storefront" | "scanner" | "admin" | "tickets" | "full"): The UI mode to render.
