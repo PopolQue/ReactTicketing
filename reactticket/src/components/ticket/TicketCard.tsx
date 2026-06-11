@@ -8,7 +8,13 @@ export const TicketCard = ({ ticket, eventName }: { ticket: IssuedTicket, eventN
     <div className="tf-ticket-card">
       <h2>{eventName}</h2>
       <p>Ticket ID: {ticket.id}</p>
-      <QRCode payload={ticket.qrPayload} />
+      {ticket.qrPayload ? (
+        <QRCode payload={ticket.qrPayload} />
+      ) : (
+        <div className="rt-ticket-pending-msg">
+          QR Code will be generated closer to the event.
+        </div>
+      )}
       <TicketDownload ticket={ticket} eventName={eventName} />
     </div>
   );

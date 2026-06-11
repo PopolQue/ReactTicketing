@@ -1,4 +1,4 @@
-import { TicketTypeConfig, IssuedTicket, Order } from './ticket.types';
+import { TicketTypeConfig, IssuedTicket, Order, TicketPersonalization } from './ticket.types';
 import { PromoCode, PromoBatch } from './promo.types';
 import { ScanEvent } from './scan.types';
 import { ScanAccount } from './scanAccount.types';
@@ -20,6 +20,8 @@ export interface StorageAdapter {
   getIssuedTickets(eventId: string): Promise<IssuedTicket[]>;
   saveTicket(ticket: IssuedTicket): Promise<void>;
   updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void>;
+  deliverTicket(ticketId: string, qrPayload: string): Promise<void>;
+  transferTicket(ticketId: string, toEmail: string, newPersonalization: TicketPersonalization): Promise<void>;
   countIssuedTickets(ticketTypeId: string, eventId: string): Promise<number>;
 
   // Promo Codes

@@ -105,6 +105,35 @@ export class SupabaseAdapter implements StorageAdapter {
     if (error) throw error;
   }
 
+  async deliverTicket(ticketId: string, qrPayload: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('tickets')
+      .update({ status: 'delivered', qr_payload: qrPayload })
+      .eq('id', ticketId);
+    if (error) throw error;
+  }
+
+  async transferTicket(ticketId: string, toEmail: string, newPersonalization: import('../types/ticket.types').TicketPersonalization): Promise<void> {
+    const ticket = await this.getTicket(ticketId);
+    if (!ticket) throw new Error('Ticket not found');
+    
+    const history = ticket.transferHistory || [];
+    history.push({
+      fromEmail: ticket.personalization.email,
+      toEmail,
+      at: new Date()
+    });
+
+    const { error } = await this.supabase
+      .from('tickets')
+      .update({ 
+        personalization: newPersonalization,
+        transfer_history: history
+      })
+      .eq('id', ticketId);
+    if (error) throw error;
+  }
+
   async countIssuedTickets(ticketTypeId: string, eventId: string): Promise<number> {
     const { count, error } = await this.supabase
       .from('tickets')

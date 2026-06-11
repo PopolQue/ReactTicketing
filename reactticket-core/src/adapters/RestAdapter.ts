@@ -89,6 +89,18 @@ export class RestAdapter implements StorageAdapter {
       body: JSON.stringify({ status }),
     });
   }
+  async deliverTicket(ticketId: string, qrPayload: string): Promise<void> {
+    await this.request(`/tickets/${ticketId}/deliver`, {
+      method: 'POST',
+      body: JSON.stringify({ qrPayload }),
+    });
+  }
+  async transferTicket(ticketId: string, toEmail: string, newPersonalization: import('../types/ticket.types').TicketPersonalization): Promise<void> {
+    await this.request(`/tickets/${ticketId}/transfer`, {
+      method: 'POST',
+      body: JSON.stringify({ toEmail, newPersonalization }),
+    });
+  }
   async countIssuedTickets(ticketTypeId: string): Promise<number> {
     const res = await this.request<{ count: number }>(`/ticket-types/${ticketTypeId}/issued-count`);
     return res.count;

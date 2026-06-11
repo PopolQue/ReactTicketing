@@ -47,8 +47,8 @@ export interface IssuedTicket {
   issuedAt: Date;
   validFrom?: Date;
   validUntil?: Date;
-  status: "valid" | "used" | "cancelled" | "transferred";
-  qrPayload: string;
+  status: "pending_delivery" | "delivered" | "used" | "cancelled" | "transferred";
+  qrPayload?: string;
   transferHistory?: TransferRecord[];
   promoCodeUsed?: string;
   pricePaidCents: number;

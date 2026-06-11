@@ -109,6 +109,50 @@ export class LocalStorageAdapter implements StorageAdapter {
         }
     }
   }
+
+  async deliverTicket(ticketId: string, qrPayload: string): Promise<void> {
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                const tickets: IssuedTicket[] = JSON.parse(data);
+                const index = tickets.findIndex(t => t.id === ticketId);
+                if (index > -1) {
+                    tickets[index].status = 'delivered';
+                    tickets[index].qrPayload = qrPayload;
+                    localStorage.setItem(key, JSON.stringify(tickets));
+                    return;
+                }
+            }
+        }
+    }
+  }
+
+  async transferTicket(ticketId: string, toEmail: string, newPersonalization: import('../types/ticket.types').TicketPersonalization): Promise<void> {
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                const tickets: IssuedTicket[] = JSON.parse(data);
+                const index = tickets.findIndex(t => t.id === ticketId);
+                if (index > -1) {
+                    const ticket = tickets[index];
+                    if (!ticket.transferHistory) ticket.transferHistory = [];
+                    ticket.transferHistory.push({
+                        fromEmail: ticket.personalization.email,
+                        toEmail: toEmail,
+                        at: new Date()
+                    });
+                    ticket.personalization = newPersonalization;
+                    localStorage.setItem(key, JSON.stringify(tickets));
+                    return;
+                }
+            }
+        }
+    }
+  }
   async countIssuedTickets(ticketTypeId: string, eventId: string): Promise<number> {
     const tickets = await this.getIssuedTickets(eventId);
     console.log(`Debug: Counting tickets. Total in storage: ${tickets.length}, ticketTypeId: ${ticketTypeId}`);

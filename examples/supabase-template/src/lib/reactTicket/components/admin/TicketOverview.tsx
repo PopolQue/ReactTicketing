@@ -38,7 +38,7 @@ export const TicketOverview: React.FC = () => {
                 )}
               </td>
               <td style={{ padding: '8px' }}>
-                <span style={{ fontSize: '12px', padding: '2px 6px', borderRadius: '4px', background: ticket.status === 'valid' ? '#dcfce7' : '#fee2e2' }}>
+                <span style={{ fontSize: '12px', padding: '2px 6px', borderRadius: '4px', background: ticket.status === 'delivered' ? '#dcfce7' : '#fee2e2' }}>
                   {ticket.status.toUpperCase()}
                 </span>
               </td>
