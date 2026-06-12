@@ -11,6 +11,8 @@ export default function CreateEvent() {
     title: '',
     start_date: '',
     venue: '',
+    city: '',
+    country: '',
     description: ''
   });
 
@@ -51,6 +53,8 @@ export default function CreateEvent() {
             organizer_name: companyName,
             start_date: new Date(formData.start_date).toISOString(),
             venue: formData.venue,
+            city: formData.city,
+            country: formData.country,
             description: formData.description,
             organizer_id: user.id,
             timezone_id: 'gmt1_berlin', // Must be a valid seed from the timezones table
@@ -96,6 +100,16 @@ export default function CreateEvent() {
             <div>
               <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Venue</label>
               <input required type="text" name="venue" value={formData.venue} onChange={handleChange} className="input-field" placeholder="Club XYZ" />
+            </div>
+          </div>
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>City</label>
+              <input required type="text" name="city" value={formData.city} onChange={handleChange} className="input-field" placeholder="Berlin" />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Country</label>
+              <input required type="text" name="country" value={formData.country} onChange={handleChange} className="input-field" placeholder="Germany" />
             </div>
           </div>
           <div>

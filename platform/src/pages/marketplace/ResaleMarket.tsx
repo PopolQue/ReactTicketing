@@ -1,42 +1,61 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
 import CheckoutModal from '../../components/CheckoutModal';
 
+// Define a basic interface to avoid 'any' types
+interface Listing {
+  id: string;
+  seller_id: string;
+  asking_price_cents: number;
+  tickets?: {
+    events?: {
+      name?: string;
+      start_date: string;
+      venue?: string;
+      city?: string;
+      country?: string;
+    };
+    ticket_types?: {
+      name?: string;
+    };
+  };
+}
+
 export default function ResaleMarket() {
   const navigate = useNavigate();
   const { showToast } = useToast();
-  const [listings, setListings] = useState<any[]>([]);
+  const [listings, setListings] = useState<Listing[]>([]);
   const [loading, setLoading] = useState(true);
-  
-  const [checkoutListing, setCheckoutListing] = useState<any>(null);
+
+  const [checkoutListing, setCheckoutListing] = useState<Listing | null>(null);
 
   useEffect(() => {
+    async function fetchListings() {
+      const { data } = await supabase
+        .from('resale_listings')
+        .select(`
+          *,
+          tickets (
+            *,
+            events ( name, start_date, venue, city, country ),
+            ticket_types ( name )
+          )
+        `)
+        .eq('is_active', true)
+        .order('created_at', { ascending: false })
+        .limit(20);
+
+      if (data) setListings(data as Listing[]);
+      setLoading(false);
+    }
+
     fetchListings();
     document.title = 'Secondary Market | Ticketeer';
   }, []);
 
-  async function fetchListings() {
-    const { data, error } = await supabase
-      .from('resale_listings')
-      .select(`
-        *,
-        tickets (
-          *,
-          events ( name, start_date, venue ),
-          ticket_types ( name )
-        )
-      `)
-      .eq('is_active', true)
-      .order('created_at', { ascending: false })
-      .limit(20);
-
-    if (data) setListings(data);
-    setLoading(false);
-  }
-
-  const initBuyTicket = async (listing: any) => {
+  const initBuyTicket = async (listing: Listing) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       showToast("Please log in to purchase secondary market tickets.", 'error');
@@ -58,7 +77,7 @@ export default function ResaleMarket() {
     if (!user) return;
 
     try {
-      const { data, error } = await supabase.rpc('buy_resale_ticket', {
+      const { error } = await supabase.rpc('buy_resale_ticket', {
         p_listing_id: checkoutListing.id,
         p_buyer_id: user.id
       });
@@ -67,8 +86,9 @@ export default function ResaleMarket() {
 
       showToast("Ticket successfully purchased and transferred to your wallet!", 'success');
       navigate('/wallet');
-    } catch (err: any) {
-      showToast("Purchase failed: " + err.message, 'error');
+    } catch (err: unknown) {
+      const errorMessage = err instanceof Error ? err.message : String(err);
+      showToast("Purchase failed: " + errorMessage, 'error');
       setCheckoutListing(null);
     }
   };
@@ -77,8 +97,8 @@ export default function ResaleMarket() {
     <div className="resale-market-page" style={{ minHeight: '100vh', padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
       <header style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: '40px', gap: '16px', alignItems: 'center' }}>
         <div>
-           <h1 style={{ fontSize: '2.5rem', margin: 0 }}>Secondary Market</h1>
-           <p style={{ color: 'var(--text-secondary)', margin: '8px 0 0 0' }}>Securely buy tickets from other fans.</p>
+          <h1 style={{ fontSize: '2.5rem', margin: 0 }}>Secondary Market</h1>
+          <p style={{ color: 'var(--text-secondary)', margin: '8px 0 0 0' }}>Securely buy tickets from other fans.</p>
         </div>
         <div style={{ display: 'flex', gap: '16px' }}>
           <Link to="/" className="btn-secondary" style={{ textDecoration: 'none' }}>Primary Market</Link>
@@ -97,11 +117,13 @@ export default function ResaleMarket() {
               <div key={listing.id} className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column' }}>
                 <div style={{ marginBottom: '20px' }}>
                   <h3 style={{ margin: '0 0 8px 0', fontSize: '1.4rem' }}>{listing.tickets?.events?.name}</h3>
-                  <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                    {new Date(listing.tickets?.events?.start_date).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} • {listing.tickets?.events?.venue}
-                  </p>
+                  {listing.tickets?.events?.start_date && (
+                    <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+                      {new Date(listing.tickets.events.start_date).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} • {listing.tickets.events.venue}{listing.tickets.events.city ? `, ${listing.tickets.events.city}` : ''}{listing.tickets.events.country ? `, ${listing.tickets.events.country}` : ''}
+                    </p>
+                  )}
                 </div>
-                
+
                 <div style={{ padding: '16px', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '8px', marginBottom: '24px', flexGrow: 1 }}>
                   <p style={{ margin: '0 0 4px 0', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>Ticket Type</p>
                   <p style={{ margin: '0 0 0 0', fontWeight: 600 }}>{listing.tickets?.ticket_types?.name}</p>
@@ -114,8 +136,8 @@ export default function ResaleMarket() {
                       €{(listing.asking_price_cents / 100).toFixed(2)}
                     </p>
                   </div>
-                  <button 
-                    onClick={() => initBuyTicket(listing)} 
+                  <button
+                    onClick={() => initBuyTicket(listing)}
                     className="btn-primary"
                   >
                     Buy Now
@@ -128,9 +150,9 @@ export default function ResaleMarket() {
       )}
 
       {checkoutListing && (
-        <CheckoutModal 
+        <CheckoutModal
           amountCents={checkoutListing.asking_price_cents}
-          itemName={`${checkoutListing.tickets?.events?.name} (Resale)`}
+          itemName={`${checkoutListing.tickets?.events?.name || 'Ticket'} (Resale)`}
           onConfirm={executePurchase}
           onCancel={() => setCheckoutListing(null)}
         />

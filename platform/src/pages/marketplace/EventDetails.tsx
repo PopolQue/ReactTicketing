@@ -8,7 +8,7 @@ export default function EventDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
-  
+
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [tiers, setTiers] = useState<any[]>([]);
@@ -24,24 +24,24 @@ export default function EventDetails() {
         .select(`*, organizer_profiles(company_name)`)
         .eq('id', id)
         .single();
-        
+
       if (data) {
         setEvent(data);
-        document.title = `${data.name} | Ticketeer`; // SEO Meta Title injection
+        document.title = `${data.name} | Admit`; // SEO Meta Title injection
       }
 
       const { data: tiersData } = await supabase
         .from('ticket_types')
         .select('*')
         .eq('event_id', id);
-        
+
       if (tiersData) setTiers(tiersData);
 
       setLoading(false);
     }
-    
+
     fetchEventDetails();
-    return () => { document.title = 'Ticketeer'; }
+    return () => { document.title = 'Admit'; }
   }, [id]);
 
   const initCheckout = async (tier: any) => {
@@ -62,7 +62,7 @@ export default function EventDetails() {
     try {
       const orderId = crypto.randomUUID();
       const priceCents = checkoutTier.pricing?.amount || 0;
-      
+
       const { error: orderError } = await supabase.from('orders').insert([{
         id: orderId,
         event_id: event.id,
@@ -73,9 +73,9 @@ export default function EventDetails() {
         total_cents: priceCents,
         status: 'completed'
       }]);
-      
+
       if (orderError) throw orderError;
-      
+
       const { error: ticketError } = await supabase.from('tickets').insert([{
         id: crypto.randomUUID(),
         event_id: event.id,
@@ -90,7 +90,7 @@ export default function EventDetails() {
       }]);
 
       if (ticketError) throw ticketError;
-      
+
       showToast('Ticket purchased successfully! View it in your wallet.', 'success');
       navigate('/wallet');
     } catch (err: any) {
@@ -115,18 +115,18 @@ export default function EventDetails() {
 
       {images.length > 0 && (
         <div style={{ width: '100%', height: '400px', backgroundColor: '#000', position: 'relative', overflow: 'hidden' }}>
-          <img 
-            src={images[currentImageIndex]} 
-            alt="Event" 
-            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }} 
+          <img
+            src={images[currentImageIndex]}
+            alt="Event"
+            style={{ width: '100%', height: '100%', objectFit: 'cover', opacity: 0.8 }}
           />
           {images.length > 1 && (
             <div style={{ position: 'absolute', bottom: '20px', left: '0', right: '0', display: 'flex', justifyContent: 'center', gap: '8px' }}>
               {images.map((_: any, idx: number) => (
-                <button 
+                <button
                   key={idx}
                   onClick={() => setCurrentImageIndex(idx)}
-                  style={{ 
+                  style={{
                     width: '12px', height: '12px', borderRadius: '50%', border: 'none', cursor: 'pointer',
                     backgroundColor: idx === currentImageIndex ? customAccentColor : 'rgba(255,255,255,0.4)'
                   }}
@@ -143,7 +143,7 @@ export default function EventDetails() {
           <p style={{ color: customAccentColor, fontSize: '1.2rem', margin: '0 0 24px 0', fontWeight: 600 }}>
             Presented by {event.organizer_profiles?.company_name || 'Independent Organizer'}
           </p>
-          
+
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '40px', padding: '24px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
             <div>
               <p style={{ margin: '0 0 8px 0', color: 'rgba(255,255,255,0.6)' }}>Date & Time</p>
@@ -152,6 +152,11 @@ export default function EventDetails() {
             <div>
               <p style={{ margin: '0 0 8px 0', color: 'rgba(255,255,255,0.6)' }}>Venue</p>
               <p style={{ margin: 0, fontSize: '1.1rem' }}>{event.venue}</p>
+              {(event.city || event.country) && (
+                <p style={{ margin: '4px 0 0 0', fontSize: '0.9rem', color: 'rgba(255,255,255,0.7)' }}>
+                  {event.city}{event.city && event.country ? ', ' : ''}{event.country}
+                </p>
+              )}
             </div>
           </div>
 
@@ -180,8 +185,8 @@ export default function EventDetails() {
                       <div style={{ fontSize: '1.4rem', fontWeight: 600, color: 'white' }}>
                         €{((tier.pricing?.amount || 0) / 100).toFixed(2)}
                       </div>
-                      <button 
-                        onClick={() => initCheckout(tier)} 
+                      <button
+                        onClick={() => initCheckout(tier)}
                         className="btn-primary"
                         style={{ backgroundColor: customAccentColor }}
                       >
@@ -197,7 +202,7 @@ export default function EventDetails() {
       </main>
 
       {checkoutTier && (
-        <CheckoutModal 
+        <CheckoutModal
           amountCents={checkoutTier.pricing?.amount || 0}
           itemName={`${event.name} - ${checkoutTier.name}`}
           onConfirm={executePurchase}

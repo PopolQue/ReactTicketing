@@ -46,7 +46,7 @@ export default function EventsList() {
                   </span>
                 </div>
                 <p style={{ color: 'var(--text-secondary)', margin: '0 0 20px 0' }}>
-                  {new Date(event.start_date).toLocaleDateString()} • {event.venue}
+                  {new Date(event.start_date).toLocaleDateString()} • {event.venue}{event.city ? `, ${event.city}` : ''}{event.country ? `, ${event.country}` : ''}
                 </p>
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <Link to={`/organizer/events/${event.id}`} style={{ width: '100%' }}>

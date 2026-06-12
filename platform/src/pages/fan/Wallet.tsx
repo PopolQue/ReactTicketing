@@ -26,7 +26,7 @@ export default function Wallet() {
       .from('tickets')
       .select(`
         *,
-        events ( name, start_date, venue ),
+        events ( name, start_date, venue, city, country ),
         ticket_types ( name ),
         resale_listings ( id, is_active, asking_price_cents )
       `)
@@ -104,7 +104,7 @@ export default function Wallet() {
                   <div style={{ padding: '24px', backgroundColor: 'var(--accent)', color: 'white', opacity: activeListing ? 0.7 : 1 }}>
                     <h3 style={{ margin: '0 0 8px 0', fontSize: '1.5rem', lineHeight: '1.2' }}>{ticket.events?.name}</h3>
                     <p style={{ margin: 0, opacity: 0.9, fontWeight: 500 }}>
-                      {new Date(ticket.events?.start_date).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} • {ticket.events?.venue}
+                      {new Date(ticket.events?.start_date).toLocaleString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} • {ticket.events?.venue}{ticket.events?.city ? `, ${ticket.events.city}` : ''}{ticket.events?.country ? `, ${ticket.events.country}` : ''}
                     </p>
                   </div>
                   
