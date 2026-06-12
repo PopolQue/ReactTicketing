@@ -18,6 +18,10 @@ import ResaleMarket from './pages/marketplace/ResaleMarket'
 
 import Settings from './pages/organizer/Settings'
 import ScanTickets from './pages/organizer/ScanTickets'
+import ArtistsList from './pages/organizer/ArtistsList'
+import BlogsList from './pages/organizer/BlogsList'
+import BlogFeed from './pages/marketplace/BlogFeed'
+import BlogPost from './pages/marketplace/BlogPost'
 import { ToastProvider } from './components/Toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
@@ -31,8 +35,10 @@ function App() {
         <Route path="/events/:id" element={<EventDetails />} />
         <Route path="/wallet" element={<Wallet />} />
         <Route path="/resale" element={<ResaleMarket />} />
+        <Route path="/blogs" element={<BlogFeed />} />
+        <Route path="/blogs/:slug" element={<BlogPost />} />
         <Route path="/auth" element={<Auth />} />
-        
+
         {/* Organizer Portal */}
         <Route path="/organizer" element={<OrganizerLayout />}>
           <Route index element={<Dashboard />} />
@@ -41,6 +47,8 @@ function App() {
           <Route path="events/:id" element={<ManageEvent />} />
           <Route path="scan" element={<ScanTickets />} />
           <Route path="settings" element={<Settings />} />
+          <Route path="artists" element={<ArtistsList />} />
+          <Route path="blogs" element={<BlogsList />} />
         </Route>
       </Routes>
     </ToastProvider>

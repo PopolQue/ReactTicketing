@@ -1,5 +1,6 @@
 import fs from 'node:fs/promises'
 import express from 'express'
+import { Transform } from 'node:stream'
 
 // Constants
 const isProduction = process.env.NODE_ENV === 'production'
@@ -37,7 +38,13 @@ if (!isProduction) {
 // Serve HTML
 app.use(async (req, res) => {
   try {
-    const url = req.originalUrl.replace(base, '')
+    let url = req.originalUrl
+    if (base !== '/' && url.startsWith(base)) {
+      url = url.replace(base, '')
+    }
+    if (!url.startsWith('/')) {
+      url = '/' + url
+    }
 
     let template
     let render
@@ -51,19 +58,28 @@ app.use(async (req, res) => {
       render = (await import('./dist/server/entry-server.js')).render
     }
 
-    const { pipe } = render(url, {})
-
     const [htmlStart, htmlEnd] = template.split('<!--ssr-outlet-->')
-    
-    res.status(200).set({ 'Content-Type': 'text/html' })
-    
-    res.write(htmlStart)
-    
-    const stream = pipe(res)
-    
-    stream.on('finish', () => {
-      res.write(htmlEnd)
-      res.end()
+
+    const { pipe } = render(url, {
+      onShellReady() {
+        res.status(200).set({ 'Content-Type': 'text/html' })
+        res.write(htmlStart)
+        
+        const transformStream = new Transform({
+          transform(chunk, encoding, callback) {
+            callback(null, chunk)
+          },
+          flush(callback) {
+            this.push(htmlEnd)
+            callback()
+          }
+        })
+        
+        pipe(transformStream).pipe(res)
+      },
+      onShellError(err) {
+        res.status(500).send(err.message)
+      }
     })
     
   } catch (e) {
