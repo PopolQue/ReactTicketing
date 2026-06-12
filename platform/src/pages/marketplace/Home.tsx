@@ -145,9 +145,19 @@ export default function Home() {
               filteredEvents.map((event) => (
                 <Link to={`/events/${event.id}`} key={event.id} style={{ textDecoration: 'none', color: 'inherit' }}>
                   <div className="glass-panel event-card-hover" style={{ padding: '24px', height: '100%' }}>
-                    <div style={{ height: '180px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '8px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      <span style={{ fontSize: '3rem', opacity: 0.2 }}>🎟️</span>
-                    </div>
+                    {event.images && event.images.length > 0 ? (
+                      <div style={{ height: '180px', borderRadius: '8px', marginBottom: '20px', overflow: 'hidden' }}>
+                        <img 
+                          src={event.images[0]} 
+                          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: event.theme_customization?.thumbnailPosition || '50% 50%' }} 
+                          alt="Event Thumbnail" 
+                        />
+                      </div>
+                    ) : (
+                      <div style={{ height: '180px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '8px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <span style={{ fontSize: '3rem', opacity: 0.2 }}>🎟️</span>
+                      </div>
+                    )}
                     <h3 style={{ margin: '0 0 12px 0', fontSize: '1.5rem', lineHeight: '1.3' }}>{event.name}</h3>
                     <p style={{ margin: '0 0 12px 0', color: 'var(--text-secondary)', fontWeight: 500 }}>
                       {new Date(event.start_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} • {event.venue}{event.city ? `, ${event.city}` : ''}{event.country ? `, ${event.country}` : ''}

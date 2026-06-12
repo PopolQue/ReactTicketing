@@ -14,9 +14,15 @@ export default function ManageEvent() {
   const [tierForm, setTierForm] = useState({ name: '', price: '', capacity: '' });
   const [isPublishing, setIsPublishing] = useState(false);
 
-  // New states for Images & Theme
+  // Images & Theme
   const [uploadingImage, setUploadingImage] = useState(false);
-  const [theme, setTheme] = useState({ bgColor: '#0f1115', accentColor: '#6366f1' });
+  const [theme, setTheme] = useState({ bgColor: '#0f1115', accentColor: '#6366f1', thumbnailPosition: '50% 50%' });
+  const [initialImages, setInitialImages] = useState<string[]>([]);
+  const [initialThumbnailPosition, setInitialThumbnailPosition] = useState('50% 50%');
+
+  // Drag state for thumbnail
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartY, setDragStartY] = useState(0);
 
   useEffect(() => {
     async function fetchData() {
@@ -29,11 +35,14 @@ export default function ManageEvent() {
       const { data: eventData } = await supabase.from('events').select('*').eq('id', id).single();
       if (eventData) {
         setEvent(eventData);
+        setInitialImages(eventData.images || []);
         if (eventData.theme_customization) {
           setTheme({
             bgColor: eventData.theme_customization.bgColor || '#0f1115',
-            accentColor: eventData.theme_customization.accentColor || '#6366f1'
+            accentColor: eventData.theme_customization.accentColor || '#6366f1',
+            thumbnailPosition: eventData.theme_customization.thumbnailPosition || '50% 50%'
           });
+          setInitialThumbnailPosition(eventData.theme_customization.thumbnailPosition || '50% 50%');
         }
       }
 
@@ -103,23 +112,67 @@ export default function ManageEvent() {
     const newImageUrl = publicUrlData.publicUrl;
 
     const updatedImages = [...currentImages, newImageUrl];
-    const { error: updateError } = await supabase.from('events').update({ images: updatedImages }).eq('id', id);
-
-    if (!updateError) {
-      setEvent({ ...event, images: updatedImages });
-    }
+    setEvent({ ...event, images: updatedImages });
     setUploadingImage(false);
+  };
+
+  const moveImage = (index: number, direction: number) => {
+    const currentImages = event.images || [];
+    const newImages = [...currentImages];
+    const targetIndex = index + direction;
+    if (targetIndex < 0 || targetIndex >= newImages.length) return;
+    
+    const temp = newImages[index];
+    newImages[index] = newImages[targetIndex];
+    newImages[targetIndex] = temp;
+    
+    setEvent({ ...event, images: newImages });
+  };
+
+  const savePicturesAndPreview = async () => {
+    const currentImages = event.images || [];
+    const { error } = await supabase.from('events').update({ 
+      images: currentImages,
+      theme_customization: theme
+    }).eq('id', id);
+    
+    if (!error) {
+      showToast("Pictures and Thumbnail Preview saved successfully!", "success");
+      setInitialImages(currentImages);
+      setInitialThumbnailPosition(theme.thumbnailPosition);
+    } else {
+      showToast("Failed to save pictures.", "error");
+    }
   };
 
   const saveTheme = async () => {
     const { error } = await supabase.from('events').update({ theme_customization: theme }).eq('id', id);
-    if (!error) showToast("Theme saved successfully!", 'success');
+    if (!error) showToast("Theme & Thumbnail saved successfully!", 'success');
+  };
+
+  const handleThumbnailDrag = (e: React.MouseEvent) => {
+    if (!isDragging) return;
+    const deltaY = e.clientY - dragStartY;
+    setDragStartY(e.clientY);
+    
+    let currentY = 50;
+    if (theme.thumbnailPosition) {
+       const match = theme.thumbnailPosition.match(/50% (\d+(?:\.\d+)?)%/);
+       if (match) currentY = parseFloat(match[1]);
+    }
+    
+    const newY = Math.max(0, Math.min(100, currentY - (deltaY * 0.5)));
+    setTheme({...theme, thumbnailPosition: `50% ${newY}%`});
   };
 
   if (loading) return <div style={{ padding: '24px' }}>Loading...</div>;
 
   const currentImages = event?.images || [];
   const maxImages = subscriptionTier === 'pro' ? 10 : 3;
+
+  const isPicturesDirty = 
+    JSON.stringify(currentImages) !== JSON.stringify(initialImages) ||
+    theme.thumbnailPosition !== initialThumbnailPosition;
 
   return (
     <div className="manage-event-page" style={{ maxWidth: '1000px' }}>
@@ -131,9 +184,12 @@ export default function ManageEvent() {
             {subscriptionTier.toUpperCase()} PLAN
           </span>
         </div>
-        <button onClick={togglePublish} disabled={isPublishing} className="btn-primary" style={{ backgroundColor: event?.published ? '#10b981' : 'var(--accent)' }}>
-          {isPublishing ? 'Updating...' : (event?.published ? '✓ Published (Live)' : 'Publish Event')}
-        </button>
+        <div style={{ display: 'flex', gap: '12px' }}>
+          <a href={`/events/${id}`} target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ textDecoration: 'none' }}>Preview Event Page</a>
+          <button onClick={togglePublish} disabled={isPublishing} className="btn-primary" style={{ backgroundColor: event?.published ? '#10b981' : 'var(--accent)' }}>
+            {isPublishing ? 'Updating...' : (event?.published ? '✓ Published (Live)' : 'Publish Event')}
+          </button>
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
@@ -176,7 +232,22 @@ export default function ManageEvent() {
             
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginTop: '16px', marginBottom: '16px' }}>
               {currentImages.map((img: string, idx: number) => (
-                <img key={idx} src={img} alt={`Event ${idx}`} style={{ width: '100%', aspectRatio: '1', objectFit: 'cover', borderRadius: '8px' }} />
+                <div key={idx} style={{ position: 'relative', width: '100%', aspectRatio: '1' }}>
+                  <img src={img} alt={`Event ${idx}`} style={{ width: '100%', height: '100%', objectFit: 'cover', borderRadius: '8px' }} />
+                  <div style={{ position: 'absolute', bottom: '8px', left: '8px', right: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                    <button 
+                      onClick={() => moveImage(idx, -1)} 
+                      disabled={idx === 0}
+                      style={{ background: 'rgba(0,0,0,0.6)', border: 'none', color: 'white', borderRadius: '4px', padding: '4px 8px', cursor: idx === 0 ? 'not-allowed' : 'pointer', opacity: idx === 0 ? 0.3 : 1 }}
+                    >←</button>
+                    <button 
+                      onClick={() => moveImage(idx, 1)} 
+                      disabled={idx === currentImages.length - 1}
+                      style={{ background: 'rgba(0,0,0,0.6)', border: 'none', color: 'white', borderRadius: '4px', padding: '4px 8px', cursor: idx === currentImages.length - 1 ? 'not-allowed' : 'pointer', opacity: idx === currentImages.length - 1 ? 0.3 : 1 }}
+                    >→</button>
+                  </div>
+                  {idx === 0 && <div style={{ position: 'absolute', top: '8px', left: '8px', background: 'var(--accent)', color: 'white', fontSize: '0.7rem', padding: '2px 6px', borderRadius: '4px', pointerEvents: 'none' }}>Thumbnail</div>}
+                </div>
               ))}
               {currentImages.length < maxImages && (
                 <label style={{ width: '100%', aspectRatio: '1', border: '2px dashed var(--border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backgroundColor: 'rgba(0,0,0,0.1)' }}>
@@ -187,6 +258,43 @@ export default function ManageEvent() {
             </div>
             {subscriptionTier === 'free' && (
               <p style={{ fontSize: '0.85rem', color: 'var(--accent)', margin: 0 }}>Upgrade to Pro to upload up to 10 images!</p>
+            )}
+
+            {currentImages.length > 0 && (
+              <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
+                <h4 style={{ marginBottom: '8px' }}>Card Thumbnail Preview</h4>
+                <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '16px' }}>
+                  Click and drag the image vertically to adjust its position on the public discovery cards. Remember to click "Save Theme" below!
+                </p>
+                <div 
+                  style={{ width: '100%', height: '180px', overflow: 'hidden', borderRadius: '8px', cursor: isDragging ? 'grabbing' : 'grab', position: 'relative' }}
+                  onMouseDown={(e) => { setIsDragging(true); setDragStartY(e.clientY); }}
+                  onMouseUp={() => setIsDragging(false)}
+                  onMouseLeave={() => setIsDragging(false)}
+                  onMouseMove={handleThumbnailDrag}
+                >
+                  <img 
+                    src={currentImages[0]} 
+                    alt="Thumbnail preview" 
+                    draggable={false}
+                    style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: theme.thumbnailPosition, pointerEvents: 'none' }} 
+                  />
+                  <div style={{ position: 'absolute', top: '8px', right: '8px', backgroundColor: 'rgba(0,0,0,0.6)', padding: '4px 8px', borderRadius: '4px', fontSize: '0.75rem', color: 'white', pointerEvents: 'none' }}>
+                    {theme.thumbnailPosition}
+                  </div>
+                </div>
+              </div>
+            )}
+            
+            {currentImages.length > 0 && (
+              <button 
+                onClick={savePicturesAndPreview}
+                disabled={!isPicturesDirty}
+                className="btn-primary"
+                style={{ width: '100%', marginTop: '24px', opacity: isPicturesDirty ? 1 : 0.5, cursor: isPicturesDirty ? 'pointer' : 'not-allowed' }}
+              >
+                Save Pictures & Preview
+              </button>
             )}
           </div>
 
@@ -220,11 +328,10 @@ export default function ManageEvent() {
               </div>
               <button 
                 onClick={saveTheme} 
-                disabled={subscriptionTier !== 'pro'} 
                 className="btn-primary" 
                 style={{ marginTop: '8px' }}
               >
-                Save Theme
+                Save Theme Colors
               </button>
             </div>
             {subscriptionTier !== 'pro' && (
