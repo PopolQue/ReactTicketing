@@ -1,20 +1,28 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import Skeleton from '../../components/Skeleton';
 
 export default function Home() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
+  const [user, setUser] = useState<any>(null);
+
   useEffect(() => {
     async function fetchEvents() {
+      const { data: { user: currentUser } } = await supabase.auth.getUser();
+      if (currentUser) setUser(currentUser);
+
       const { data, error } = await supabase
         .from('events')
         .select(`
           *,
           organizer_profiles ( company_name )
         `)
-        .order('start_date', { ascending: true });
+        .eq('published', true)
+        .order('start_date', { ascending: true })
+        .limit(20);
         
       if (!error && data) {
         setEvents(data);
@@ -27,14 +35,28 @@ export default function Home() {
     fetchEvents();
   }, []);
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    setUser(null);
+  };
+
   return (
     <div className="marketplace-page" style={{ minHeight: '100vh' }}>
       <header style={{ padding: '24px 40px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <h2 style={{ margin: 0, letterSpacing: '-0.5px' }}>
           Ticketeer <span style={{ color: 'var(--accent)' }}>Marketplace</span>
         </h2>
-        <nav style={{ display: 'flex', gap: '16px' }}>
-          <Link to="/auth" className="btn-secondary" style={{ textDecoration: 'none' }}>Organizer Portal</Link>
+        <nav style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
+          <Link to="/resale" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontWeight: 500, marginRight: '16px' }}>Secondary Market</Link>
+          {user ? (
+            <>
+              <Link to="/wallet" className="btn-secondary" style={{ textDecoration: 'none' }}>My Wallet</Link>
+              <Link to="/organizer" className="btn-secondary" style={{ textDecoration: 'none' }}>Organizer Dashboard</Link>
+              <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>Logout</button>
+            </>
+          ) : (
+            <Link to="/auth" className="btn-primary" style={{ textDecoration: 'none' }}>Log In / Sign Up</Link>
+          )}
         </nav>
       </header>
 
@@ -45,7 +67,15 @@ export default function Home() {
         </div>
 
         {loading ? (
-          <p style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>Loading live events...</p>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '32px' }}>
+            {[1, 2, 3, 4, 5, 6].map(i => (
+              <div key={i} className="glass-panel" style={{ padding: '24px' }}>
+                <Skeleton height="30px" width="80%" style={{ marginBottom: '12px' }} />
+                <Skeleton height="20px" width="60%" style={{ marginBottom: '24px' }} />
+                <Skeleton height="40px" width="100%" />
+              </div>
+            ))}
+          </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
             {events.length === 0 ? (

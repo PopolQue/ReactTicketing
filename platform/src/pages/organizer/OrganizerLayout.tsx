@@ -14,6 +14,7 @@ export default function OrganizerLayout() {
         <nav className="org-nav">
           <Link to="/organizer" className={`org-nav-link ${location.pathname === '/organizer' ? 'active' : ''}`}>Dashboard</Link>
           <Link to="/organizer/events" className={`org-nav-link ${location.pathname.includes('/events') ? 'active' : ''}`}>My Events</Link>
+          <Link to="/organizer/scan" className={`org-nav-link ${location.pathname.includes('/scan') ? 'active' : ''}`}>Scan Tickets</Link>
           <Link to="/organizer/settings" className={`org-nav-link ${location.pathname.includes('/settings') ? 'active' : ''}`}>Settings & Payouts</Link>
         </nav>
       </aside>

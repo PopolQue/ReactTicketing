@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useToast } from '../../components/Toast';
 
 export default function ManageEvent() {
+  const { showToast } = useToast();
   const { id } = useParams();
   const [event, setEvent] = useState<any>(null);
   const [tiers, setTiers] = useState<any[]>([]);
@@ -46,7 +48,7 @@ export default function ManageEvent() {
   const togglePublish = async () => {
     setIsPublishing(true);
     if (!event.published && tiers.length === 0) {
-      alert("You must add at least one ticket tier before publishing.");
+      showToast("You must add at least one ticket tier before publishing.", 'error');
       setIsPublishing(false);
       return;
     }
@@ -81,7 +83,7 @@ export default function ManageEvent() {
     const currentImages = event.images || [];
 
     if (currentImages.length >= maxImages) {
-      alert(`Your ${subscriptionTier} tier allows a maximum of ${maxImages} images.`);
+      showToast(`Your ${subscriptionTier} tier allows a maximum of ${maxImages} images.`, 'error');
       return;
     }
 
@@ -92,7 +94,7 @@ export default function ManageEvent() {
     const { error: uploadError } = await supabase.storage.from('event_images').upload(fileName, file);
 
     if (uploadError) {
-      alert('Error uploading image: ' + uploadError.message);
+      showToast('Error uploading image: ' + uploadError.message, 'error');
       setUploadingImage(false);
       return;
     }
@@ -111,7 +113,7 @@ export default function ManageEvent() {
 
   const saveTheme = async () => {
     const { error } = await supabase.from('events').update({ theme_customization: theme }).eq('id', id);
-    if (!error) alert("Theme saved successfully!");
+    if (!error) showToast("Theme saved successfully!", 'success');
   };
 
   if (loading) return <div style={{ padding: '24px' }}>Loading...</div>;

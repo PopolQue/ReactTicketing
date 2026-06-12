@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useToast } from '../../components/Toast';
 
 export default function Auth() {
   const navigate = useNavigate();
+  const { showToast } = useToast();
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -50,6 +52,7 @@ export default function Auth() {
         navigate('/organizer');
       }
     } catch (err: any) {
+      showToast("Error during signup: " + err.message, 'error');
       setError(err.message);
     } finally {
       setLoading(false);

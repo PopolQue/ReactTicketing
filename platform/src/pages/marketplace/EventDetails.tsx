@@ -1,17 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useToast } from '../../components/Toast';
+import CheckoutModal from '../../components/CheckoutModal';
 
 export default function EventDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { showToast } = useToast();
+  
   const [event, setEvent] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [tiers, setTiers] = useState<any[]>([]);
 
-  // Simple state for a basic image carousel
+  // Carousel & Checkout state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [checkoutTier, setCheckoutTier] = useState<any>(null);
 
   useEffect(() => {
     async function fetchEventDetails() {
@@ -21,7 +25,10 @@ export default function EventDetails() {
         .eq('id', id)
         .single();
         
-      if (data) setEvent(data);
+      if (data) {
+        setEvent(data);
+        document.title = `${data.name} | Ticketeer`; // SEO Meta Title injection
+      }
 
       const { data: tiersData } = await supabase
         .from('ticket_types')
@@ -34,25 +41,32 @@ export default function EventDetails() {
     }
     
     fetchEventDetails();
+    return () => { document.title = 'Ticketeer'; }
   }, [id]);
 
-  const handleBuyTicket = async (tier: any) => {
+  const initCheckout = async (tier: any) => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      alert('Please log in or sign up to purchase a ticket.');
+      showToast('Please log in or sign up to purchase a ticket.', 'error');
       navigate('/auth');
       return;
     }
-    
-    setCheckoutLoading(true);
+    setCheckoutTier(tier);
+  };
+
+  const executePurchase = async () => {
+    if (!checkoutTier) return;
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return;
+
     try {
       const orderId = crypto.randomUUID();
-      const priceCents = tier.pricing?.amount || 0;
+      const priceCents = checkoutTier.pricing?.amount || 0;
       
       const { error: orderError } = await supabase.from('orders').insert([{
         id: orderId,
         event_id: event.id,
-        items: [{ ticket_type_id: tier.id, quantity: 1, price_cents: priceCents }],
+        items: [{ ticket_type_id: checkoutTier.id, quantity: 1, price_cents: priceCents }],
         buyer_email: user.email,
         subtotal_cents: priceCents,
         discount_cents: 0,
@@ -65,7 +79,7 @@ export default function EventDetails() {
       const { error: ticketError } = await supabase.from('tickets').insert([{
         id: crypto.randomUUID(),
         event_id: event.id,
-        ticket_type_id: tier.id,
+        ticket_type_id: checkoutTier.id,
         order_id: orderId,
         personalization: { name: user.email },
         buyer_email: user.email,
@@ -77,18 +91,17 @@ export default function EventDetails() {
 
       if (ticketError) throw ticketError;
       
+      showToast('Ticket purchased successfully! View it in your wallet.', 'success');
       navigate('/wallet');
     } catch (err: any) {
-      alert("Error purchasing ticket: " + err.message);
-    } finally {
-      setCheckoutLoading(false);
+      showToast("Error purchasing ticket: " + err.message, 'error');
+      setCheckoutTier(null);
     }
   };
 
   if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading...</div>;
   if (!event) return <div style={{ padding: '60px', textAlign: 'center' }}>Event not found.</div>;
 
-  // Apply the custom theme if it exists
   const theme = event.theme_customization || {};
   const customBgColor = theme.bgColor || 'var(--bg-color)';
   const customAccentColor = theme.accentColor || 'var(--accent)';
@@ -100,7 +113,6 @@ export default function EventDetails() {
         <Link to="/" style={{ color: 'rgba(255,255,255,0.7)', textDecoration: 'none' }}>← Back to Marketplace</Link>
       </header>
 
-      {/* Hero Image Section */}
       {images.length > 0 && (
         <div style={{ width: '100%', height: '400px', backgroundColor: '#000', position: 'relative', overflow: 'hidden' }}>
           <img 
@@ -132,7 +144,7 @@ export default function EventDetails() {
             Presented by {event.organizer_profiles?.company_name || 'Independent Organizer'}
           </p>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', marginBottom: '40px', padding: '24px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '24px', marginBottom: '40px', padding: '24px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '12px' }}>
             <div>
               <p style={{ margin: '0 0 8px 0', color: 'rgba(255,255,255,0.6)' }}>Date & Time</p>
               <p style={{ margin: 0, fontSize: '1.1rem' }}>{new Date(event.start_date).toLocaleString()}</p>
@@ -159,7 +171,7 @@ export default function EventDetails() {
             ) : (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {tiers.map(tier => (
-                  <div key={tier.id} className="glass-panel" style={{ padding: '20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                  <div key={tier.id} className="glass-panel" style={{ padding: '20px', display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)' }}>
                     <div>
                       <h4 style={{ margin: '0 0 8px 0', fontSize: '1.2rem' }}>{tier.name}</h4>
                       <p style={{ color: 'rgba(255,255,255,0.6)', margin: 0, fontSize: '0.9rem' }}>Capacity: {tier.capacity}</p>
@@ -169,12 +181,11 @@ export default function EventDetails() {
                         €{((tier.pricing?.amount || 0) / 100).toFixed(2)}
                       </div>
                       <button 
-                        onClick={() => handleBuyTicket(tier)} 
-                        disabled={checkoutLoading} 
+                        onClick={() => initCheckout(tier)} 
                         className="btn-primary"
                         style={{ backgroundColor: customAccentColor }}
                       >
-                        {checkoutLoading ? 'Processing...' : 'Buy Ticket'}
+                        Buy Ticket
                       </button>
                     </div>
                   </div>
@@ -184,6 +195,15 @@ export default function EventDetails() {
           </div>
         </div>
       </main>
+
+      {checkoutTier && (
+        <CheckoutModal 
+          amountCents={checkoutTier.pricing?.amount || 0}
+          itemName={`${event.name} - ${checkoutTier.name}`}
+          onConfirm={executePurchase}
+          onCancel={() => setCheckoutTier(null)}
+        />
+      )}
     </div>
   );
 }
