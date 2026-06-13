@@ -1,13 +1,7 @@
 -- 1. Fix function_search_path_mutable warnings
 ALTER FUNCTION public.buy_resale_ticket(UUID, UUID) SET search_path = '';
 ALTER FUNCTION public.promote_admin_by_email(TEXT) SET search_path = '';
-ALTER FUNCTION public.rls_auto_enable() SET search_path = '';
 
--- 2. Fix SECURITY DEFINER warnings for trigger function (rls_auto_enable)
--- Triggers don't need to be executed by standard roles.
-REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM PUBLIC;
-REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM anon;
-REVOKE EXECUTE ON FUNCTION public.rls_auto_enable() FROM authenticated;
 
 -- 3. Fix SECURITY DEFINER warnings for is_superadmin()
 -- We move it to a private schema so it is not exposed by PostgREST as an RPC endpoint.
