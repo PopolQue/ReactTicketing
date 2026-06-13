@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
-import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
-import imageCompression from 'browser-image-compression';
+import { useStorageUpload } from '../../hooks/useStorageUpload';
 
 export default function ImageUploader({ eventId, event, updateEvent, theme, setTheme, subscriptionTier }: { eventId: string, event: any, updateEvent: any, theme: any, setTheme: any, subscriptionTier: string }) {
   const { showToast } = useToast();
-  const [uploadingImage, setUploadingImage] = useState(false);
+  const { uploadImage, uploading } = useStorageUpload('event_images');
+  
   const [initialImages, setInitialImages] = useState<string[]>(event.images || []);
   const [initialThumbnailPosition, setInitialThumbnailPosition] = useState(theme.thumbnailPosition || '50% 50%');
   
@@ -28,34 +28,10 @@ export default function ImageUploader({ eventId, event, updateEvent, theme, setT
       return;
     }
 
-    setUploadingImage(true);
-    
-    try {
-      // Compress the image to minimize hosting costs while retaining reasonable quality
-      const options = {
-        maxSizeMB: 0.5,
-        maxWidthOrHeight: 1200,
-        useWebWorker: true,
-        fileType: 'image/webp' as any // Convert to webp to save massive bandwidth
-      };
-      
-      const compressedFile = await imageCompression(file, options);
-      
-      const fileName = `${eventId}_${crypto.randomUUID()}.webp`;
-
-      const { error: uploadError } = await supabase.storage.from('event_images').upload(fileName, compressedFile, {
-        contentType: 'image/webp'
-      });
-
-      if (uploadError) throw uploadError;
-
-      const { data: publicUrlData } = supabase.storage.from('event_images').getPublicUrl(fileName);
-      const updatedImages = [...currentImages, publicUrlData.publicUrl];
+    const publicUrl = await uploadImage(file, eventId);
+    if (publicUrl) {
+      const updatedImages = [...currentImages, publicUrl];
       updateEvent({ images: updatedImages });
-    } catch (error: any) {
-      showToast('Error uploading image: ' + error.message, 'error');
-    } finally {
-      setUploadingImage(false);
     }
   };
 
@@ -125,8 +101,8 @@ export default function ImageUploader({ eventId, event, updateEvent, theme, setT
         ))}
         {currentImages.length < maxImages && (
           <label style={{ width: '100%', aspectRatio: '1', border: '2px dashed var(--border)', borderRadius: '8px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', backgroundColor: 'rgba(0,0,0,0.1)' }}>
-            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} disabled={uploadingImage} />
-            <span style={{ fontSize: '1.5rem', color: 'var(--text-secondary)' }}>{uploadingImage ? '...' : '+'}</span>
+            <input type="file" accept="image/*" style={{ display: 'none' }} onChange={handleImageUpload} disabled={uploading} />
+            <span style={{ fontSize: '1.5rem', color: 'var(--text-secondary)' }}>{uploading ? '...' : '+'}</span>
           </label>
         )}
       </div>

@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 import { useOutletContext } from 'react-router-dom';
 import type { Entity } from './EntitySwitcher';
+import { useDebouncedSearch } from '../hooks/useDebouncedSearch';
 
 export type Venue = {
   id: string;
@@ -19,10 +20,7 @@ interface VenueSelectorProps {
 export default function VenueSelector({ selectedVenueId, onVenueChange }: VenueSelectorProps) {
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [search, setSearch] = useState('');
-  const [venues, setVenues] = useState<Venue[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-  const [loading, setLoading] = useState(false);
-  
   const [selectedVenue, setSelectedVenue] = useState<Venue | null>(null);
 
   // If a venue ID is already selected, fetch it to display its name
@@ -37,31 +35,24 @@ export default function VenueSelector({ selectedVenueId, onVenueChange }: VenueS
     }
   }, [selectedVenueId, selectedVenue]);
 
-  useEffect(() => {
-    if (!search || (selectedVenue && search === selectedVenue.name)) {
-      setVenues([]);
-      return;
-    }
-
-    const fetchVenues = async () => {
-      setLoading(true);
-      const { data } = await supabase
-        .from('venues')
-        .select('*')
-        .ilike('name', `%${search}%`)
-        .order('is_verified', { ascending: false }) // Prioritize verified venues
-        .limit(5);
-
-      if (data) {
-        setVenues(data);
-        setIsDropdownOpen(true);
-      }
-      setLoading(false);
-    };
-
-    const debounce = setTimeout(fetchVenues, 300);
-    return () => clearTimeout(debounce);
+  const skipCondition = useCallback(() => {
+    return !search || (selectedVenue !== null && search === selectedVenue.name);
   }, [search, selectedVenue]);
+
+  const { results: venues, loading } = useDebouncedSearch<Venue>(
+    search,
+    'venues',
+    'name',
+    'is_verified',
+    300,
+    skipCondition
+  );
+
+  useEffect(() => {
+    if (venues.length > 0 && !skipCondition()) {
+      setIsDropdownOpen(true);
+    }
+  }, [venues, skipCondition]);
 
   const handleSelectVenue = (venue: Venue) => {
     setSelectedVenue(venue);
@@ -71,12 +62,9 @@ export default function VenueSelector({ selectedVenueId, onVenueChange }: VenueS
   };
 
   const handleCreateNew = async () => {
-    setLoading(true);
     // Create a stub venue
     const { data: { user } } = await supabase.auth.getUser();
     
-    // Attempt to infer city/country from the current user or active entity context if we wanted, 
-    // but for now we create a basic stub.
     const newVenueId = crypto.randomUUID();
     const newVenueData = {
       id: newVenueId,
@@ -94,7 +82,6 @@ export default function VenueSelector({ selectedVenueId, onVenueChange }: VenueS
     } else {
       console.error("Error creating venue:", error);
     }
-    setLoading(false);
   };
 
   return (

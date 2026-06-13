@@ -1,75 +1,12 @@
-import React, { useState } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
+import React from 'react';
+import { useOutletContext } from 'react-router-dom';
 import type { Entity } from '../../components/EntitySwitcher';
 import VenueSelector from '../../components/VenueSelector';
+import { useEventForm } from '../../hooks/useEventForm';
 
 export default function CreateEvent() {
-  const navigate = useNavigate();
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  
-  const [formData, setFormData] = useState({
-    title: '',
-    start_date: '',
-    venue_id: '',
-    city: '',
-    country: '',
-    description: '',
-    is_external: false,
-    external_ticket_url: ''
-  });
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
-    setFormData({ ...formData, [e.target.name]: value });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-
-    try {
-      if (!activeEntity) {
-        throw new Error("Authentication Required: You must have an active Organizer profile to create an event.");
-      }
-
-      // 2. Insert the event into Supabase
-      const { data, error: insertError } = await supabase
-        .from('events')
-        .insert([
-          {
-            id: crypto.randomUUID(),
-            name: formData.title,
-            organizer_name: activeEntity.name,
-            start_date: new Date(formData.start_date).toISOString(),
-            venue_id: formData.venue_id,
-            city: formData.city,
-            country: formData.country,
-            description: formData.description,
-            organizer_id: activeEntity.id,
-            timezone_id: 'gmt1_berlin',
-            published: false,
-            is_external: formData.is_external,
-            external_ticket_url: formData.is_external ? formData.external_ticket_url : null
-          }
-        ])
-        .select();
-
-      if (insertError) throw insertError;
-
-      // 3. Navigate back to events list on success
-      navigate('/organizer/events');
-      
-    } catch (err: any) {
-      console.error('Error creating event:', err);
-      setError(err.message || 'An unexpected error occurred.');
-    } finally {
-      setLoading(false);
-    }
-  };
+  const { formData, handleChange, handleVenueChange, createEvent, loading, error } = useEventForm(activeEntity);
 
   return (
     <div className="create-event-page" style={{ maxWidth: '800px' }}>
@@ -82,7 +19,7 @@ export default function CreateEvent() {
       )}
 
       <div className="glass-panel" style={{ padding: '24px' }}>
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+        <form onSubmit={createEvent} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Event Title</label>
             <input required type="text" name="title" value={formData.title} onChange={handleChange} className="input-field" placeholder="e.g. Neon Nights Vol. 4" />
@@ -95,12 +32,7 @@ export default function CreateEvent() {
             <div>
               <VenueSelector 
                 selectedVenueId={formData.venue_id} 
-                onVenueChange={(id, data) => setFormData(prev => ({ 
-                  ...prev, 
-                  venue_id: id,
-                  city: data?.city || prev.city,
-                  country: data?.country || prev.country
-                }))} 
+                onVenueChange={handleVenueChange} 
               />
             </div>
           </div>
