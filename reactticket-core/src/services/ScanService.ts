@@ -1,8 +1,8 @@
-import { StorageAdapter } from "reactticket-core/types/adapter.types";
-import { ScanEvent, ScanResult, AnalyticsSummary } from "reactticket-core/types/scan.types";
+import { StorageAdapter } from "../types/adapter.types";
+import { ScanEvent, ScanResult, AnalyticsSummary } from "../types/scan.types";
 import { AuthService } from "./AuthService";
-import { IssuedTicket } from "reactticket-core/types/ticket.types";
-import { ScanSession } from "reactticket-core/types/auth.types";
+import { IssuedTicket } from "../types/ticket.types";
+import { ScanSession } from "../types/auth.types";
 
 export class ScanService {
   constructor(private adapter: StorageAdapter, private authService: AuthService) {}

@@ -24,6 +24,7 @@ export default function OrganizerLayout() {
           <Link to="/organizer/artists" className={`org-nav-link ${location.pathname.includes('/artists') ? 'active' : ''}`}>Artists</Link>
           <Link to="/organizer/blogs" className={`org-nav-link ${location.pathname.includes('/blogs') ? 'active' : ''}`}>Blogs</Link>
           <Link to="/organizer/scan" className={`org-nav-link ${location.pathname.includes('/scan') ? 'active' : ''}`}>Scan Tickets</Link>
+          <Link to="/organizer/marketing" className={`org-nav-link ${location.pathname.includes('/marketing') ? 'active' : ''}`}>Marketing & Analytics</Link>
           <Link to="/organizer/settings" className={`org-nav-link ${location.pathname.includes('/settings') ? 'active' : ''}`}>Settings & Payouts</Link>
         </nav>
       </aside>

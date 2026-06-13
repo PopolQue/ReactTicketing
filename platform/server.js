@@ -18,6 +18,47 @@ const ssrManifest = isProduction
 // Create http server
 const app = express()
 
+// Parse JSON bodies for API routes
+app.use(express.json())
+
+// Stripe backend setup
+let stripeClient;
+if (process.env.STRIPE_SECRET_KEY) {
+  const Stripe = (await import('stripe')).default;
+  stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY, {
+    apiVersion: '2023-10-16',
+  });
+}
+
+// API Routes
+app.post('/api/create-payment-intent', async (req, res) => {
+  if (!stripeClient) {
+    return res.status(500).json({ error: 'Stripe is not configured on the server.' });
+  }
+  
+  try {
+    const { amountCents, itemName } = req.body;
+    
+    // Create a PaymentIntent with the order amount and currency
+    const paymentIntent = await stripeClient.paymentIntents.create({
+      amount: amountCents,
+      currency: 'eur',
+      description: itemName,
+      // In a real app, you'd probably pass automatic_payment_methods: { enabled: true }
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+
+    res.send({
+      clientSecret: paymentIntent.client_secret,
+    });
+  } catch (err) {
+    console.error("Stripe error:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // Add Vite or respective production middlewares
 let vite
 if (!isProduction) {

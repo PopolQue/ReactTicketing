@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
 
 export default function ScanTickets() {
   const [ticketId, setTicketId] = useState('');
@@ -113,7 +114,7 @@ export default function ScanTickets() {
             color: scanResult.status === 'valid' ? '#10b981' : 
                    scanResult.status === 'duplicate' ? '#f59e0b' : '#ef4444' 
           }}>
-            {scanResult.status === 'valid' ? '✓' : scanResult.status === 'duplicate' ? '⚠️' : '✗'}
+            {scanResult.status === 'valid' ? <CheckCircle2 size={64} /> : scanResult.status === 'duplicate' ? <AlertTriangle size={64} /> : <XCircle size={64} />}
           </div>
           
           <h3 style={{ margin: '0 0 8px 0', fontSize: '1.5rem' }}>{scanResult.message}</h3>

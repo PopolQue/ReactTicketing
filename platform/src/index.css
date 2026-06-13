@@ -43,6 +43,41 @@ body {
   transform: translateY(-1px);
 }
 
+.btn-secondary {
+  background: transparent;
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-secondary:hover {
+  border-color: var(--text-secondary);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.btn-nav {
+  background: transparent;
+  color: var(--text-primary);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-decoration: none;
+}
+
+.btn-nav:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
 .input-field {
   width: 100%;
   padding: 12px;

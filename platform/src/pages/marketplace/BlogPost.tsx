@@ -34,7 +34,7 @@ export default function BlogPost() {
 
   return (
     <article style={{ maxWidth: '800px', margin: '0 auto', padding: '60px 20px', minHeight: '100vh' }}>
-      <Link to="/blogs" style={{ color: 'var(--accent)', textDecoration: 'none', marginBottom: '32px', display: 'inline-block' }}>
+      <Link to="/blogs" className="btn-nav" style={{ padding: '8px 0', color: 'var(--accent)', marginBottom: '32px', display: 'inline-block' }}>
         &larr; Back to all stories
       </Link>
       

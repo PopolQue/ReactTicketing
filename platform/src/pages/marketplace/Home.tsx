@@ -1,42 +1,17 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import Skeleton from '../../components/Skeleton';
+import { ShieldCheck, RefreshCw, Palette } from 'lucide-react';
 
 export default function Home() {
-  const [events, setEvents] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
   const [user, setUser] = useState<any>(null);
 
-  // Search and Filter State
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
-
   useEffect(() => {
-    async function fetchEvents() {
+    async function checkUser() {
       const { data: { user: currentUser } } = await supabase.auth.getUser();
       if (currentUser) setUser(currentUser);
-
-      const { data, error } = await supabase
-        .from('events')
-        .select(`
-          *,
-          organizer_profiles ( company_name )
-        `)
-        .eq('published', true)
-        .eq('approval_status', 'approved')
-        .order('start_date', { ascending: true })
-        .limit(20);
-
-      if (!error && data) {
-        setEvents(data);
-      } else if (error) {
-        console.error("Error fetching events:", error);
-      }
-      setLoading(false);
     }
-
-    fetchEvents();
+    checkUser();
   }, []);
 
   const handleLogout = async () => {
@@ -44,28 +19,15 @@ export default function Home() {
     setUser(null);
   };
 
-  // Derive unique cities
-  const uniqueCities = Array.from(new Set(events.map(e => e.city).filter(Boolean))) as string[];
-
-  // Filter events based on search and selected city
-  const filteredEvents = events.filter(e => {
-    const matchesCity = selectedCity ? e.city === selectedCity : true;
-    const matchesSearch = searchQuery === '' ||
-      e.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      (e.city && e.city.toLowerCase().includes(searchQuery.toLowerCase())) ||
-      (e.venue && e.venue.toLowerCase().includes(searchQuery.toLowerCase()));
-
-    return matchesCity && matchesSearch;
-  });
-
   return (
-    <div className="marketplace-page" style={{ minHeight: '100vh' }}>
-      <header style={{ padding: '24px 40px', borderBottom: '1px solid var(--border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="landing-page" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+      <header style={{ padding: '24px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 10 }}>
         <h2 style={{ margin: 0, letterSpacing: '-0.5px' }}>
           Admit <span style={{ color: 'var(--accent)' }}>Marketplace</span>
         </h2>
         <nav style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <Link to="/resale" style={{ color: 'var(--text-primary)', textDecoration: 'none', fontWeight: 500, marginRight: '16px' }}>Secondary Market</Link>
+          <Link to="/discover" className="btn-nav">Discover</Link>
+          <Link to="/resale" className="btn-nav">Secondary Market</Link>
           {user ? (
             <>
               <Link to="/wallet" className="btn-secondary" style={{ textDecoration: 'none' }}>My Wallet</Link>
@@ -78,103 +40,56 @@ export default function Home() {
         </nav>
       </header>
 
-      <main style={{ padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h1 style={{ fontSize: '3.5rem', marginBottom: '16px', fontWeight: 800, letterSpacing: '-1px' }}>Discover Your Next Experience</h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '32px' }}>From underground club nights to massive festivals. Securely buy and resell tickets.</p>
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'relative', padding: '60px 20px', overflow: 'hidden' }}>
+        {/* Background glow effects */}
+        <div style={{ position: 'absolute', top: '20%', left: '10%', width: '40vw', height: '40vw', background: 'radial-gradient(circle, rgba(99,102,241,0.15) 0%, rgba(0,0,0,0) 70%)', filter: 'blur(60px)', zIndex: 0, pointerEvents: 'none' }} />
+        <div style={{ position: 'absolute', bottom: '10%', right: '10%', width: '30vw', height: '30vw', background: 'radial-gradient(circle, rgba(192,132,252,0.1) 0%, rgba(0,0,0,0) 70%)', filter: 'blur(60px)', zIndex: 0, pointerEvents: 'none' }} />
+        
+        <div style={{ textAlign: 'center', zIndex: 1, maxWidth: '800px', animation: 'fadeIn 1s ease-out' }}>
+          <span style={{ display: 'inline-block', padding: '6px 16px', borderRadius: '30px', backgroundColor: 'rgba(255,255,255,0.05)', color: 'var(--accent)', fontSize: '0.9rem', fontWeight: 600, letterSpacing: '1px', marginBottom: '24px', border: '1px solid rgba(99,102,241,0.3)' }}>
+            THE FUTURE OF TICKETING
+          </span>
+          <h1 style={{ fontSize: 'clamp(3rem, 6vw, 5.5rem)', margin: '0 0 24px 0', lineHeight: 1.1, fontWeight: 800, letterSpacing: '-2px' }}>
+            Unforgettable <br/> <span style={{ background: 'linear-gradient(to right, #6366f1, #c084fc)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Experiences Await</span>
+          </h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', marginBottom: '48px', maxWidth: '600px', margin: '0 auto 48px auto', lineHeight: 1.6 }}>
+            Discover underground club nights, massive festivals, and intimate live shows. Securely buy and seamlessly resell tickets on the world's most elegant marketplace.
+          </p>
 
-          {/* Search Bar */}
-          <div style={{ maxWidth: '600px', margin: '0 auto', display: 'flex' }}>
-            <input
-              type="text"
-              placeholder="Search by event name, city, or venue..."
-              value={searchQuery}
-              onChange={e => setSearchQuery(e.target.value)}
-              className="input-field"
-              style={{ flexGrow: 1, padding: '16px 24px', fontSize: '1.1rem', borderRadius: '30px', border: '1px solid var(--border)', backgroundColor: 'rgba(255,255,255,0.05)' }}
-            />
+          <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+            <Link to="/discover" className="btn-primary" style={{ padding: '16px 40px', fontSize: '1.2rem', borderRadius: '30px', transition: 'transform 0.2s', boxShadow: '0 10px 30px -10px rgba(99,102,241,0.5)' }}>
+              Start Discovering
+            </Link>
+            <Link to="/organizer" className="btn-secondary" style={{ padding: '16px 40px', fontSize: '1.2rem', borderRadius: '30px' }}>
+              Host an Event
+            </Link>
           </div>
         </div>
 
-        {/* Filters */}
-        {!loading && uniqueCities.length > 0 && (
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '40px', justifyContent: 'center' }}>
-            <button
-              onClick={() => setSelectedCity(null)}
-              style={{
-                padding: '8px 16px', borderRadius: '20px', border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 500,
-                backgroundColor: selectedCity === null ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
-                color: selectedCity === null ? 'white' : 'var(--text-primary)'
-              }}
-            >
-              All Cities
-            </button>
-            {uniqueCities.map(city => (
-              <button
-                key={city}
-                onClick={() => setSelectedCity(city)}
-                style={{
-                  padding: '8px 16px', borderRadius: '20px', border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 500,
-                  backgroundColor: selectedCity === city ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
-                  color: selectedCity === city ? 'white' : 'var(--text-primary)'
-                }}
-              >
-                {city}
-              </button>
-            ))}
+        {/* Feature Highlights */}
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '32px', width: '100%', maxWidth: '1200px', marginTop: '100px', zIndex: 1 }}>
+          <div className="glass-panel" style={{ padding: '32px', textAlign: 'center', transition: 'transform 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
+            <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto', color: '#6366f1' }}>
+              <ShieldCheck size={32} />
+            </div>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>Secure Ecosystem</h3>
+            <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>Every ticket is verified and cryptographically signed. Say goodbye to fake PDF tickets.</p>
           </div>
-        )}
-
-        {loading ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))', gap: '32px' }}>
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="glass-panel" style={{ padding: '24px' }}>
-                <Skeleton height="30px" width="80%" style={{ marginBottom: '12px' }} />
-                <Skeleton height="20px" width="60%" style={{ marginBottom: '24px' }} />
-                <Skeleton height="40px" width="100%" />
-              </div>
-            ))}
+          <div className="glass-panel" style={{ padding: '32px', textAlign: 'center', transition: 'transform 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
+            <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'rgba(192,132,252,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto', color: '#c084fc' }}>
+              <RefreshCw size={32} />
+            </div>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>Fair Resale Market</h3>
+            <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>Can't make it? Resell your ticket safely through our built-in secondary marketplace.</p>
           </div>
-        ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
-            {filteredEvents.length === 0 ? (
-              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', border: '1px dashed var(--border)', borderRadius: '12px' }}>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>No events found matching your criteria.</p>
-                <button onClick={() => { setSearchQuery(''); setSelectedCity(null); }} className="btn-secondary" style={{ marginTop: '16px' }}>Clear Filters</button>
-              </div>
-            ) : (
-              filteredEvents.map((event) => (
-                <Link to={`/events/${event.id}`} key={event.id} style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <div className="glass-panel event-card-hover" style={{ padding: '24px', height: '100%' }}>
-                    {event.images && event.images.length > 0 ? (
-                      <div style={{ height: '180px', borderRadius: '8px', marginBottom: '20px', overflow: 'hidden' }}>
-                        <img 
-                          src={event.images[0]} 
-                          style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: event.theme_customization?.thumbnailPosition || '50% 50%' }} 
-                          alt="Event Thumbnail" 
-                        />
-                      </div>
-                    ) : (
-                      <div style={{ height: '180px', backgroundColor: 'rgba(255,255,255,0.03)', borderRadius: '8px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                        <span style={{ fontSize: '3rem', opacity: 0.2 }}>🎟️</span>
-                      </div>
-                    )}
-                    <h3 style={{ margin: '0 0 12px 0', fontSize: '1.5rem', lineHeight: '1.3', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      {event.name}
-                      {event.is_external && <span style={{ fontSize: '0.7rem', backgroundColor: 'var(--accent)', color: 'white', padding: '2px 8px', borderRadius: '12px', verticalAlign: 'middle', fontWeight: 'bold' }}>EXTERNAL</span>}
-                    </h3>
-                    <p style={{ margin: '0 0 12px 0', color: 'var(--text-secondary)', fontWeight: 500 }}>
-                      {new Date(event.start_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} • {event.venue}{event.city ? `, ${event.city}` : ''}{event.country ? `, ${event.country}` : ''}
-                    </p>
-                    <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--accent)', fontWeight: 600 }}>
-                      By {event.organizer_profiles?.company_name || 'Independent Organizer'}
-                    </p>
-                  </div>
-                </Link>
-              ))
-            )}
+          <div className="glass-panel" style={{ padding: '32px', textAlign: 'center', transition: 'transform 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
+            <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'rgba(52,211,153,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto', color: '#34d399' }}>
+              <Palette size={32} />
+            </div>
+            <h3 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>Stunning UI</h3>
+            <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>Experience a meticulously crafted platform that prioritizes both aesthetics and usability.</p>
           </div>
-        )}
+        </div>
       </main>
     </div>
   );

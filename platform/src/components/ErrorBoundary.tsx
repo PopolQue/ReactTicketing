@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { AlertTriangle } from 'lucide-react';
 
 interface Props {
   children?: React.ReactNode;
@@ -29,7 +29,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
       return (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '100vh', padding: '40px', textAlign: 'center' }}>
           <div className="glass-panel" style={{ padding: '40px', maxWidth: '600px', border: '1px solid #ef4444' }}>
-            <h1 style={{ color: '#ef4444', marginBottom: '16px', fontSize: '3rem' }}>⚠️</h1>
+            <h1 style={{ color: '#ef4444', marginBottom: '16px' }}><AlertTriangle size={64} /></h1>
             <h2 style={{ marginBottom: '16px' }}>Something went wrong.</h2>
             <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
               We've encountered an unexpected error. Our team has been notified.

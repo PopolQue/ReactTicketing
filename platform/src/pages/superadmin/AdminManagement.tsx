@@ -23,7 +23,29 @@ export default function AdminManagement() {
       .from('user_roles')
       .select('id, user_id, role, created_at');
     
-    if (data) setAdmins(data);
+    if (data) {
+      // Fetch performance metrics for each admin
+      const adminIds = data.map(d => d.user_id);
+      
+      const { data: events } = await supabase
+        .from('events')
+        .select('reviewed_by')
+        .in('reviewed_by', adminIds);
+        
+      const { data: tickets } = await supabase
+        .from('support_tickets')
+        .select('assigned_admin_id')
+        .eq('status', 'resolved')
+        .in('assigned_admin_id', adminIds);
+        
+      const adminsWithMetrics = data.map(admin => {
+        const eventsReviewed = events?.filter(e => e.reviewed_by === admin.user_id).length || 0;
+        const ticketsResolved = tickets?.filter(t => t.assigned_admin_id === admin.user_id).length || 0;
+        return { ...admin, eventsReviewed, ticketsResolved };
+      });
+      
+      setAdmins(adminsWithMetrics);
+    }
     setLoading(false);
   };
 
@@ -91,7 +113,8 @@ export default function AdminManagement() {
             <tr style={{ borderBottom: '1px solid var(--border)', backgroundColor: 'rgba(255,255,255,0.02)' }}>
               <th style={{ padding: '16px 24px', color: 'var(--text-secondary)', fontWeight: 500 }}>User ID</th>
               <th style={{ padding: '16px 24px', color: 'var(--text-secondary)', fontWeight: 500 }}>Role</th>
-              <th style={{ padding: '16px 24px', color: 'var(--text-secondary)', fontWeight: 500 }}>Promoted On</th>
+              <th style={{ padding: '16px 24px', color: 'var(--text-secondary)', fontWeight: 500 }}>Events Reviewed</th>
+              <th style={{ padding: '16px 24px', color: 'var(--text-secondary)', fontWeight: 500 }}>Tickets Resolved</th>
               <th style={{ padding: '16px 24px', color: 'var(--text-secondary)', fontWeight: 500 }}>Actions</th>
             </tr>
           </thead>
@@ -110,7 +133,8 @@ export default function AdminManagement() {
                     {admin.role.toUpperCase()}
                   </span>
                 </td>
-                <td style={{ padding: '16px 24px', color: 'var(--text-secondary)' }}>{new Date(admin.created_at).toLocaleDateString()}</td>
+                <td style={{ padding: '16px 24px', fontWeight: 600 }}>{admin.eventsReviewed}</td>
+                <td style={{ padding: '16px 24px', fontWeight: 600 }}>{admin.ticketsResolved}</td>
                 <td style={{ padding: '16px 24px' }}>
                   {admin.role !== 'superadmin' && (
                     <button 

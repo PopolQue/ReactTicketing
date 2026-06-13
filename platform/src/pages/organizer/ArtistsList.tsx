@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
+import ArtistFormModal from '../../components/modals/ArtistFormModal';
 
 export default function ArtistsList() {
   const { showToast } = useToast();
@@ -87,7 +88,12 @@ export default function ArtistsList() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2>Manage Artists</h2>
+        <div>
+          <h2 style={{ margin: '0 0 8px 0' }}>Manage Artists</h2>
+          <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
+            Create stub pages for artists on your lineup. Once an artist claims their page, they will take over management.
+          </p>
+        </div>
         <button className="btn-primary" onClick={openCreateModal}>+ Add Artist</button>
       </div>
 
@@ -103,7 +109,13 @@ export default function ArtistsList() {
                 <h3 style={{ margin: '0 0 8px 0' }}>{artist.name}</h3>
                 <p style={{ margin: '0 0 16px 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{artist.bio}</p>
                 <div style={{ display: 'flex', gap: '8px' }}>
-                  <button onClick={() => openEditModal(artist)} className="btn-secondary" style={{ padding: '8px 12px', fontSize: '0.85rem' }}>Edit</button>
+                  {artist.claimed_by_user_id ? (
+                    <span style={{ fontSize: '0.85rem', color: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: '4px 8px', borderRadius: '4px' }}>
+                      ✓ Verified & Managed by Artist
+                    </span>
+                  ) : (
+                    <button onClick={() => openEditModal(artist)} className="btn-secondary" style={{ padding: '8px 12px', fontSize: '0.85rem' }}>Edit Stub</button>
+                  )}
                 </div>
               </div>
             ))
@@ -111,40 +123,15 @@ export default function ArtistsList() {
         </div>
       )}
 
-      {isModalOpen && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
-          <div className="glass-panel" style={{ padding: '40px', width: '100%', maxWidth: '500px' }}>
-            <h2 style={{ marginTop: 0, marginBottom: '24px' }}>{editingArtistId ? 'Edit Artist' : 'Create Artist'}</h2>
-            <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Artist Name</label>
-                <input 
-                  type="text" 
-                  className="input-field" 
-                  value={formData.name} 
-                  onChange={e => setFormData({...formData, name: e.target.value})} 
-                  required 
-                />
-              </div>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Biography</label>
-                <textarea 
-                  className="input-field" 
-                  rows={4}
-                  value={formData.bio} 
-                  onChange={e => setFormData({...formData, bio: e.target.value})} 
-                />
-              </div>
-              <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-                <button type="button" onClick={() => setIsModalOpen(false)} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>
-                <button type="submit" disabled={saving} className="btn-primary" style={{ flex: 1 }}>
-                  {saving ? 'Saving...' : 'Save Artist'}
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
+      <ArtistFormModal 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleSubmit}
+        formData={formData}
+        setFormData={setFormData}
+        editingArtistId={editingArtistId}
+        saving={saving}
+      />
     </div>
   );
 }

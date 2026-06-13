@@ -1,115 +1,96 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements } from '@stripe/react-stripe-js';
+import MockCheckoutForm from './MockCheckoutForm';
+import StripeCheckoutForm from './StripeCheckoutForm';
+
+// Initialize stripe conditionally based on the environment variable
+const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
+const stripePromise = stripeKey ? loadStripe(stripeKey) : null;
 
 interface CheckoutModalProps {
+  eventId: string;
   amountCents: number;
   itemName: string;
-  onConfirm: () => Promise<void>;
+  onConfirm: (promoCodeObj?: any) => Promise<void>;
   onCancel: () => void;
 }
 
-export default function CheckoutModal({ amountCents, itemName, onConfirm, onCancel }: CheckoutModalProps) {
-  const [loading, setLoading] = useState(false);
-  const [cardNumber, setCardNumber] = useState('');
-  const [expiry, setExpiry] = useState('');
-  const [cvc, setCvc] = useState('');
+export default function CheckoutModal({ eventId, amountCents, itemName, onConfirm, onCancel }: CheckoutModalProps) {
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const formatCardNumber = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    const matches = v.match(/\d{4,16}/g);
-    const match = matches && matches[0] || '';
-    const parts = [];
-    for (let i=0, len=match.length; i<len; i+=4) {
-      parts.push(match.substring(i, i+4));
+  useEffect(() => {
+    if (!stripeKey) {
+      setLoading(false);
+      return;
     }
-    if (parts.length) {
-      return parts.join(' ');
-    } else {
-      return value;
-    }
-  };
 
-  const formatExpiry = (value: string) => {
-    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
-    if (v.length >= 2) {
-      return `${v.substring(0, 2)}/${v.substring(2, 4)}`;
-    }
-    return v;
-  };
+    // If we have a Stripe key, fetch a PaymentIntent from our backend
+    async function fetchIntent() {
+      try {
+        const res = await fetch('/api/create-payment-intent', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ amountCents, itemName })
+        });
+        
+        if (!res.ok) {
+          throw new Error('Failed to initialize payment.');
+        }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setLoading(true);
-    // Simulate network delay for Stripe processing
-    await new Promise(r => setTimeout(r, 1500));
-    await onConfirm();
-    setLoading(false);
+        const data = await res.json();
+        setClientSecret(data.clientSecret);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchIntent();
+  }, [amountCents, itemName]);
+
+  if (!stripeKey) {
+    return <MockCheckoutForm eventId={eventId} amountCents={amountCents} itemName={itemName} onConfirm={onConfirm} onCancel={onCancel} />;
+  }
+
+  if (loading) {
+    return (
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
+        <p>Loading secure checkout...</p>
+      </div>
+    );
+  }
+
+  if (error || !clientSecret) {
+    return (
+      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
+        <div className="glass-panel" style={{ padding: '40px', width: '100%', maxWidth: '400px', textAlign: 'center' }}>
+          <h3 style={{ color: '#ef4444' }}>Checkout Error</h3>
+          <p>{error || 'Could not connect to payment gateway.'}</p>
+          <button onClick={onCancel} className="btn-secondary" style={{ marginTop: '16px' }}>Go Back</button>
+        </div>
+      </div>
+    );
+  }
+
+  const options = {
+    clientSecret,
+    appearance: {
+      theme: 'night' as const,
+      variables: {
+        colorPrimary: '#10b981',
+        colorBackground: '#1f2937',
+        colorText: '#ffffff',
+      }
+    }
   };
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
-      <div className="glass-panel" style={{ padding: '40px', width: '100%', maxWidth: '400px', backgroundColor: 'rgba(15, 17, 21, 0.95)' }}>
-        <h2 style={{ marginTop: 0, marginBottom: '8px' }}>Secure Checkout</h2>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-          Payment for <strong>{itemName}</strong>.
-        </p>
-
-        <div style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px', marginBottom: '24px', display: 'flex', justifyContent: 'space-between' }}>
-          <span>Total</span>
-          <strong style={{ fontSize: '1.2rem', color: 'var(--accent)' }}>€{(amountCents / 100).toFixed(2)}</strong>
-        </div>
-
-        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Card Number</label>
-            <input 
-              required 
-              type="text" 
-              maxLength={19}
-              className="input-field" 
-              value={cardNumber} 
-              onChange={e => setCardNumber(formatCardNumber(e.target.value))} 
-              placeholder="0000 0000 0000 0000" 
-              style={{ letterSpacing: '2px', fontFamily: 'monospace' }}
-            />
-          </div>
-          
-          <div style={{ display: 'flex', gap: '16px' }}>
-            <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Expiry Date</label>
-              <input 
-                required 
-                type="text" 
-                maxLength={5}
-                className="input-field" 
-                value={expiry} 
-                onChange={e => setExpiry(formatExpiry(e.target.value))} 
-                placeholder="MM/YY" 
-                style={{ textAlign: 'center', fontFamily: 'monospace' }}
-              />
-            </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>CVC</label>
-              <input 
-                required 
-                type="text" 
-                maxLength={4}
-                className="input-field" 
-                value={cvc} 
-                onChange={e => setCvc(e.target.value.replace(/\D/g, ''))} 
-                placeholder="123" 
-                style={{ textAlign: 'center', fontFamily: 'monospace' }}
-              />
-            </div>
-          </div>
-
-          <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-            <button type="button" onClick={onCancel} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>
-            <button type="submit" disabled={loading || cardNumber.length < 14} className="btn-primary" style={{ flex: 1, backgroundColor: '#10b981' }}>
-              {loading ? 'Processing...' : 'Pay Now'}
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+    <Elements stripe={stripePromise} options={options}>
+      <StripeCheckoutForm amountCents={amountCents} itemName={itemName} onConfirm={onConfirm} onCancel={onCancel} />
+    </Elements>
   );
 }

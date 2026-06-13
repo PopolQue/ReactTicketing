@@ -79,7 +79,7 @@ export default function SuperAdminLayout() {
         </nav>
 
         <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
-          <Link to="/" style={{ color: 'var(--text-secondary)', textDecoration: 'none', fontSize: '0.9rem' }}>
+          <Link to="/" className="btn-nav" style={{ padding: '8px 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
             ← Back to Marketplace
           </Link>
         </div>
