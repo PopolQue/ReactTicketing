@@ -11,10 +11,10 @@ const ToastContext = createContext<ToastContextProps | undefined>(undefined);
 export function ToastProvider({ children }: { children: React.ReactNode }) {
   const [toast, setToast] = useState<{ message: string; type: ToastType } | null>(null);
 
-  const showToast = (message: string, type: ToastType = 'info') => {
+  const showToast = React.useCallback((message: string, type: ToastType = 'info') => {
     setToast({ message, type });
     setTimeout(() => setToast(null), 4000);
-  };
+  }, []);
 
   return (
     <ToastContext.Provider value={{ showToast }}>
