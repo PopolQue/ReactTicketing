@@ -12,6 +12,8 @@ import ImageUploader from '../../features/event-management/ImageUploader';
 import ThemeCustomizer from '../../features/event-management/ThemeCustomizer';
 import ScanAccountsManager from '../../features/event-management/ScanAccountsManager';
 import PromoManager from '../../features/event-management/PromoManager';
+import ScanDashboard from '../../features/event-management/ScanDashboard';
+import ExportManager from '../../features/event-management/ExportManager';
 
 export default function ManageEvent() {
   const { id } = useParams();
@@ -87,6 +89,8 @@ export default function ManageEvent() {
           />
           <PromoManager eventId={id!} />
           <ScanAccountsManager eventId={id!} />
+          <ScanDashboard eventId={id!} />
+          <ExportManager eventId={id!} eventName={event?.name} />
         </div>
 
         {/* Artists Lineup Section */}

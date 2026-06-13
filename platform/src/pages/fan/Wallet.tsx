@@ -119,7 +119,20 @@ export default function Wallet() {
             <form onSubmit={handleListForResale} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
               <div>
                 <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Asking Price (€)</label>
-                <input required type="number" step="0.01" min="1" className="input-field" value={askingPrice} onChange={e => setAskingPrice(e.target.value)} placeholder="e.g. 35.00" />
+                <input 
+                  required 
+                  type="number" 
+                  step="0.01" 
+                  min="1" 
+                  max={resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : undefined}
+                  className="input-field" 
+                  value={askingPrice} 
+                  onChange={e => setAskingPrice(e.target.value)} 
+                  placeholder={`Max €${resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : ''}`} 
+                />
+                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '8px' }}>
+                  Maximum allowed resale price (10% cap): €{resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : '0.00'}
+                </p>
               </div>
               <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
                 <button type="button" onClick={() => setResellTicket(null)} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>

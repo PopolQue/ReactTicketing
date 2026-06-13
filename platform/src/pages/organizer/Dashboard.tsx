@@ -43,13 +43,13 @@ export default function Dashboard() {
         .select(`
           id,
           price_paid_cents,
-          created_at,
+          issued_at,
           buyer_email,
           events ( name ),
           ticket_types ( name )
         `)
         .in('event_id', eventIds)
-        .order('created_at', { ascending: false })
+        .order('issued_at', { ascending: false })
         .limit(5);
 
       if (recentTickets) setRecentSales(recentTickets);
@@ -117,7 +117,7 @@ export default function Dashboard() {
                     +€{((sale.price_paid_cents || 0) / 100).toFixed(2)}
                   </p>
                   <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
-                    {new Date(sale.created_at).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    {new Date(sale.issued_at).toLocaleString([], { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </p>
                 </div>
               </div>

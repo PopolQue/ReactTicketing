@@ -35,5 +35,5 @@ export function useTicketTiers(eventId: string | undefined) {
     return { data, error };
   };
 
-  return { tiers, loading, createTier, refetch: fetchTiers };
+  return { tiers, setTiers, loading, createTier, refetch: fetchTiers };
 }
