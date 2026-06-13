@@ -1,6 +1,5 @@
 -- supabase/migrations/20260622000021_increment_promo_rpc.sql
 
--- supabase-lint-ignore authenticated_security_definer_function_executable
 CREATE OR REPLACE FUNCTION increment_promo_usage(p_code TEXT)
 RETURNS VOID
 LANGUAGE plpgsql

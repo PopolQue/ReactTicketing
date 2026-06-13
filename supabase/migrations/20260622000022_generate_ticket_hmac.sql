@@ -4,7 +4,6 @@
 CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
 
 -- Function to generate the new HMAC format TF1.<eventId>.<ticketId>.<hmac>
--- supabase-lint-ignore authenticated_security_definer_function_executable
 CREATE OR REPLACE FUNCTION generate_ticket_hmac(
   p_event_id TEXT,
   p_ticket_id TEXT
@@ -45,9 +44,6 @@ REVOKE EXECUTE ON FUNCTION generate_ticket_hmac FROM anon;
 GRANT EXECUTE ON FUNCTION generate_ticket_hmac TO authenticated;
 
 -- Trigger to automatically assign qr_payload on insert if not provided
--- supabase-lint-ignore function_search_path_mutable
--- supabase-lint-ignore anon_security_definer_function_executable
--- supabase-lint-ignore authenticated_security_definer_function_executable
 CREATE OR REPLACE FUNCTION trg_set_ticket_qr_payload()
 RETURNS TRIGGER
 LANGUAGE plpgsql

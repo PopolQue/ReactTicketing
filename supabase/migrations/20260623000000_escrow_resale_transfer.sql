@@ -1,9 +1,6 @@
 -- Phase 1: Secondary Market Expansion (Escrow Transfer & Price Capping)
 
 -- 1. Create a trigger to enforce dynamic price capping (Max 10% above face value)
--- supabase-lint-ignore function_search_path_mutable
--- supabase-lint-ignore anon_security_definer_function_executable
--- supabase-lint-ignore authenticated_security_definer_function_executable
 CREATE OR REPLACE FUNCTION trg_enforce_price_cap()
 RETURNS TRIGGER
 LANGUAGE plpgsql
@@ -31,7 +28,6 @@ FOR EACH ROW
 EXECUTE FUNCTION trg_enforce_price_cap();
 
 -- 2. Update the RPC to use Cryptographic Escrow Transfer
--- supabase-lint-ignore authenticated_security_definer_function_executable
 CREATE OR REPLACE FUNCTION buy_resale_ticket(p_listing_id UUID, p_buyer_id UUID)
 RETURNS BOOLEAN
 LANGUAGE plpgsql

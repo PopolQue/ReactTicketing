@@ -4,9 +4,6 @@
 CREATE EXTENSION IF NOT EXISTS pg_cron WITH SCHEMA extensions;
 
 -- Create function to deactivate expired promos
--- supabase-lint-ignore function_search_path_mutable
--- supabase-lint-ignore anon_security_definer_function_executable
--- supabase-lint-ignore authenticated_security_definer_function_executable
 CREATE OR REPLACE FUNCTION cleanup_expired_promos()
 RETURNS void
 LANGUAGE plpgsql

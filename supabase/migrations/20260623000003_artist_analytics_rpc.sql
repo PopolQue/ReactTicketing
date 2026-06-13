@@ -1,5 +1,3 @@
--- supabase-lint-ignore anon_security_definer_function_executable
--- supabase-lint-ignore authenticated_security_definer_function_executable
 CREATE OR REPLACE FUNCTION public.get_artist_analytics(artist_id_param UUID)
 RETURNS JSONB
 LANGUAGE plpgsql
