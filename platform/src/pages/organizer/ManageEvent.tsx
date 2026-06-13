@@ -14,6 +14,7 @@ import ScanAccountsManager from '../../features/event-management/ScanAccountsMan
 import PromoManager from '../../features/event-management/PromoManager';
 import ScanDashboard from '../../features/event-management/ScanDashboard';
 import ExportManager from '../../features/event-management/ExportManager';
+import CheckoutFieldsManager from '../../features/event-management/CheckoutFieldsManager';
 
 export default function ManageEvent() {
   const { id } = useParams();
@@ -87,6 +88,7 @@ export default function ManageEvent() {
             setTiers={setTiers} 
             updateEvent={updateEvent} 
           />
+          <CheckoutFieldsManager eventId={id!} />
           <PromoManager eventId={id!} />
           <ScanAccountsManager eventId={id!} />
           <ScanDashboard eventId={id!} />

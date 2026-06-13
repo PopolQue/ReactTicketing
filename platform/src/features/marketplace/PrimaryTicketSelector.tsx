@@ -3,12 +3,14 @@ import React from 'react';
 export default function PrimaryTicketSelector({
   event,
   tiers,
-  initCheckout,
+  cart,
+  updateCart,
   customAccentColor
 }: {
   event: any;
   tiers: any[];
-  initCheckout: (tier: any) => void;
+  cart: { [tierId: string]: number };
+  updateCart: (tierId: string, delta: number) => void;
   customAccentColor: string;
 }) {
   return (
@@ -32,26 +34,35 @@ export default function PrimaryTicketSelector({
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-          {tiers.map(tier => (
-            <div key={tier.id} className="glass-panel" style={{ padding: '20px', display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)' }}>
-              <div>
-                <h4 style={{ margin: '0 0 8px 0', fontSize: '1.2rem' }}>{tier.name}</h4>
-                <p style={{ color: 'rgba(255,255,255,0.6)', margin: 0, fontSize: '0.9rem' }}>Capacity: {tier.capacity}</p>
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-                <div style={{ fontSize: '1.4rem', fontWeight: 600, color: 'white' }}>
-                  €{((tier.pricing?.amount || 0) / 100).toFixed(2)}
+          {tiers.map(tier => {
+            const quantity = cart[tier.id] || 0;
+            return (
+              <div key={tier.id} className="glass-panel" style={{ padding: '20px', display: 'flex', flexWrap: 'wrap', gap: '16px', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                <div>
+                  <h4 style={{ margin: '0 0 8px 0', fontSize: '1.2rem' }}>{tier.name}</h4>
+                  <p style={{ color: 'rgba(255,255,255,0.6)', margin: 0, fontSize: '0.9rem' }}>Capacity: {tier.capacity}</p>
                 </div>
-                <button
-                  onClick={() => initCheckout(tier)}
-                  className="btn-primary"
-                  style={{ backgroundColor: customAccentColor }}
-                >
-                  Buy Ticket
-                </button>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
+                  <div style={{ fontSize: '1.4rem', fontWeight: 600, color: 'white' }}>
+                    €{((tier.pricing?.amount || 0) / 100).toFixed(2)}
+                  </div>
+                  
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', backgroundColor: 'rgba(0,0,0,0.3)', padding: '4px', borderRadius: '8px' }}>
+                    <button 
+                      onClick={() => updateCart(tier.id, -1)} 
+                      disabled={quantity === 0}
+                      style={{ width: '32px', height: '32px', borderRadius: '4px', border: 'none', backgroundColor: quantity > 0 ? 'rgba(255,255,255,0.1)' : 'transparent', color: 'white', cursor: quantity > 0 ? 'pointer' : 'not-allowed' }}
+                    >-</button>
+                    <span style={{ minWidth: '20px', textAlign: 'center', fontWeight: 600 }}>{quantity}</span>
+                    <button 
+                      onClick={() => updateCart(tier.id, 1)} 
+                      style={{ width: '32px', height: '32px', borderRadius: '4px', border: 'none', backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer' }}
+                    >+</button>
+                  </div>
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>

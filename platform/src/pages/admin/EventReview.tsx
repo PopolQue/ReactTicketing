@@ -19,7 +19,7 @@ export default function EventReview() {
       .select('*, organizer_profiles(company_name)')
       .eq('published', true)
       .eq('approval_status', 'pending')
-      .order('created_at', { ascending: false });
+      .order('start_date', { ascending: true });
     
     if (data) setEvents(data);
     setLoading(false);

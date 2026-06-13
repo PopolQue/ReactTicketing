@@ -43,6 +43,8 @@ export default function TicketCard({
             <button onClick={() => handleCancelListing(activeListing.id)} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.9rem', borderColor: '#ef4444', color: '#ef4444' }}>Cancel Listing</button>
          ) : ticket.status === 'transferred' ? (
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', fontStyle: 'italic' }}>No longer valid</span>
+         ) : ticket.price_paid_cents <= 0 ? (
+            <span style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', fontStyle: 'italic', maxWidth: '100px', textAlign: 'right' }}>Complimentary (Non-Resellable)</span>
          ) : (
             <button onClick={() => setResellTicket(ticket)} className="btn-secondary" style={{ padding: '8px 16px', fontSize: '0.9rem' }}>Resell Ticket</button>
          )}

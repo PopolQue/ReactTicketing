@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
-import CheckoutModal from '../../components/CheckoutModal';
 import EventHero from '../../features/marketplace/EventHero';
 import PrimaryTicketSelector from '../../features/marketplace/PrimaryTicketSelector';
+import CheckoutFlow from '../../features/marketplace/CheckoutFlow';
 
 export default function EventDetails() {
   const { id } = useParams();
@@ -18,7 +18,10 @@ export default function EventDetails() {
 
   // Carousel & Checkout state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const [checkoutTier, setCheckoutTier] = useState<any>(null);
+
+  // Cart & Checkout State
+  const [cart, setCart] = useState<{ [tierId: string]: number }>({});
+  const [checkoutMode, setCheckoutMode] = useState(false);
 
   useEffect(() => {
     async function fetchEventDetails() {
@@ -54,76 +57,27 @@ export default function EventDetails() {
     return () => { document.title = 'Admit'; }
   }, [id]);
 
-  const initCheckout = async (tier: any) => {
+  const updateCart = (tierId: string, delta: number) => {
+    setCart(prev => {
+      const current = prev[tierId] || 0;
+      const next = Math.max(0, current + delta);
+      if (next === 0) {
+        const copy = { ...prev };
+        delete copy[tierId];
+        return copy;
+      }
+      return { ...prev, [tierId]: next };
+    });
+  };
+
+  const handleBeginCheckout = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      showToast('Please log in or sign up to purchase a ticket.', 'error');
+      showToast('Please log in or sign up to purchase tickets.', 'error');
       navigate('/auth');
       return;
     }
-    setCheckoutTier(tier);
-  };
-
-  const executePurchase = async (promoCodeObj?: any) => {
-    if (!checkoutTier) return;
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
-
-    try {
-      const orderId = crypto.randomUUID();
-      const subtotalCents = checkoutTier.pricing?.amount || 0;
-      let discountCents = 0;
-      let finalTotalCents = subtotalCents;
-
-      if (promoCodeObj) {
-        if (promoCodeObj.discount_kind === 'percent_off') {
-            discountCents = Math.round(subtotalCents * (promoCodeObj.discount_value / 100));
-        } else if (promoCodeObj.discount_kind === 'amount_off') {
-            discountCents = promoCodeObj.discount_value;
-        } else if (promoCodeObj.discount_kind === 'free') {
-            discountCents = subtotalCents;
-        }
-        finalTotalCents = Math.max(0, subtotalCents - discountCents);
-      }
-
-      const { error: orderError } = await supabase.from('orders').insert([{
-        id: orderId,
-        event_id: event.id,
-        items: [{ ticket_type_id: checkoutTier.id, quantity: 1, price_cents: subtotalCents }],
-        buyer_email: user.email,
-        subtotal_cents: subtotalCents,
-        discount_cents: discountCents,
-        total_cents: finalTotalCents,
-        status: 'completed'
-      }]);
-
-      if (orderError) throw orderError;
-
-      const { error: ticketError } = await supabase.from('tickets').insert([{
-        id: crypto.randomUUID(),
-        event_id: event.id,
-        ticket_type_id: checkoutTier.id,
-        order_id: orderId,
-        personalization: { name: user.email },
-        buyer_email: user.email,
-        status: 'valid',
-        price_paid_cents: finalTotalCents,
-        owner_id: user.id
-      }]);
-
-      if (ticketError) throw ticketError;
-
-      if (promoCodeObj) {
-          // Increment promo usage (Migration 005 uses RPC, or just update directly for MVP)
-          await supabase.rpc('increment_promo_usage', { p_code: promoCodeObj.code, p_event_id: event.id }).catch(() => {});
-      }
-
-      showToast('Ticket purchased successfully! View it in your wallet.', 'success');
-      navigate('/wallet');
-    } catch (err: any) {
-      showToast("Error purchasing ticket: " + err.message, 'error');
-      setCheckoutTier(null);
-    }
+    setCheckoutMode(true);
   };
 
   if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading...</div>;
@@ -195,23 +149,38 @@ export default function EventDetails() {
             </div>
           )}
 
-          <PrimaryTicketSelector 
-            event={event} 
-            tiers={tiers} 
-            initCheckout={initCheckout} 
-            customAccentColor={customAccentColor} 
-          />
+          {checkoutMode ? (
+            <CheckoutFlow 
+              event={event} 
+              tiers={tiers} 
+              cart={cart} 
+              onCancel={() => setCheckoutMode(false)} 
+              onComplete={() => navigate('/wallet')} 
+            />
+          ) : (
+            <PrimaryTicketSelector 
+              event={event} 
+              tiers={tiers} 
+              cart={cart}
+              updateCart={updateCart}
+              customAccentColor={customAccentColor} 
+            />
+          )}
         </div>
       </main>
 
-      {checkoutTier && (
-        <CheckoutModal
-          eventId={event.id}
-          amountCents={checkoutTier.pricing?.amount || 0}
-          itemName={`${event.name} - ${checkoutTier.name}`}
-          onConfirm={executePurchase}
-          onCancel={() => setCheckoutTier(null)}
-        />
+      {!checkoutMode && Object.keys(cart).length > 0 && (
+        <div style={{ position: 'fixed', bottom: 0, left: 0, right: 0, padding: '24px', backgroundColor: 'rgba(15, 17, 21, 0.95)', borderTop: '1px solid var(--border)', zIndex: 100, display: 'flex', justifyContent: 'center' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', width: '100%', maxWidth: '800px' }}>
+            <div>
+              <p style={{ margin: '0 0 4px 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Selected Tickets</p>
+              <p style={{ margin: 0, fontSize: '1.2rem', fontWeight: 600 }}>{Object.values(cart).reduce((a, b) => a + b, 0)} Items</p>
+            </div>
+            <button onClick={handleBeginCheckout} className="btn-primary" style={{ padding: '12px 32px', fontSize: '1.1rem', backgroundColor: customAccentColor }}>
+              Proceed to Checkout →
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

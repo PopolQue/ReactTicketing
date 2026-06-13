@@ -15,41 +15,7 @@ export default function MockCheckoutForm({ eventId, amountCents, itemName, onCon
   const [expiry, setExpiry] = useState('');
   const [cvc, setCvc] = useState('');
 
-  const [promoCode, setPromoCode] = useState('');
-  const [appliedPromo, setAppliedPromo] = useState<any>(null);
-  const [promoError, setPromoError] = useState('');
-
-  const handleApplyPromo = async () => {
-    setPromoError('');
-    if (!promoCode) return;
-    const { data, error } = await supabase
-      .from('promo_codes')
-      .select('*')
-      .eq('event_id', eventId)
-      .eq('code', promoCode.toUpperCase())
-      .eq('active', true)
-      .single();
-    
-    if (error || !data) {
-      setPromoError('Invalid or expired promo code');
-    } else {
-      setAppliedPromo(data);
-    }
-  };
-
-  const getDiscountedAmount = () => {
-    if (!appliedPromo) return amountCents;
-    if (appliedPromo.discount_kind === 'percent_off') {
-        return Math.max(0, amountCents - Math.round(amountCents * (appliedPromo.discount_value / 100)));
-    } else if (appliedPromo.discount_kind === 'amount_off') {
-        return Math.max(0, amountCents - appliedPromo.discount_value);
-    } else if (appliedPromo.discount_kind === 'free') {
-        return 0;
-    }
-    return amountCents;
-  };
-
-  const finalAmountCents = getDiscountedAmount();
+  const finalAmountCents = amountCents;
 
   const formatCardNumber = (value: string) => {
     const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
@@ -79,7 +45,7 @@ export default function MockCheckoutForm({ eventId, amountCents, itemName, onCon
     setLoading(true);
     // Simulate network delay for Stripe processing
     await new Promise(r => setTimeout(r, 1500));
-    await onConfirm(appliedPromo);
+    await onConfirm();
     setLoading(false);
   };
 
@@ -91,39 +57,8 @@ export default function MockCheckoutForm({ eventId, amountCents, itemName, onCon
           Payment for <strong>{itemName}</strong>.
         </p>
 
-        <div style={{ marginBottom: '24px' }}>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <input 
-              type="text" 
-              placeholder="Promo Code" 
-              className="input-field" 
-              value={promoCode} 
-              onChange={e => setPromoCode(e.target.value)} 
-              disabled={!!appliedPromo}
-            />
-            <button 
-              type="button" 
-              onClick={appliedPromo ? () => { setAppliedPromo(null); setPromoCode(''); } : handleApplyPromo}
-              className="btn-secondary"
-            >
-              {appliedPromo ? 'Remove' : 'Apply'}
-            </button>
-          </div>
-          {promoError && <p style={{ color: '#ef4444', fontSize: '0.85rem', marginTop: '4px' }}>{promoError}</p>}
-        </div>
-
         <div style={{ padding: '16px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px', marginBottom: '24px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)' }}>
-            <span>Subtotal</span>
-            <span>€{(amountCents / 100).toFixed(2)}</span>
-          </div>
-          {appliedPromo && (
-            <div style={{ display: 'flex', justifyContent: 'space-between', color: '#10b981' }}>
-              <span>Discount ({appliedPromo.code})</span>
-              <span>-€{((amountCents - finalAmountCents) / 100).toFixed(2)}</span>
-            </div>
-          )}
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', paddingTop: '8px', borderTop: '1px solid rgba(255,255,255,0.1)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '8px', paddingTop: '8px' }}>
             <strong>Total</strong>
             <strong style={{ fontSize: '1.2rem', color: 'var(--accent)' }}>€{(finalAmountCents / 100).toFixed(2)}</strong>
           </div>
