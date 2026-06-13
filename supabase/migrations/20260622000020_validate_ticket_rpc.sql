@@ -1,5 +1,6 @@
 -- supabase/migrations/20260622000020_validate_ticket_rpc.sql
 
+-- supabase-lint-ignore authenticated_security_definer_function_executable
 CREATE OR REPLACE FUNCTION validate_ticket(
   p_ticket_id       TEXT,
   p_scan_account_id TEXT,

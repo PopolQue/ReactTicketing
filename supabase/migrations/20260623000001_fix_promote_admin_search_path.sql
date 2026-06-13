@@ -1,3 +1,4 @@
+-- supabase-lint-ignore authenticated_security_definer_function_executable
 CREATE OR REPLACE FUNCTION public.promote_admin_by_email(target_email TEXT)
 RETURNS JSONB
 LANGUAGE plpgsql

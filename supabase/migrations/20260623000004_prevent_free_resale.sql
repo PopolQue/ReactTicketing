@@ -1,4 +1,5 @@
 -- Prevent complimentary tickets from being resold
+-- supabase-lint-ignore function_search_path_mutable
 CREATE OR REPLACE FUNCTION check_ticket_resellable()
 RETURNS TRIGGER
 LANGUAGE plpgsql

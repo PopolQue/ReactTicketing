@@ -20,6 +20,9 @@ import ArtistEditProfile from './pages/artist/ArtistEditProfile'
 import Home from './pages/marketplace/Home'
 import Discover from './pages/marketplace/Discover'
 import EventDetails from './pages/marketplace/EventDetails'
+import ArtistProfile from './pages/marketplace/ArtistProfile'
+import VenueProfile from './pages/marketplace/VenueProfile'
+import OrganizerProfile from './pages/marketplace/OrganizerProfile'
 import Wallet from './pages/fan/Wallet'
 import ResaleMarket from './pages/marketplace/ResaleMarket'
 import ClaimPortal from './pages/marketplace/ClaimPortal'
@@ -57,6 +60,9 @@ function App() {
         <Route path="/" element={<Home />} />
         <Route path="/discover" element={<Discover />} />
         <Route path="/events/:id" element={<EventDetails />} />
+        <Route path="/artist/:id" element={<ArtistProfile />} />
+        <Route path="/venue/:id" element={<VenueProfile />} />
+        <Route path="/organizer/:id" element={<OrganizerProfile />} />
         
         <Route element={<ProtectedRoute />}>
           <Route path="/wallet" element={<Wallet />} />
