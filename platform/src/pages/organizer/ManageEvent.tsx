@@ -65,9 +65,20 @@ export default function ManageEvent() {
     fetchData();
   }, [id]);
 
+  const handleExternalUrlUpdate = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newUrl = e.target.value;
+    setEvent({ ...event, external_ticket_url: newUrl });
+  };
+
+  const saveExternalUrl = async () => {
+    const { error } = await supabase.from('events').update({ external_ticket_url: event.external_ticket_url }).eq('id', id);
+    if (error) showToast("Failed to update URL", "error");
+    else showToast("External URL updated successfully", "success");
+  };
+
   const togglePublish = async () => {
     setIsPublishing(true);
-    if (!event.published && tiers.length === 0) {
+    if (!event.published && !event.is_external && tiers.length === 0) {
       showToast("You must add at least one ticket tier before publishing.", 'error');
       setIsPublishing(false);
       return;
@@ -233,30 +244,52 @@ export default function ManageEvent() {
         
         {/* Ticket Tiers Section */}
         <div className="glass-panel" style={{ padding: '24px' }}>
-          <h3>Ticket Tiers</h3>
-          <div style={{ margin: '20px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {tiers.length === 0 ? <p style={{ color: 'var(--text-secondary)' }}>No tickets added yet.</p> : tiers.map(tier => (
-              <div key={tier.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
-                <div>
-                  <strong style={{ display: 'block', marginBottom: '4px' }}>{tier.name}</strong>
-                  <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Capacity: {tier.capacity}</div>
-                </div>
-                <div style={{ fontWeight: 600, color: 'var(--accent)' }}>
-                  €{((tier.pricing?.amount || 0) / 100).toFixed(2)}
+          {event?.is_external ? (
+            <div>
+              <h3>External Event Link</h3>
+              <p style={{ color: 'var(--text-secondary)' }}>This event links to an external ticketing platform.</p>
+              <div style={{ marginTop: '16px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Ticket URL</label>
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <input 
+                    type="url" 
+                    className="input-field" 
+                    value={event?.external_ticket_url || ''} 
+                    onChange={handleExternalUrlUpdate}
+                    placeholder="https://..." 
+                  />
+                  <button onClick={saveExternalUrl} className="btn-secondary">Save URL</button>
                 </div>
               </div>
-            ))}
-          </div>
-
-          <h4 style={{ marginTop: '32px', marginBottom: '16px', borderTop: '1px solid var(--border)', paddingTop: '20px' }}>Add New Tier</h4>
-          <form onSubmit={handleCreateTier} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            <input required type="text" placeholder="Tier Name (e.g. VIP)" className="input-field" value={tierForm.name} onChange={e => setTierForm({...tierForm, name: e.target.value})} />
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <input required type="number" step="0.01" min="0" placeholder="Price (€)" className="input-field" value={tierForm.price} onChange={e => setTierForm({...tierForm, price: e.target.value})} />
-              <input required type="number" min="1" placeholder="Capacity" className="input-field" value={tierForm.capacity} onChange={e => setTierForm({...tierForm, capacity: e.target.value})} />
             </div>
-            <button type="submit" className="btn-secondary" style={{ marginTop: '8px' }}>+ Add Ticket Tier</button>
-          </form>
+          ) : (
+            <>
+              <h3>Ticket Tiers</h3>
+              <div style={{ margin: '20px 0', display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {tiers.length === 0 ? <p style={{ color: 'var(--text-secondary)' }}>No tickets added yet.</p> : tiers.map(tier => (
+                  <div key={tier.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '12px', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
+                    <div>
+                      <strong style={{ display: 'block', marginBottom: '4px' }}>{tier.name}</strong>
+                      <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Capacity: {tier.capacity}</div>
+                    </div>
+                    <div style={{ fontWeight: 600, color: 'var(--accent)' }}>
+                      €{((tier.pricing?.amount || 0) / 100).toFixed(2)}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <h4 style={{ marginTop: '32px', marginBottom: '16px', borderTop: '1px solid var(--border)', paddingTop: '20px' }}>Add New Tier</h4>
+              <form onSubmit={handleCreateTier} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                <input required type="text" placeholder="Tier Name (e.g. VIP)" className="input-field" value={tierForm.name} onChange={e => setTierForm({...tierForm, name: e.target.value})} />
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <input required type="number" step="0.01" min="0" placeholder="Price (€)" className="input-field" value={tierForm.price} onChange={e => setTierForm({...tierForm, price: e.target.value})} />
+                  <input required type="number" min="1" placeholder="Capacity" className="input-field" value={tierForm.capacity} onChange={e => setTierForm({...tierForm, capacity: e.target.value})} />
+                </div>
+                <button type="submit" className="btn-secondary" style={{ marginTop: '8px' }}>+ Add Ticket Tier</button>
+              </form>
+            </>
+          )}
         </div>
 
         {/* Artists Lineup Section */}

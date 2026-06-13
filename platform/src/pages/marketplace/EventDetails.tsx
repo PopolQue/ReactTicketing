@@ -194,7 +194,19 @@ export default function EventDetails() {
 
           <div style={{ borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '32px' }}>
             <h3 style={{ marginBottom: '24px' }}>Tickets</h3>
-            {tiers.length === 0 ? (
+            {event.is_external ? (
+              <div style={{ textAlign: 'center', padding: '40px', border: '1px dashed rgba(255,255,255,0.2)', borderRadius: '12px', backgroundColor: 'rgba(255,255,255,0.05)' }}>
+                <h4 style={{ marginBottom: '16px', fontSize: '1.4rem' }}>Tickets available on external platform</h4>
+                <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: '24px' }}>This event is hosted by {event.organizer_profiles?.company_name || 'an independent organizer'} and tickets are sold externally.</p>
+                {event.external_ticket_url ? (
+                  <a href={event.external_ticket_url} target="_blank" rel="noopener noreferrer" className="btn-primary" style={{ backgroundColor: customAccentColor, display: 'inline-block', textDecoration: 'none', padding: '14px 32px', fontSize: '1.1rem' }}>
+                    Get Tickets Now ↗
+                  </a>
+                ) : (
+                  <p style={{ color: '#ef4444' }}>Ticket link is currently unavailable.</p>
+                )}
+              </div>
+            ) : tiers.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '40px', border: '1px dashed rgba(255,255,255,0.2)', borderRadius: '12px' }}>
                 <p style={{ color: 'rgba(255,255,255,0.6)' }}>The organizer hasn't set up ticket tiers yet.</p>
               </div>

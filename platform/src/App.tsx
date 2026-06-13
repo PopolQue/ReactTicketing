@@ -22,6 +22,14 @@ import ArtistsList from './pages/organizer/ArtistsList'
 import BlogsList from './pages/organizer/BlogsList'
 import BlogFeed from './pages/marketplace/BlogFeed'
 import BlogPost from './pages/marketplace/BlogPost'
+
+// Admin & Support
+import ContactSupport from './pages/support/ContactSupport'
+import AdminLayout from './pages/admin/AdminLayout'
+import EventReview from './pages/admin/EventReview'
+import SupportDesk from './pages/admin/SupportDesk'
+import SuperAdminLayout from './pages/superadmin/SuperAdminLayout'
+import AdminManagement from './pages/superadmin/AdminManagement'
 import { ToastProvider } from './components/Toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
 
@@ -49,6 +57,22 @@ function App() {
           <Route path="settings" element={<Settings />} />
           <Route path="artists" element={<ArtistsList />} />
           <Route path="blogs" element={<BlogsList />} />
+        </Route>
+
+        {/* Public Support */}
+        <Route path="/support" element={<ContactSupport />} />
+
+        {/* Admin Portal */}
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<div style={{ padding: '24px' }}><h1>Admin Dashboard</h1><p>Welcome to the Admit employee portal. Select an option from the sidebar to manage events or support tickets.</p></div>} />
+          <Route path="events" element={<EventReview />} />
+          <Route path="support" element={<SupportDesk />} />
+        </Route>
+
+        {/* SuperAdmin Portal */}
+        <Route path="/superadmin" element={<SuperAdminLayout />}>
+          <Route index element={<div style={{ padding: '24px' }}><h1>SuperAdmin Dashboard</h1><p>Welcome to the top-level management dashboard. Here you can monitor system metrics and manage admins.</p></div>} />
+          <Route path="admins" element={<AdminManagement />} />
         </Route>
       </Routes>
     </ToastProvider>

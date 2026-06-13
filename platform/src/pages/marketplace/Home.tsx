@@ -24,6 +24,7 @@ export default function Home() {
           organizer_profiles ( company_name )
         `)
         .eq('published', true)
+        .eq('approval_status', 'approved')
         .order('start_date', { ascending: true })
         .limit(20);
 
@@ -158,7 +159,10 @@ export default function Home() {
                         <span style={{ fontSize: '3rem', opacity: 0.2 }}>🎟️</span>
                       </div>
                     )}
-                    <h3 style={{ margin: '0 0 12px 0', fontSize: '1.5rem', lineHeight: '1.3' }}>{event.name}</h3>
+                    <h3 style={{ margin: '0 0 12px 0', fontSize: '1.5rem', lineHeight: '1.3', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      {event.name}
+                      {event.is_external && <span style={{ fontSize: '0.7rem', backgroundColor: 'var(--accent)', color: 'white', padding: '2px 8px', borderRadius: '12px', verticalAlign: 'middle', fontWeight: 'bold' }}>EXTERNAL</span>}
+                    </h3>
                     <p style={{ margin: '0 0 12px 0', color: 'var(--text-secondary)', fontWeight: 500 }}>
                       {new Date(event.start_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} • {event.venue}{event.city ? `, ${event.city}` : ''}{event.country ? `, ${event.country}` : ''}
                     </p>

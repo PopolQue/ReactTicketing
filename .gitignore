@@ -1,5 +1,7 @@
 # .gitignore
 
+secrets
+
 design/
 
 # Dependencies
@@ -30,3 +32,4 @@ yarn-error.log*
 # OS
 .DS_Store
 Thumbs.db
+platform/seed.js

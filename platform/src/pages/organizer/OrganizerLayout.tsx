@@ -1,9 +1,16 @@
 
-import { Outlet, Link, useLocation } from 'react-router-dom';
+import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
+import { supabase } from '../../lib/supabase';
 import './Organizer.css';
 
 export default function OrganizerLayout() {
   const location = useLocation();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
   return (
     <div className="org-layout">
@@ -23,7 +30,7 @@ export default function OrganizerLayout() {
       <main className="org-content">
         <header className="org-header glass-panel">
           <h3>Welcome back, Organizer</h3>
-          <button className="btn-secondary">Logout</button>
+          <button onClick={handleLogout} className="btn-secondary">Logout</button>
         </header>
         <div className="org-page-content">
           <Outlet />

@@ -13,11 +13,14 @@ export default function CreateEvent() {
     venue: '',
     city: '',
     country: '',
-    description: ''
+    description: '',
+    is_external: false,
+    external_ticket_url: ''
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+    setFormData({ ...formData, [e.target.name]: value });
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -58,7 +61,9 @@ export default function CreateEvent() {
             description: formData.description,
             organizer_id: user.id,
             timezone_id: 'gmt1_berlin', // Must be a valid seed from the timezones table
-            published: false
+            published: false,
+            is_external: formData.is_external,
+            external_ticket_url: formData.is_external ? formData.external_ticket_url : null
           }
         ])
         .select();
@@ -115,6 +120,37 @@ export default function CreateEvent() {
           <div>
             <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Description</label>
             <textarea required name="description" value={formData.description} onChange={handleChange} className="input-field" rows={4} placeholder="Describe your event..."></textarea>
+          </div>
+          
+          <div style={{ backgroundColor: 'rgba(255,255,255,0.02)', padding: '16px', borderRadius: '8px', border: '1px solid var(--border)' }}>
+            <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', gap: '12px' }}>
+              <input 
+                type="checkbox" 
+                name="is_external" 
+                checked={formData.is_external} 
+                onChange={handleChange}
+                style={{ width: '20px', height: '20px', accentColor: 'var(--accent)' }}
+              />
+              <div>
+                <strong style={{ display: 'block', color: 'white' }}>This is an external event</strong>
+                <span style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Check this if you are selling tickets on another platform (like Resident Advisor) but want fans to discover it here.</span>
+              </div>
+            </label>
+            
+            {formData.is_external && (
+              <div style={{ marginTop: '16px', paddingTop: '16px', borderTop: '1px solid var(--border)' }}>
+                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>External Ticket Link</label>
+                <input 
+                  required={formData.is_external} 
+                  type="url" 
+                  name="external_ticket_url" 
+                  value={formData.external_ticket_url} 
+                  onChange={handleChange} 
+                  className="input-field" 
+                  placeholder="https://ra.co/events/..." 
+                />
+              </div>
+            )}
           </div>
           
           <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '12px', alignSelf: 'flex-start', opacity: loading ? 0.7 : 1 }}>

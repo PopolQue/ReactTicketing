@@ -10,6 +10,31 @@ interface CheckoutModalProps {
 export default function CheckoutModal({ amountCents, itemName, onConfirm, onCancel }: CheckoutModalProps) {
   const [loading, setLoading] = useState(false);
   const [cardNumber, setCardNumber] = useState('');
+  const [expiry, setExpiry] = useState('');
+  const [cvc, setCvc] = useState('');
+
+  const formatCardNumber = (value: string) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    const matches = v.match(/\d{4,16}/g);
+    const match = matches && matches[0] || '';
+    const parts = [];
+    for (let i=0, len=match.length; i<len; i+=4) {
+      parts.push(match.substring(i, i+4));
+    }
+    if (parts.length) {
+      return parts.join(' ');
+    } else {
+      return value;
+    }
+  };
+
+  const formatExpiry = (value: string) => {
+    const v = value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+    if (v.length >= 2) {
+      return `${v.substring(0, 2)}/${v.substring(2, 4)}`;
+    }
+    return v;
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,17 +60,48 @@ export default function CheckoutModal({ amountCents, itemName, onConfirm, onCanc
 
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Card Number (Mock)</label>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Card Number</label>
             <input 
               required 
               type="text" 
-              maxLength={16}
+              maxLength={19}
               className="input-field" 
               value={cardNumber} 
-              onChange={e => setCardNumber(e.target.value.replace(/\D/g, ''))} 
-              placeholder="4242 4242 4242 4242" 
+              onChange={e => setCardNumber(formatCardNumber(e.target.value))} 
+              placeholder="0000 0000 0000 0000" 
+              style={{ letterSpacing: '2px', fontFamily: 'monospace' }}
             />
           </div>
+          
+          <div style={{ display: 'flex', gap: '16px' }}>
+            <div style={{ flex: 1 }}>
+              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Expiry Date</label>
+              <input 
+                required 
+                type="text" 
+                maxLength={5}
+                className="input-field" 
+                value={expiry} 
+                onChange={e => setExpiry(formatExpiry(e.target.value))} 
+                placeholder="MM/YY" 
+                style={{ textAlign: 'center', fontFamily: 'monospace' }}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>CVC</label>
+              <input 
+                required 
+                type="text" 
+                maxLength={4}
+                className="input-field" 
+                value={cvc} 
+                onChange={e => setCvc(e.target.value.replace(/\D/g, ''))} 
+                placeholder="123" 
+                style={{ textAlign: 'center', fontFamily: 'monospace' }}
+              />
+            </div>
+          </div>
+
           <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
             <button type="button" onClick={onCancel} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>
             <button type="submit" disabled={loading || cardNumber.length < 14} className="btn-primary" style={{ flex: 1, backgroundColor: '#10b981' }}>
