@@ -20,6 +20,25 @@ export default function ManageEventHeader({ event, eventId, updateEvent, subscri
     setIsPublishing(false);
   };
 
+  const getButtonText = () => {
+    if (isPublishing) return 'Updating...';
+    if (event?.published) {
+      if (event?.approval_status === 'approved') return '✓ Published (Live)';
+      if (event?.approval_status === 'rejected') return 'Action Required (Rejected)';
+      return '⏳ Admit Approval Requested';
+    }
+    return 'Publish Event';
+  };
+
+  const getButtonColor = () => {
+    if (event?.published) {
+      if (event?.approval_status === 'approved') return '#10b981';
+      if (event?.approval_status === 'rejected') return '#ef4444';
+      return '#f59e0b';
+    }
+    return 'var(--accent)';
+  };
+
   return (
     <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
       <div>
@@ -31,8 +50,8 @@ export default function ManageEventHeader({ event, eventId, updateEvent, subscri
       </div>
       <div style={{ display: 'flex', gap: '12px' }}>
         <a href={`/events/${eventId}`} target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{ textDecoration: 'none' }}>Preview Event Page</a>
-        <button onClick={togglePublish} disabled={isPublishing} className="btn-primary" style={{ backgroundColor: event?.published ? '#10b981' : 'var(--accent)' }}>
-          {isPublishing ? 'Updating...' : (event?.published ? '✓ Published (Live)' : 'Publish Event')}
+        <button onClick={togglePublish} disabled={isPublishing} className="btn-primary" style={{ backgroundColor: getButtonColor() }}>
+          {getButtonText()}
         </button>
       </div>
     </div>
