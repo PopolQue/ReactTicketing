@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import type { Entity } from '../../components/EntitySwitcher';
 import { useToast } from '../../components/Toast';
 import ArtistFormModal from '../../components/modals/ArtistFormModal';
 
 export default function ArtistsList() {
   const { showToast } = useToast();
+  const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [artists, setArtists] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   
@@ -16,16 +19,15 @@ export default function ArtistsList() {
 
   useEffect(() => {
     fetchArtists();
-  }, []);
+  }, [activeEntity]);
 
   async function fetchArtists() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!activeEntity) return;
 
     const { data, error } = await supabase
       .from('artists')
       .select('*')
-      .eq('created_by', user.id)
+      .eq('created_by', activeEntity.id)
       .order('created_at', { ascending: false });
 
     if (error) {

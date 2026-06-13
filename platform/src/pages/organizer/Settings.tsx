@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import type { Entity } from '../../components/EntitySwitcher';
 import { useToast } from '../../components/Toast';
 
 export default function Settings() {
+  const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const { showToast } = useToast();
   const [profile, setProfile] = useState<any>(null);
   const [stripeAccountId, setStripeAccountId] = useState('');
@@ -11,13 +14,12 @@ export default function Settings() {
 
   useEffect(() => {
     async function fetchProfile() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!activeEntity) return;
 
       const { data } = await supabase
-        .from('organizer_profiles')
+        .from('organizers')
         .select('*')
-        .eq('id', user.id)
+        .eq('id', activeEntity.id)
         .single();
 
       if (data) {
@@ -27,13 +29,13 @@ export default function Settings() {
       setLoading(false);
     }
     fetchProfile();
-  }, []);
+  }, [activeEntity]);
 
   const handleSaveStripe = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     const { error } = await supabase
-      .from('organizer_profiles')
+      .from('organizers')
       .update({ stripe_account_id: stripeAccountId })
       .eq('id', profile.id);
 
@@ -54,10 +56,10 @@ export default function Settings() {
       <div className="glass-panel" style={{ padding: '32px' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
           <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontWeight: 'bold', color: 'white', marginRight: '16px' }}>
-            {profile.company_name?.charAt(0).toUpperCase()}
+            {profile.name?.charAt(0).toUpperCase()}
           </div>
           <div>
-            <h3 style={{ margin: '0 0 4px 0' }}>{profile.company_name}</h3>
+            <h3 style={{ margin: '0 0 4px 0' }}>{profile.name}</h3>
             <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
               Plan: <strong style={{ color: 'var(--accent)', textTransform: 'uppercase' }}>{profile.subscription_tier}</strong>
             </p>

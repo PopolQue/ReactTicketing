@@ -1,27 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import type { Entity } from '../../components/EntitySwitcher';
 
 export default function EventsList() {
+  const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function fetchMyEvents() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!activeEntity) return;
 
       const { data } = await supabase
         .from('events')
-        .select('*')
-        .eq('organizer_id', user.id)
+        .select('*, venues(name, city, country)')
+        .eq('organizer_id', activeEntity.id)
         .order('start_date', { ascending: false });
         
       if (data) setEvents(data);
       setLoading(false);
     }
     fetchMyEvents();
-  }, []);
+  }, [activeEntity]);
 
   return (
     <div className="events-list-page">
@@ -67,7 +68,7 @@ export default function EventsList() {
                     </span>
                   </div>
                   <p style={{ color: 'var(--text-secondary)', margin: '0 0 20px 0' }}>
-                    {new Date(event.start_date).toLocaleDateString()} • {event.venue}{event.city ? `, ${event.city}` : ''}{event.country ? `, ${event.country}` : ''}
+                    {new Date(event.start_date).toLocaleDateString()} • {event.venues?.name || event.venue}{event.venues?.city || event.city ? `, ${event.venues?.city || event.city}` : ''}{event.venues?.country || event.country ? `, ${event.venues?.country || event.country}` : ''}
                   </p>
                   <div style={{ display: 'flex', gap: '12px' }}>
                     <Link to={`/organizer/events/${event.id}`} style={{ width: '100%' }}>

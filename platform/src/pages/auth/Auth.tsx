@@ -42,13 +42,13 @@ export default function Auth() {
         // Try to fetch organizer profile to determine redirect
         const { data: user } = await supabase.auth.getUser();
         if (user.user) {
-          const { data: profile } = await supabase.from('organizer_profiles').select('id').eq('id', user.user.id).single();
+          const { data: profile } = await supabase.from('organizers').select('id').eq('claimed_by_user_id', user.user.id).limit(1).single();
           if (profile) {
              navigate('/organizer');
              return;
           }
           
-          const { data: artistClaim } = await supabase.from('artist_claims').select('id').eq('user_id', user.user.id).limit(1).single();
+          const { data: artistClaim } = await supabase.from('entity_claims').select('id').eq('user_id', user.user.id).eq('entity_type', 'artist').limit(1).single();
           if (artistClaim) {
              navigate('/artist');
              return;
@@ -65,9 +65,9 @@ export default function Auth() {
         // Create Organizer Profile only if they selected 'organizer'
         if (data?.user && accountType === 'organizer') {
           const { error: profileError } = await supabase
-            .from('organizer_profiles')
+            .from('organizers')
             .insert([
-              { id: data.user.id, company_name: companyName || 'My Ticketing Co' }
+              { claimed_by_user_id: data.user.id, name: companyName || 'My Ticketing Co', is_verified: true }
             ]);
             
           if (profileError) {

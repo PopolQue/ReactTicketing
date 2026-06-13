@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import type { User } from '@supabase/supabase-js';
 import { ShieldCheck, RefreshCw, Palette } from 'lucide-react';
 
 export default function Home() {
-  const [user, setUser] = useState<any>(null);
+  const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     async function checkUser() {
@@ -88,6 +89,40 @@ export default function Home() {
             </div>
             <h3 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>Stunning UI</h3>
             <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>Experience a meticulously crafted platform that prioritizes both aesthetics and usability.</p>
+          </div>
+        </div>
+
+        {/* Creator Features Section */}
+        <div style={{ marginTop: '120px', width: '100%', maxWidth: '1200px', zIndex: 1 }}>
+          <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+            <h2 style={{ fontSize: '2.5rem', margin: '0 0 16px 0' }}>Built for Organizers & Artists</h2>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
+              Admit isn't just a ticket store—it's a comprehensive ecosystem designed to empower creators.
+            </p>
+          </div>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
+            <div className="glass-panel" style={{ padding: '40px', borderTop: '4px solid #6366f1' }}>
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '16px', color: 'white' }}>Custom Checkouts</h3>
+              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
+                Go beyond Name and Email. Our dynamic Form Builder lets organizers demand precise ticket holder information like Age, Country, Dietary Restrictions, and Custom Responses directly in the shopping cart.
+              </p>
+            </div>
+            
+            <div className="glass-panel" style={{ padding: '40px', borderTop: '4px solid #c084fc' }}>
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '16px', color: 'white' }}>Lineup Management</h3>
+              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
+                Organizers can instantly generate placeholder profiles for every act on their lineup to launch events immediately without waiting for artists to register.
+              </p>
+            </div>
+
+            <div className="glass-panel" style={{ padding: '40px', borderTop: '4px solid #10b981' }}>
+              <h3 style={{ fontSize: '1.5rem', marginBottom: '16px', color: 'white' }}>Entity Claiming</h3>
+              <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
+                Artists, Venues, and Organizers can search the platform to "Claim" their automatically generated profiles. Once verified by our team, they unlock full control over their pages and exclusive dashboards with deep Audience Analytics.
+              </p>
+              <Link to="/claim" className="btn-secondary" style={{ display: 'inline-block', textDecoration: 'none', fontSize: '0.9rem' }}>Go to Claim Portal →</Link>
+            </div>
           </div>
         </div>
       </main>

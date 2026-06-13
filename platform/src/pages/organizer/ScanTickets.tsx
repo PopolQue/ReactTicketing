@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
+import { useOutletContext } from 'react-router-dom';
+import type { Entity } from '../../components/EntitySwitcher';
 
 export default function ScanTickets() {
+  const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [ticketId, setTicketId] = useState('');
   const [scanResult, setScanResult] = useState<{ status: string, message: string, ticket?: any } | null>(null);
   const [scanning, setScanning] = useState(false);
@@ -13,7 +16,7 @@ export default function ScanTickets() {
     setScanResult(null);
 
     const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
+    if (!user || !activeEntity) {
       setScanResult({ status: 'error', message: 'You must be logged in to scan tickets.' });
       setScanning(false);
       return;
@@ -33,7 +36,7 @@ export default function ScanTickets() {
     }
 
     // 2. Verify Organizer owns the event
-    if (ticket.events.organizer_id !== user.id) {
+    if (ticket.events.organizer_id !== activeEntity.id) {
       setScanResult({ status: 'invalid', message: 'This ticket is for an event you do not manage.' });
       setScanning(false);
       return;

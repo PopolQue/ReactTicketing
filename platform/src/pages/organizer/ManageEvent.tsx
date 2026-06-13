@@ -3,6 +3,8 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useEvent } from '../../hooks/useEvent';
 import { useTicketTiers } from '../../hooks/useTicketTiers';
+import { useOutletContext } from 'react-router-dom';
+import type { Entity } from '../../components/EntitySwitcher';
 
 // Extracted Domain Components
 import ManageEventHeader from '../../features/event-management/ManageEventHeader';
@@ -17,6 +19,7 @@ import ExportManager from '../../features/event-management/ExportManager';
 import CheckoutFieldsManager from '../../features/event-management/CheckoutFieldsManager';
 
 export default function ManageEvent() {
+  const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const { id } = useParams();
   
   // Custom Hooks
@@ -32,12 +35,11 @@ export default function ManageEvent() {
 
   useEffect(() => {
     async function fetchAncillaryData() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (user) {
-        const { data: profile } = await supabase.from('organizer_profiles').select('subscription_tier').eq('id', user.id).single();
+      if (activeEntity) {
+        const { data: profile } = await supabase.from('organizers').select('subscription_tier').eq('id', activeEntity.id).single();
         if (profile) setSubscriptionTier(profile.subscription_tier);
 
-        const { data: artistsData } = await supabase.from('artists').select('*').eq('created_by', user.id);
+        const { data: artistsData } = await supabase.from('artists').select('*').eq('created_by', activeEntity.id);
         if (artistsData) setAvailableArtists(artistsData);
       }
 
@@ -47,7 +49,7 @@ export default function ManageEvent() {
       }
     }
     fetchAncillaryData();
-  }, [id]);
+  }, [id, activeEntity]);
 
   // Sync theme when event loads
   useEffect(() => {

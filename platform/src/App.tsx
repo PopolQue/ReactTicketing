@@ -1,5 +1,6 @@
 import { Routes, Route, Link } from 'react-router-dom'
 import './App.css'
+import './index.css'
 
 // Organizer Components
 import OrganizerLayout from './pages/organizer/OrganizerLayout'
@@ -21,6 +22,7 @@ import Discover from './pages/marketplace/Discover'
 import EventDetails from './pages/marketplace/EventDetails'
 import Wallet from './pages/fan/Wallet'
 import ResaleMarket from './pages/marketplace/ResaleMarket'
+import ClaimPortal from './pages/marketplace/ClaimPortal'
 
 import Settings from './pages/organizer/Settings'
 import ScanTickets from './pages/organizer/ScanTickets'
@@ -30,6 +32,10 @@ import MarketingAndAnalytics from './pages/organizer/MarketingAndAnalytics'
 import BlogFeed from './pages/marketplace/BlogFeed'
 import BlogPost from './pages/marketplace/BlogPost'
 
+// Venue Portal
+import VenueLayout from './pages/venue/VenueLayout'
+import VenueDashboard from './pages/venue/VenueDashboard'
+
 // Admin & Support
 import ContactSupport from './pages/support/ContactSupport'
 import AdminLayout from './pages/admin/AdminLayout'
@@ -37,7 +43,7 @@ import EventReview from './pages/admin/EventReview'
 import SupportDesk from './pages/admin/SupportDesk'
 import SuperAdminLayout from './pages/superadmin/SuperAdminLayout'
 import AdminManagement from './pages/superadmin/AdminManagement'
-import ArtistClaims from './pages/admin/ArtistClaims'
+import EntityClaims from './pages/admin/EntityClaims'
 import { ToastProvider } from './components/Toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -59,6 +65,7 @@ function App() {
         <Route path="/blogs" element={<BlogFeed />} />
         <Route path="/blogs/:slug" element={<BlogPost />} />
         <Route path="/auth" element={<Auth />} />
+        <Route path="/claim" element={<ClaimPortal />} />
 
         {/* Organizer Portal */}
         <Route element={<ProtectedRoute />}>
@@ -83,6 +90,13 @@ function App() {
           </Route>
         </Route>
 
+        {/* Venue Portal */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/venue" element={<VenueLayout />}>
+            <Route index element={<VenueDashboard />} />
+          </Route>
+        </Route>
+
         {/* Public Support */}
         <Route path="/support" element={<ContactSupport />} />
 
@@ -92,7 +106,7 @@ function App() {
             <Route index element={<div style={{ padding: '24px' }}><h1>Admin Dashboard</h1><p>Welcome to the Admit employee portal. Select an option from the sidebar to manage events or support tickets.</p></div>} />
             <Route path="events" element={<EventReview />} />
             <Route path="support" element={<SupportDesk />} />
-            <Route path="artists" element={<ArtistClaims />} />
+            <Route path="claims" element={<EntityClaims />} />
           </Route>
         </Route>
 

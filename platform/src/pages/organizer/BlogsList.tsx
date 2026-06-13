@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import type { Entity } from '../../components/EntitySwitcher';
 import { useToast } from '../../components/Toast';
 import BlogFormModal from '../../components/modals/BlogFormModal';
 
 export default function BlogsList() {
   const { showToast } = useToast();
+  const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [blogs, setBlogs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -16,16 +19,15 @@ export default function BlogsList() {
 
   useEffect(() => {
     fetchBlogs();
-  }, []);
+  }, [activeEntity]);
 
   async function fetchBlogs() {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    if (!activeEntity) return;
 
     const { data, error } = await supabase
       .from('blogs')
       .select('*')
-      .eq('author_id', user.id)
+      .eq('author_id', activeEntity.id)
       .order('created_at', { ascending: false });
 
     if (error) {

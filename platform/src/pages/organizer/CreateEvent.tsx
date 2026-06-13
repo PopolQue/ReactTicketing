@@ -1,16 +1,19 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import type { Entity } from '../../components/EntitySwitcher';
+import VenueSelector from '../../components/VenueSelector';
 
 export default function CreateEvent() {
   const navigate = useNavigate();
+  const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
   const [formData, setFormData] = useState({
     title: '',
     start_date: '',
-    venue: '',
+    venue_id: '',
     city: '',
     country: '',
     description: '',
@@ -29,21 +32,8 @@ export default function CreateEvent() {
     setError(null);
 
     try {
-      // 1. Get the currently logged-in user (Organizer)
-      const { data: { user } } = await supabase.auth.getUser();
-      
-      if (!user) {
-        throw new Error("Authentication Required: You must be logged in as an Organizer to create an event.");
-      }
-
-      // Fetch organizer name to satisfy the legacy NOT NULL constraint
-      const { data: profile } = await supabase.from('organizer_profiles').select('company_name').eq('id', user.id).maybeSingle();
-      
-      let companyName = profile?.company_name;
-      if (!profile) {
-        companyName = 'Independent Organizer';
-        // Auto-repair: create the profile if it's completely missing
-        await supabase.from('organizer_profiles').insert([{ id: user.id, company_name: companyName }]);
+      if (!activeEntity) {
+        throw new Error("Authentication Required: You must have an active Organizer profile to create an event.");
       }
 
       // 2. Insert the event into Supabase
@@ -51,16 +41,16 @@ export default function CreateEvent() {
         .from('events')
         .insert([
           {
-            id: crypto.randomUUID(), // Legacy schema expects TEXT id
-            name: formData.title,    // Legacy schema expects 'name' instead of 'title'
-            organizer_name: companyName,
+            id: crypto.randomUUID(),
+            name: formData.title,
+            organizer_name: activeEntity.name,
             start_date: new Date(formData.start_date).toISOString(),
-            venue: formData.venue,
+            venue_id: formData.venue_id,
             city: formData.city,
             country: formData.country,
             description: formData.description,
-            organizer_id: user.id,
-            timezone_id: 'gmt1_berlin', // Must be a valid seed from the timezones table
+            organizer_id: activeEntity.id,
+            timezone_id: 'gmt1_berlin',
             published: false,
             is_external: formData.is_external,
             external_ticket_url: formData.is_external ? formData.external_ticket_url : null
@@ -103,8 +93,15 @@ export default function CreateEvent() {
               <input required type="datetime-local" name="start_date" value={formData.start_date} onChange={handleChange} className="input-field" />
             </div>
             <div>
-              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Venue</label>
-              <input required type="text" name="venue" value={formData.venue} onChange={handleChange} className="input-field" placeholder="Club XYZ" />
+              <VenueSelector 
+                selectedVenueId={formData.venue_id} 
+                onVenueChange={(id, data) => setFormData(prev => ({ 
+                  ...prev, 
+                  venue_id: id,
+                  city: data?.city || prev.city,
+                  country: data?.country || prev.country
+                }))} 
+              />
             </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>

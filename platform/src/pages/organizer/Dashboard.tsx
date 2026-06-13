@@ -1,7 +1,10 @@
 import React, { useEffect, useState } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import type { Entity } from '../../components/EntitySwitcher';
 
 export default function Dashboard() {
+  const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [stats, setStats] = useState({
     totalEvents: 0,
     ticketsSold: 0,
@@ -12,14 +15,13 @@ export default function Dashboard() {
 
   useEffect(() => {
     async function fetchAnalytics() {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!activeEntity) return;
 
       // 1. Fetch all events for this organizer
       const { data: eventsData } = await supabase
         .from('events')
         .select('id')
-        .eq('organizer_id', user.id);
+        .eq('organizer_id', activeEntity.id);
 
       if (!eventsData || eventsData.length === 0) {
         setLoading(false);
@@ -75,7 +77,7 @@ export default function Dashboard() {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, []);
+  }, [activeEntity]);
 
   if (loading) return <div style={{ padding: '24px' }}>Loading Analytics...</div>;
 

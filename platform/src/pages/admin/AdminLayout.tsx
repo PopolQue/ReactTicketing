@@ -78,16 +78,16 @@ export default function AdminLayout() {
             Support Desk
           </Link>
           <Link 
-            to="/admin/artists" 
+            to="/admin/claims" 
             style={{ 
               padding: '12px 16px', 
               borderRadius: '8px', 
               textDecoration: 'none', 
               color: 'white',
-              backgroundColor: isActive('/admin/artists') ? 'rgba(255,255,255,0.1)' : 'transparent'
+              backgroundColor: isActive('/admin/claims') ? 'rgba(255,255,255,0.1)' : 'transparent'
             }}
           >
-            Artist Claims
+            Entity Claims
           </Link>
         </nav>
 

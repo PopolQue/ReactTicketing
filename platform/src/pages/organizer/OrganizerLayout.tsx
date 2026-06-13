@@ -1,11 +1,13 @@
-
+import { useState } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import './Organizer.css';
+import EntitySwitcher, { type Entity } from '../../components/EntitySwitcher';
 
 export default function OrganizerLayout() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [activeEntity, setActiveEntity] = useState<Entity | null>(null);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -29,12 +31,12 @@ export default function OrganizerLayout() {
         </nav>
       </aside>
       <main className="org-content">
-        <header className="org-header glass-panel">
-          <h3>Welcome back, Organizer</h3>
+        <header className="org-header glass-panel" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <EntitySwitcher onEntityChange={setActiveEntity} />
           <button onClick={handleLogout} className="btn-secondary">Logout</button>
         </header>
         <div className="org-page-content">
-          <Outlet />
+          {activeEntity ? <Outlet context={{ activeEntity }} /> : <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>Please wait or create an organizer profile...</div>}
         </div>
       </main>
     </div>
