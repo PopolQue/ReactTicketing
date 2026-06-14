@@ -131,9 +131,8 @@ export class AuthService {
     let isValidHash = false;
 
     if (account.pinHash.startsWith('$2')) {
-        isLegacyBcrypt = true;
-        // Simulate bcrypt check: in a real environment this would use bcrypt.compare
-        isValidHash = true; // Mocked success for legacy transition
+        console.error("Legacy bcrypt hash detected, please reset PIN via organizer dashboard.");
+        throw new Error("Account requires PIN reset for security upgrade.");
     } else {
         const saltBuffer = this._decode(account.pinSalt);
         const providedHash = await this.hashPin(pin, saltBuffer);
@@ -145,17 +144,7 @@ export class AuthService {
         throw new Error("Invalid credentials");
     }
 
-    if (isLegacyBcrypt) {
-        // Rehash to PBKDF2
-        const newSalt = crypto.getRandomValues(new Uint8Array(16));
-        const newPinHash = await this.hashPin(pin, newSalt);
-        account.credentialVersion += 1;
-        await this.adapter.updateScanAccount(account.id, {
-            pinHash: newPinHash,
-            pinSalt: btoa(String.fromCharCode(...newSalt)),
-            credentialVersion: account.credentialVersion
-        });
-    }
+
 
     const issuedAt = Date.now();
     const expiresAt = issuedAt + (this.eventSettings.scanSessionTTLHours || 8) * 3600000;

@@ -58,6 +58,9 @@ const SuperAdminLayout = React.lazy(() => import('./pages/superadmin/SuperAdminL
 const AdminManagement = React.lazy(() => import('./pages/superadmin/AdminManagement'))
 const EntityClaims = React.lazy(() => import('./pages/admin/EntityClaims'))
 const WriterApplicationsReview = React.lazy(() => import('./pages/admin/WriterApplicationsReview'))
+const AdminInviteManagerPage = React.lazy(() => import('./pages/admin/InviteManagerPage'))
+const OrganizerInviteManagerPage = React.lazy(() => import('./pages/organizer/InviteManagerPage'))
+const InviteAcceptPage = React.lazy(() => import('./pages/invite/InviteAcceptPage'))
 const WriterLayout = React.lazy(() => import('./pages/writer/WriterLayout'))
 const WriterDashboard = React.lazy(() => import('./pages/writer/WriterDashboard'))
 import { ToastProvider } from './components/Toast'
@@ -105,6 +108,7 @@ function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/sitemap" element={<SitemapPage />} />
+          <Route path="/invite/:rawToken" element={<InviteAcceptPage />} />
         </Route>
 
         {/* Organizer Portal */}
@@ -119,6 +123,7 @@ function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="marketing" element={<MarketingAndAnalytics />} />
             <Route path="artists" element={<ArtistsList />} />
+            <Route path="invites" element={<OrganizerInviteManagerPage />} />
             <Route path="blogs" element={<BlogsList />} />
           </Route>
         </Route>
@@ -153,6 +158,7 @@ function App() {
             <Route path="events" element={<EventReview />} />
             <Route path="support" element={<SupportDesk />} />
             <Route path="claims" element={<EntityClaims />} />
+            <Route path="invites" element={<AdminInviteManagerPage />} />
             <Route path="writer-applications" element={<WriterApplicationsReview />} />
           </Route>
         </Route>

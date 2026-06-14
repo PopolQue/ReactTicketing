@@ -8,3 +8,6 @@ if (!supabaseUrl || !supabaseAnonKey) {
 }
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+import { SupabaseAdapter } from './Admit/SupabaseAdapter';
+export const supabaseAdapter = new SupabaseAdapter(supabase);

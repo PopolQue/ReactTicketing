@@ -214,8 +214,8 @@ export function mapEventToAdmitConfig(event: any): any {
       maxOrderSize: event.settings?.maxOrderSize || 10,
       requireBuyerEmail: true,
       adminKey: '',
-      scanSessionSecret: 'dummy',
-      qrSigningSecret: 'dummy',
+      scanSessionSecret: import.meta.env.VITE_SCAN_SESSION_SECRET || 'fallback_do_not_use',
+      qrSigningSecret: import.meta.env.VITE_SUPABASE_QR_SECRET || 'fallback_do_not_use',
     },
     theme: {
       bgColor: event.theme_customization?.bgColor,

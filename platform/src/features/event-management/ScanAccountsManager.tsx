@@ -19,31 +19,32 @@ export default function ScanAccountsManager({ eventId }: { eventId: string }) {
     setIsLoading(false);
   };
 
-  const deriveKey = async (pin: string): Promise<string> => {
+  const deriveKey = async (pin: string): Promise<{ pinHash: string; pinSalt: string }> => {
     const enc = new TextEncoder();
-    const keyMaterial = await window.crypto.subtle.importKey(
-      "raw", enc.encode(pin), { name: "PBKDF2" }, false, ["deriveBits"]
+    const pinBuffer = enc.encode(pin);
+    const keyMaterial = await crypto.subtle.importKey(
+      "raw", pinBuffer, "PBKDF2", false, ["deriveBits"]
     );
-    // Use a fixed dummy salt for the MVP
-    const salt = enc.encode("dummy-salt-12345");
-    const derivedBits = await window.crypto.subtle.deriveBits(
-      { name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" },
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const derivedBits = await crypto.subtle.deriveBits(
+      { name: "PBKDF2", salt: salt, iterations: 600000, hash: "SHA-256" },
       keyMaterial,
       256
     );
-    const hashArray = Array.from(new Uint8Array(derivedBits));
-    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    return `pbkdf2:100000:dummy-salt-12345:${hashHex}`;
+    const hashHex = btoa(String.fromCharCode(...new Uint8Array(derivedBits)));
+    const saltHex = btoa(String.fromCharCode(...salt));
+    return { pinHash: hashHex, pinSalt: saltHex };
   };
 
   const handleCreate = async (e: React.FormEvent) => {
     e.preventDefault();
-    const pinHash = await deriveKey(form.pin);
+    const { pinHash, pinSalt } = await deriveKey(form.pin);
     const { error } = await supabase.from('scan_accounts').insert([{
       id: crypto.randomUUID(),
       event_id: eventId,
       username: form.username,
       pin_hash: pinHash,
+      pin_salt: pinSalt,
       assigned_location: form.assignedLocation,
       active: true
     }]);

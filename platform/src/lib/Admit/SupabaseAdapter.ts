@@ -116,6 +116,16 @@ export class SupabaseAdapter implements StorageAdapter {
     if (updErr) throw updErr;
   }
 
+  async returnTicket(ticketId: string): Promise<void> {
+    const { error } = await this.supabase.from("resale_listings").insert({ ticket_id: ticketId, seller_id: (await this.supabase.auth.getUser()).data.user?.id, asking_price_cents: 0 }); // Note: actual logic will depend on phase-shift or waitlist
+    if (error) throw error;
+  }
+
+  async buyResaleTicket(listingId: string, buyerId: string): Promise<void> {
+    const { error } = await this.supabase.rpc('buy_resale_ticket', { p_listing_id: listingId, p_buyer_id: buyerId });
+    if (error) throw error;
+  }
+
   async countIssuedTickets(ticketTypeId: string, eventId: string): Promise<number> {
     const { data, error } = await this.supabase.from("ticket_types").select("sold_count").eq("id", ticketTypeId).maybeSingle();
     if (error) throw error;
@@ -212,5 +222,45 @@ export class SupabaseAdapter implements StorageAdapter {
     });
     if (error) throw error;
     return data;
+  }
+
+  // Invites
+  async createInvite(invite: any): Promise<any> {
+    const { data, error } = await this.supabase.from("invite_links").insert(invite).select().single();
+    if (error) throw error;
+    return data;
+  }
+
+  async listInvites(filters?: any): Promise<any[]> {
+    let query = this.supabase.from("invite_links").select("*").order("created_at", { ascending: false });
+    if (filters?.entityType) query = query.eq("entity_type", filters.entityType);
+    if (filters?.entityId) query = query.eq("entity_id", filters.entityId);
+    
+    const { data, error } = await query;
+    if (error) throw error;
+    return data || [];
+  }
+
+  async validateInvite(tokenHash: string): Promise<any> {
+    const { data, error } = await this.supabase.rpc("validate_invite", { p_token_hash: tokenHash });
+    if (error) throw error;
+    return data;
+  }
+
+  async claimInvite(rawToken: string): Promise<any> {
+    const { data, error } = await this.supabase.rpc("claim_invite", { p_raw_token: rawToken });
+    if (error) throw error;
+    return data;
+  }
+
+  async revokeInvite(inviteId: string): Promise<void> {
+    const { error } = await this.supabase.rpc("revoke_invite", { p_invite_id: inviteId });
+    if (error) throw error;
+  }
+
+  async getInviteAuditEvents(inviteId: string): Promise<any[]> {
+    const { data, error } = await this.supabase.from("invite_audit_events").select("*").eq("invite_id", inviteId).order("occurred_at", { ascending: false });
+    if (error) throw error;
+    return data || [];
   }
 }
