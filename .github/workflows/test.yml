@@ -37,4 +37,7 @@ jobs:
           
       - name: Run Playwright e2e tests
         run: |
-          cd platform && npm run test:e2e
+          cd platform
+          export VITE_SUPABASE_URL="http://127.0.0.1:54321"
+          export VITE_SUPABASE_ANON_KEY=$(supabase status -o env | grep ANON_KEY | cut -d '=' -f2 | tr -d '"')
+          npm run test:e2e

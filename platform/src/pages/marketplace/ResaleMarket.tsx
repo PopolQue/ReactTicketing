@@ -77,7 +77,12 @@ export default function ResaleMarket() {
 
   return (
     <div className="resale-market-page" style={{ minHeight: '100vh', padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
-      
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '40px', borderBottom: '1px solid var(--border)', paddingBottom: '20px' }}>
+        <div>
+          <h1 style={{ fontSize: '2.5rem', margin: '0 0 8px 0', textShadow: 'var(--bloom-text)' }}>Secondary Market</h1>
+          <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1.1rem' }}>Securely buy tickets from other fans.</p>
+        </div>
+      </div>
 
       {loading ? <p style={{ color: 'var(--text-secondary)' }}>Loading listings...</p> : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>

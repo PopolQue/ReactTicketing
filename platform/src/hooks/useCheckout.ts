@@ -70,7 +70,7 @@ export function useCheckout({ eventId, tiers, cart }: { eventId: string, tiers: 
         return { ticket_type_id: tierId, quantity: cart[tierId], price_cents: tier?.pricing?.amount || 0 };
       });
 
-      const { error: orderError } = await supabase.from('orders').insert([{
+      const orderData = {
         id: orderId,
         event_id: eventId,
         items: orderItems,
@@ -79,9 +79,7 @@ export function useCheckout({ eventId, tiers, cart }: { eventId: string, tiers: 
         discount_cents: discountCents,
         total_cents: finalTotalCents,
         status: 'completed'
-      }]);
-
-      if (orderError) throw orderError;
+      };
 
       // Insert individual tickets with their personalizations
       const ticketsToInsert = ticketForms.map(t => {
@@ -110,8 +108,12 @@ export function useCheckout({ eventId, tiers, cart }: { eventId: string, tiers: 
         };
       });
 
-      const { error: ticketError } = await supabase.from('tickets').insert(ticketsToInsert);
-      if (ticketError) throw ticketError;
+      const { error: rpcError } = await supabase.rpc('create_checkout_transaction', {
+        p_order: orderData,
+        p_tickets: ticketsToInsert
+      });
+
+      if (rpcError) throw rpcError;
 
       if (onBeforeComplete) {
         await onBeforeComplete();
