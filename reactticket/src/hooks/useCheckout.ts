@@ -50,8 +50,8 @@ export const useCheckout = (cartTotals: { subtotal: string, discount: string, to
         createdAt: new Date(),
     };
 
-    console.log("Creating order:", order);
-    await adapter.createOrder(order);
+    console.log("Prepared order:", order);
+    // REMOVED: await adapter.createOrder(order); // Do not insert until payment is confirmed
 
     if (onCheckout) {
         console.log("Calling onCheckout...");
@@ -62,9 +62,18 @@ export const useCheckout = (cartTotals: { subtotal: string, discount: string, to
             try {
                 const authService = new AuthService(adapter, event.settings);
                 const ticketService = new TicketService(adapter, authService);
-                const issuedTickets = await ticketService.issueTickets(order.id);
+                
+                // 1. Pre-generate tickets in memory without saving
+                const issuedTickets = await ticketService.prepareTickets(order);
 
-                await adapter.updateOrderStatus(orderId, 'confirmed');
+                // 2. Atomic save of Order + Tickets
+                if (adapter.createCheckoutTransaction) {
+                    await adapter.createCheckoutTransaction(order, issuedTickets);
+                } else {
+                    await adapter.createOrder(order);
+                    await adapter.saveTickets(issuedTickets);
+                    await adapter.updateOrderStatus(order.id, 'confirmed');
+                }
 
                 if (onTicketIssued) {
                     for (const ticket of issuedTickets) {

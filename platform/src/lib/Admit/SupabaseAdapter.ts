@@ -44,6 +44,18 @@ export class SupabaseAdapter implements StorageAdapter {
     if (error) throw error;
   }
 
+  async createCheckoutTransaction(order: Order, tickets: IssuedTicket[]): Promise<void> {
+    const p_order = mapOrderToRow(order);
+    const p_tickets = tickets.map(mapTicketToRow);
+
+    const { error } = await this.supabase.rpc('create_checkout_transaction', {
+      p_order,
+      p_tickets
+    });
+
+    if (error) throw error;
+  }
+
   async getOrder(orderId: string): Promise<Order | null> {
     const { data, error } = await this.supabase.from("orders").select("*").eq("id", orderId).maybeSingle();
     if (error) throw error;

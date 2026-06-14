@@ -11,6 +11,7 @@ export interface StorageAdapter {
   deleteTicketType(eventId: string, ticketTypeId: string): Promise<void>;
 
   createOrder(order: Order): Promise<void>;
+  createCheckoutTransaction?(order: Order, tickets: IssuedTicket[]): Promise<void>;
   getOrder(orderId: string): Promise<Order | null>;
   updateOrderStatus(orderId: string, status: Order["status"]): Promise<void>;
 

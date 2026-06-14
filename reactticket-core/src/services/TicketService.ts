@@ -5,13 +5,7 @@ import { AuthService } from "./AuthService";
 
 export class TicketService {
   constructor(private adapter: StorageAdapter, private authService: AuthService) {}
-async issueTickets(orderId: string): Promise<IssuedTicket[]> {
-  const order = await this.adapter.getOrder(orderId);
-  if (!order) {
-      console.error("Order not found for issuance:", orderId);
-      throw new Error("Order not found");
-  }
-
+async prepareTickets(order: any): Promise<IssuedTicket[]> {
   // 1. Capacity Check
   for (const item of order.items) {
       const ticketTypes = await this.adapter.getTicketTypes(order.eventId);
@@ -25,7 +19,6 @@ async issueTickets(orderId: string): Promise<IssuedTicket[]> {
   }
 
   const tickets: IssuedTicket[] = [];
-  const ticketsToSave: IssuedTicket[] = [];
 
   for (const item of order.items) {
     const ticketType = (await this.adapter.getTicketTypes(order.eventId)).find(t => t.id === item.ticketTypeId);
@@ -45,17 +38,27 @@ async issueTickets(orderId: string): Promise<IssuedTicket[]> {
           status: "pending_delivery",
           pricePaidCents: item.unitPriceCents,
       };
-      ticketsToSave.push(ticket);
       tickets.push(ticket);
     }
   }
   
-  if (ticketsToSave.length > 0) {
-    await this.adapter.saveTickets(ticketsToSave);
+  return tickets;
+}
+
+async issueTickets(orderId: string): Promise<IssuedTicket[]> {
+  const order = await this.adapter.getOrder(orderId);
+  if (!order) {
+      console.error("Order not found for issuance:", orderId);
+      throw new Error("Order not found");
   }
+
+  const tickets = await this.prepareTickets(order);
+  await this.adapter.saveTickets(tickets);
 
   return tickets;
 }
+
+
 
 async deliverTicket(ticketId: string): Promise<void> {
   const ticket = await this.adapter.getTicket(ticketId);
