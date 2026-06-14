@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useEvent } from '../../hooks/useEvent';
@@ -8,15 +8,15 @@ import type { Entity } from '../../components/EntitySwitcher';
 
 // Extracted Domain Components
 import ManageEventHeader from '../../features/event-management/ManageEventHeader';
-import TicketTiersManager from '../../features/event-management/TicketTiersManager';
 import LineupManager from '../../features/event-management/LineupManager';
 import ImageUploader from '../../features/event-management/ImageUploader';
 import ThemeCustomizer from '../../features/event-management/ThemeCustomizer';
-import ScanAccountsManager from '../../features/event-management/ScanAccountsManager';
-import PromoManager from '../../features/event-management/PromoManager';
-import ScanDashboard from '../../features/event-management/ScanDashboard';
 import ExportManager from '../../features/event-management/ExportManager';
 import CheckoutFieldsManager from '../../features/event-management/CheckoutFieldsManager';
+
+import { SupabaseAdapter } from '../../lib/Admit/SupabaseAdapter';
+
+const ReactTicket = React.lazy(() => import('reactticket').then(m => ({ default: m.ReactTicket })));
 
 export default function ManageEvent() {
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
@@ -24,7 +24,10 @@ export default function ManageEvent() {
   
   // Custom Hooks
   const { event, loading: eventLoading, updateEvent } = useEvent(id);
-  const { tiers, loading: tiersLoading, setTiers } = useTicketTiers(id) as any;
+  const { tiers, loading: tiersLoading, setTiers } = useTicketTiers(id);
+
+  // Adapter
+  const adapter = useMemo(() => new SupabaseAdapter(supabase), []);
 
   // Local State for specific fetches
   const [subscriptionTier, setSubscriptionTier] = useState('free');
@@ -83,18 +86,22 @@ export default function ManageEvent() {
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px' }}>
         
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-          {/* Ticket Tiers Section */}
-          <TicketTiersManager 
-            event={event} 
-            eventId={id!} 
-            tiers={tiers} 
-            setTiers={setTiers} 
-            updateEvent={updateEvent} 
-          />
+          {/* ReactTicket Admin Module Integration */}
+          <div className="glass-panel" style={{ padding: '24px' }}>
+            <React.Suspense fallback={<div>Loading admit admin...</div>}>
+              {typeof window !== 'undefined' ? (
+                <ReactTicket
+                  mode="admin"
+                  event={event}
+                  adapter={adapter}
+                  onCheckout={() => Promise.resolve('cancelled')}
+                />
+              ) : (
+                <div>Loading admit admin...</div>
+              )}
+            </React.Suspense>
+          </div>
           <CheckoutFieldsManager eventId={id!} />
-          <PromoManager eventId={id!} />
-          <ScanAccountsManager eventId={id!} />
-          <ScanDashboard eventId={id!} />
           <ExportManager eventId={id!} eventName={event?.name} />
         </div>
 

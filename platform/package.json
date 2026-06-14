@@ -24,6 +24,8 @@
     "react": "^19.2.6",
     "react-dom": "^19.2.6",
     "react-router-dom": "^6.30.4",
+    "reactticket": "file:../reactticket",
+    "reactticket-core": "file:../reactticket-core",
     "sirv": "^3.0.2",
     "stripe": "^22.2.1"
   },

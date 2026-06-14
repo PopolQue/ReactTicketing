@@ -1,7 +1,7 @@
 export async function deriveKey(pin: Uint8Array, salt: Uint8Array): Promise<CryptoKey> {
   const baseKey = await crypto.subtle.importKey(
     "raw",
-    pin as any,
+    pin,
     "PBKDF2",
     false,
     ["deriveBits"]
@@ -9,14 +9,14 @@ export async function deriveKey(pin: Uint8Array, salt: Uint8Array): Promise<Cryp
   const bits = await crypto.subtle.deriveBits(
     {
       name: "PBKDF2",
-      salt: salt as any,
+      salt: salt,
       iterations: 100000,
       hash: "SHA-256",
     },
     baseKey,
     256
   );
-  return crypto.subtle.importKey("raw", bits as any, "HMAC", false, ["sign", "verify"]);
+  return crypto.subtle.importKey("raw", bits, "HMAC", false, ["sign", "verify"]);
 }
 
 export async function generateHMAC(key: CryptoKey, data: string): Promise<ArrayBuffer> {

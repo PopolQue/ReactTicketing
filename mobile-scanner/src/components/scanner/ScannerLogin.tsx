@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+
 
 // Simple implementation for web-based scanner simulation
-export const ScannerLogin = ({ onLoginSuccess }: { onLoginSuccess: () => void }) => {
+export const ScannerLogin = ({ authService, onLoginSuccess }: { authService: any, onLoginSuccess: (session: any) => void }) => {
   const [username, setUsername] = useState('');
   const [pin, setPin] = useState('');
+  const [eventId, setEventId] = useState('evt_test_001'); // Added eventId input for testing
+  const [loading, setLoading] = useState(false);
 
-  const handleLogin = () => {
-    // Integrate with reactticket-core AuthService here
-    if (username === 'crew' && pin === '1234') {
-        onLoginSuccess();
-    } else {
-        alert('Invalid credentials');
+  const handleLogin = async () => {
+    try {
+      setLoading(true);
+      const session = await authService.loginScanAccount(eventId, username, pin);
+      onLoginSuccess(session);
+    } catch (err: any) {
+      alert(err.message || 'Invalid credentials');
+    } finally {
+      setLoading(false);
     }
   };
 

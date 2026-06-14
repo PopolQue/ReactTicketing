@@ -51,11 +51,14 @@ export default function PrimaryTicketSelector({
                     <button 
                       onClick={() => updateCart(tier.id, -1)} 
                       disabled={quantity === 0}
+                      aria-disabled={quantity === 0}
+                      aria-label={`Decrease quantity of ${tier.name}`}
                       style={{ width: '32px', height: '32px', borderRadius: '4px', border: 'none', backgroundColor: quantity > 0 ? 'rgba(255,255,255,0.1)' : 'transparent', color: 'white', cursor: quantity > 0 ? 'pointer' : 'not-allowed' }}
                     >-</button>
-                    <span style={{ minWidth: '20px', textAlign: 'center', fontWeight: 600 }}>{quantity}</span>
+                    <span style={{ minWidth: '20px', textAlign: 'center', fontWeight: 600 }} aria-live="polite">{quantity}</span>
                     <button 
                       onClick={() => updateCart(tier.id, 1)} 
+                      aria-label={`Increase quantity of ${tier.name}`}
                       style={{ width: '32px', height: '32px', borderRadius: '4px', border: 'none', backgroundColor: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer' }}
                     >+</button>
                   </div>

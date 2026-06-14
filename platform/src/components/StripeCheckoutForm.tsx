@@ -51,8 +51,8 @@ export default function StripeCheckoutForm({ amountCents, itemName, onConfirm, o
 
   return (
     <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
-      <div className="glass-panel" style={{ padding: '40px', width: '100%', maxWidth: '400px', backgroundColor: 'rgba(15, 17, 21, 0.95)' }}>
-        <h2 style={{ marginTop: 0, marginBottom: '8px' }}>Secure Checkout</h2>
+      <div className="glass-panel" role="dialog" aria-modal="true" aria-labelledby="checkout-title" style={{ padding: '40px', width: '100%', maxWidth: '400px', backgroundColor: 'rgba(15, 17, 21, 0.95)' }}>
+        <h2 id="checkout-title" style={{ marginTop: 0, marginBottom: '8px' }}>Secure Checkout</h2>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
           Payment for <strong>{itemName}</strong>.
         </p>
@@ -76,8 +76,14 @@ export default function StripeCheckoutForm({ amountCents, itemName, onConfirm, o
 
           <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
             <button type="button" onClick={onCancel} className="btn-secondary" style={{ flex: 1 }} disabled={loading}>Cancel</button>
-            <button type="submit" disabled={!stripe || loading} className="btn-primary" style={{ flex: 1, backgroundColor: '#10b981' }}>
-              {loading ? 'Processing...' : 'Pay Now'}
+            <button 
+              type="submit" 
+              disabled={!stripe || loading} 
+              aria-disabled={!stripe || loading}
+              className="btn-primary" 
+              style={{ flex: 1, backgroundColor: '#10b981' }}
+            >
+              {loading ? 'Processing...' : `Pay €{(amountCents / 100).toFixed(2)}`}
             </button>
           </div>
         </form>

@@ -4,15 +4,20 @@ import { EventSettings } from "../types/event.types";
 import { signToken, verifyToken } from "../utils/crypto";
 
 export class AuthService {
-  private keyPromise: Promise<CryptoKey>;
+  private _keyPromise: Promise<CryptoKey> | null = null;
 
-  constructor(private adapter: StorageAdapter, private eventSettings: EventSettings) {
-    if (!this.eventSettings || !this.eventSettings.scanSessionSecret) {
-        console.error("AuthService initialized without scanSessionSecret", this.eventSettings);
-        this.keyPromise = Promise.reject("Missing scanSessionSecret");
-    } else {
-        this.keyPromise = this.deriveKey(this.eventSettings.scanSessionSecret);
+  constructor(private adapter: StorageAdapter, private eventSettings: EventSettings) {}
+
+  private get keyPromise(): Promise<CryptoKey> {
+    if (!this._keyPromise) {
+      if (!this.eventSettings || !this.eventSettings.scanSessionSecret) {
+          console.error("AuthService initialized without scanSessionSecret", this.eventSettings);
+          this._keyPromise = Promise.reject("Missing scanSessionSecret");
+      } else {
+          this._keyPromise = this.deriveKey(this.eventSettings.scanSessionSecret);
+      }
     }
+    return this._keyPromise;
   }
 
   private async deriveKey(secret: string): Promise<CryptoKey> {
@@ -62,10 +67,10 @@ export class AuthService {
   private async hashWithSalt(passphrase: string, salt: Uint8Array, iterations: number): Promise<Uint8Array> {
     const enc = new TextEncoder();
     const passphraseBuffer = enc.encode(passphrase);
-    const baseKey = await crypto.subtle.importKey("raw", passphraseBuffer as any, "PBKDF2", false, ["deriveBits"]);
+    const baseKey = await crypto.subtle.importKey("raw", passphraseBuffer, "PBKDF2", false, ["deriveBits"]);
     const bits = await crypto.subtle.deriveBits({
       name: "PBKDF2",
-      salt: salt as any,
+      salt: salt,
       iterations: iterations,
       hash: "SHA-256"
     }, baseKey, 256);

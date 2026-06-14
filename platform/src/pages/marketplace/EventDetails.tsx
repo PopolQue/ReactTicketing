@@ -1,13 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
 import EventHero from '../../features/marketplace/EventHero';
-import PrimaryTicketSelector from '../../features/marketplace/PrimaryTicketSelector';
-import CheckoutFlow from '../../features/marketplace/CheckoutFlow';
 import EventAboutSection from '../../features/marketplace/EventAboutSection';
-import EventCheckoutBottomBar from '../../features/marketplace/EventCheckoutBottomBar';
 import { useEventData } from '../../hooks/useEventData';
+import { SupabaseAdapter } from '../../lib/Admit/SupabaseAdapter';
+import CheckoutModal from '../../components/CheckoutModal';
+
+const ReactTicket = React.lazy(() => import('reactticket').then(m => ({ default: m.ReactTicket })));
 
 export default function EventDetails() {
   const { id } = useParams();
@@ -16,34 +17,26 @@ export default function EventDetails() {
 
   const { event, tiers, eventArtists, loading } = useEventData(id);
 
-  // Carousel & Checkout state
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // Cart & Checkout State
-  const [cart, setCart] = useState<{ [tierId: string]: number }>({});
-  const [checkoutMode, setCheckoutMode] = useState(false);
+  // Adapter initialization
+  const adapter = useMemo(() => new SupabaseAdapter(supabase), []);
 
-  const updateCart = (tierId: string, delta: number) => {
-    setCart(prev => {
-      const current = prev[tierId] || 0;
-      const next = Math.max(0, current + delta);
-      if (next === 0) {
-        const copy = { ...prev };
-        delete copy[tierId];
-        return copy;
-      }
-      return { ...prev, [tierId]: next };
-    });
-  };
+  const [checkoutOrder, setCheckoutOrder] = useState<any | null>(null);
+  const [checkoutResolve, setCheckoutResolve] = useState<((result: "confirmed" | "cancelled") => void) | null>(null);
 
-  const handleBeginCheckout = async () => {
+  const handleCheckout = async (order: any): Promise<"confirmed" | "cancelled"> => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       showToast('Please log in or sign up to purchase tickets.', 'error');
       navigate('/auth');
-      return;
+      return "cancelled";
     }
-    setCheckoutMode(true);
+    
+    return new Promise((resolve) => {
+      setCheckoutOrder(order);
+      setCheckoutResolve(() => resolve);
+    });
   };
 
   if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading...</div>;
@@ -56,6 +49,26 @@ export default function EventDetails() {
 
   return (
     <div className="event-details-page" style={{ minHeight: '100vh', backgroundColor: customBgColor, transition: 'background-color 0.5s' }}>
+      
+      {checkoutOrder && checkoutResolve && (
+        <CheckoutModal
+          eventId={event.id}
+          amountCents={checkoutOrder.totalCents}
+          itemName={`Order for ${event.name}`}
+          onConfirm={async () => {
+            checkoutResolve("confirmed");
+            setCheckoutOrder(null);
+            setCheckoutResolve(null);
+            showToast('Order confirmed! Tickets issued.', 'success');
+            navigate('/wallet');
+          }}
+          onCancel={() => {
+            checkoutResolve("cancelled");
+            setCheckoutOrder(null);
+            setCheckoutResolve(null);
+          }}
+        />
+      )}
       
 
       <EventHero 
@@ -75,33 +88,23 @@ export default function EventDetails() {
 
           <EventAboutSection event={event} eventArtists={eventArtists} customAccentColor={customAccentColor} />
 
-          {checkoutMode ? (
-            <CheckoutFlow 
-              event={event} 
-              tiers={tiers} 
-              cart={cart} 
-              onCancel={() => setCheckoutMode(false)} 
-              onComplete={() => navigate('/wallet')} 
-            />
-          ) : (
-            <PrimaryTicketSelector 
-              event={event} 
-              tiers={tiers} 
-              cart={cart}
-              updateCart={updateCart}
-              customAccentColor={customAccentColor} 
-            />
-          )}
+          <div className="react-ticket-container" style={{ '--rt-bg': customBgColor, '--rt-accent': customAccentColor } as any}>
+            <React.Suspense fallback={<div style={{ padding: '24px', textAlign: 'center' }}>Loading tickets...</div>}>
+              {typeof window !== 'undefined' ? (
+                <ReactTicket
+                  mode="storefront"
+                  event={event}
+                  adapter={adapter}
+                  onCheckout={handleCheckout}
+                  theme={theme}
+                />
+              ) : (
+                <div style={{ padding: '24px', textAlign: 'center' }}>Loading tickets...</div>
+              )}
+            </React.Suspense>
+          </div>
         </div>
       </main>
-
-      {!checkoutMode && (
-        <EventCheckoutBottomBar 
-          cart={cart} 
-          customAccentColor={customAccentColor} 
-          onProceed={handleBeginCheckout} 
-        />
-      )}
     </div>
   );
 }

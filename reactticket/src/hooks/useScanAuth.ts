@@ -12,13 +12,17 @@ export const useScanAuth = (eventId: string) => {
 
   const [failureCount, setFailureCount] = useState(0);
   const [firstFailureTimestamp, setFirstFailureTimestamp] = useState<number | null>(null);
+  const [authError, setAuthError] = useState<string | null>(null);
   const [lockedUntil, setLockedUntil] = useState<number | null>(() => {
     try {
         const stored = sessionStorage.getItem(`tf_lockout_${eventId}`);
         if (stored && parseInt(stored) > Date.now()) {
             return parseInt(stored);
         }
-    } catch (e) { console.warn(e); }
+    } catch (e: any) { 
+        console.warn(e); 
+        // Can't set state in initialization, but we'll surface errors on write
+    }
     return null;
   });
   const [lockRemainingSeconds, setLockRemainingSeconds] = useState(0);
@@ -34,7 +38,10 @@ export const useScanAuth = (eventId: string) => {
           setFirstFailureTimestamp(null);
           try {
             sessionStorage.removeItem(`tf_lockout_${eventId}`);
-          } catch(e) { console.warn(e); }
+          } catch(e: any) { 
+             console.warn(e); 
+             setAuthError("Storage access blocked");
+          }
           clearInterval(interval);
         }
       }, 1000);
@@ -44,15 +51,19 @@ export const useScanAuth = (eventId: string) => {
 
   const login = useCallback(async (username: string, pin: string) => {
     if (lockedUntil && lockedUntil > Date.now()) {
-      throw new Error(`Locked for ${lockRemainingSeconds} more seconds.`);
+      const msg = `Locked for ${lockRemainingSeconds} more seconds.`;
+      setAuthError(msg);
+      throw new Error(msg);
     }
 
     try {
+        setAuthError(null);
         const session = await authService.loginScanAccount(eventId, username, pin);
         dispatch({ type: 'SET_AUTH_SESSION', payload: session });
         setFailureCount(0);
         setFirstFailureTimestamp(null);
-    } catch (e) {
+    } catch (e: any) {
+        setAuthError(e.message || "Invalid credentials");
         const now = Date.now();
         const newFailureCount = (firstFailureTimestamp && now - firstFailureTimestamp > FAILURE_WINDOW) ? 1 : failureCount + 1;
         
@@ -68,7 +79,10 @@ export const useScanAuth = (eventId: string) => {
             setLockRemainingSeconds(LOCKOUT_DURATION / 1000);
             try {
                 sessionStorage.setItem(`tf_lockout_${eventId}`, newLockedUntil.toString());
-            } catch(e) { console.warn(e); }
+            } catch(storageErr: any) { 
+                console.warn(storageErr); 
+                setAuthError("Storage access blocked");
+            }
         }
         throw e; // re-throw to be caught by component
     }
@@ -84,5 +98,6 @@ export const useScanAuth = (eventId: string) => {
     logout,
     isLocked: !!(lockedUntil && lockedUntil > Date.now()),
     lockRemainingSeconds,
+    error: authError,
   };
 };

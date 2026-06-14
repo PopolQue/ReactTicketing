@@ -59,7 +59,7 @@ export default function CheckoutModal({ eventId, amountCents, itemName, onConfir
   if (loading) {
     return (
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000 }}>
-        <p>Loading secure checkout...</p>
+        <p role="status" aria-live="polite">Loading secure checkout...</p>
       </div>
     );
   }
@@ -67,7 +67,7 @@ export default function CheckoutModal({ eventId, amountCents, itemName, onConfir
   if (error || !clientSecret) {
     return (
       <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
-        <div className="glass-panel" style={{ padding: '40px', width: '100%', maxWidth: '400px', textAlign: 'center' }}>
+        <div className="glass-panel" role="alertdialog" aria-modal="true" style={{ padding: '40px', width: '100%', maxWidth: '400px', textAlign: 'center' }}>
           <h3 style={{ color: '#ef4444' }}>Checkout Error</h3>
           <p>{error || 'Could not connect to payment gateway.'}</p>
           <button onClick={onCancel} className="btn-secondary" style={{ marginTop: '16px' }}>Go Back</button>
