@@ -8,13 +8,7 @@ export default function VenueDashboard() {
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    if (activeEntity) {
-      fetchEvents();
-    }
-  }, [activeEntity]);
-
-  const fetchEvents = async () => {
+  async function fetchEvents() {
     setLoading(true);
     // Fetch all events booked at this venue
     const { data } = await supabase
@@ -25,7 +19,13 @@ export default function VenueDashboard() {
       
     if (data) setEvents(data);
     setLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    if (activeEntity) {
+      fetchEvents();
+    }
+  }, [activeEntity]);
 
   return (
     <div>

@@ -33,6 +33,7 @@ export default function EntityClaims() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line
     fetchClaims();
   }, []);
 

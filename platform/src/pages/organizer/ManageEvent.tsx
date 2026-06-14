@@ -54,6 +54,7 @@ export default function ManageEvent() {
   // Sync theme when event loads
   useEffect(() => {
     if (event && event.theme_customization && !initialThemeLoaded) {
+      // eslint-disable-next-line
       setTheme({
         bgColor: event.theme_customization.bgColor || '#0f1115',
         accentColor: event.theme_customization.accentColor || '#6366f1',

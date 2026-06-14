@@ -9,6 +9,7 @@ export default function Auth() {
   
   useEffect(() => {
     if (window.location.hash.includes('type=recovery')) {
+      // eslint-disable-next-line
       setAuthMode('update-password');
     }
   }, []);

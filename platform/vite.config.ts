@@ -11,4 +11,7 @@ export default defineConfig({
     setupFiles: './src/setupTests.ts',
     exclude: ['e2e/**', 'node_modules/**'],
   },
+  server: {
+    allowedHosts: ["crescentlike-florencio-nonrustic.ngrok-free.dev"]
+  }
 })

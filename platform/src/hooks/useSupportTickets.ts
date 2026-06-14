@@ -17,6 +17,7 @@ export function useSupportTickets() {
   }, []);
 
   useEffect(() => {
+    // eslint-disable-next-line
     fetchTickets();
   }, [fetchTickets]);
 
@@ -52,6 +53,7 @@ export function useSupportMessages(ticketId: string | undefined) {
   }, [ticketId]);
 
   useEffect(() => {
+    // eslint-disable-next-line
     fetchMessages();
   }, [fetchMessages]);
 

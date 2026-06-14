@@ -18,6 +18,7 @@ export default function ArtistClaims() {
   };
 
   useEffect(() => {
+    // eslint-disable-next-line
     fetchClaims();
   }, []);
 

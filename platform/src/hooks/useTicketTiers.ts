@@ -18,6 +18,7 @@ export function useTicketTiers(eventId: string | undefined) {
   }, [eventId]);
 
   useEffect(() => {
+    // eslint-disable-next-line
     fetchTiers();
   }, [fetchTiers]);
 

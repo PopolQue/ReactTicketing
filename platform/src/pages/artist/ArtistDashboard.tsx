@@ -10,20 +10,20 @@ export default function ArtistDashboard() {
   const [analytics, setAnalytics] = useState<any>(null);
   const [analyticsLoading, setAnalyticsLoading] = useState(false);
 
-  useEffect(() => {
-    if (activeEntity) {
-      fetchAnalytics();
-    }
-  }, [activeEntity]);
-
-  const fetchAnalytics = async () => {
+  async function fetchAnalytics() {
     setAnalyticsLoading(true);
     const { data, error } = await supabase.rpc('get_artist_analytics', { artist_id_param: activeEntity.id });
     if (!error && data) {
       setAnalytics(data);
     }
     setAnalyticsLoading(false);
-  };
+  }
+
+  useEffect(() => {
+    if (activeEntity) {
+      fetchAnalytics();
+    }
+  }, [activeEntity]);
 
   return (
     <div>

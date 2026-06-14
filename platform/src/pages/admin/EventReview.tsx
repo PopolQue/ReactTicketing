@@ -11,7 +11,7 @@ export default function EventReview() {
     fetchEvents();
   }, []);
 
-  const fetchEvents = async () => {
+  async function fetchEvents() {
     setLoading(true);
     // Fetch events that organizers have "published" but still need approval
     const { data } = await supabase
@@ -23,7 +23,7 @@ export default function EventReview() {
     
     if (data) setEvents(data);
     setLoading(false);
-  };
+  }
 
   const handleAction = async (eventId: string, action: 'approved' | 'rejected') => {
     const { data: { user } } = await supabase.auth.getUser();

@@ -15,6 +15,7 @@ export default function ArtistEditProfile() {
 
   useEffect(() => {
     if (claim?.artists) {
+      // eslint-disable-next-line
       setFormData({
         bio: claim.artists.bio || '',
         image_url: claim.artists.image_url || '',

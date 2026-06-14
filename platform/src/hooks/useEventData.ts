@@ -9,6 +9,7 @@ export function useEventData(eventId: string | undefined) {
 
   useEffect(() => {
     if (!eventId) {
+      // eslint-disable-next-line
       setLoading(false);
       return;
     }

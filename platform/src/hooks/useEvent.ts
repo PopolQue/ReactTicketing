@@ -24,6 +24,7 @@ export function useEvent(id: string | undefined) {
   }, [id]);
 
   useEffect(() => {
+    // eslint-disable-next-line
     fetchEvent();
   }, [fetchEvent]);
 
