@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import Modal from './Modal';
 
 interface CheckoutModalProps {
   eventId: string;
@@ -50,9 +51,8 @@ export default function MockCheckoutForm({ eventId, amountCents, itemName, onCon
   };
 
   return (
-    <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
-      <div className="glass-panel" role="dialog" aria-modal="true" aria-labelledby="checkout-title" style={{ padding: '40px', width: '100%', maxWidth: '400px', backgroundColor: 'rgba(15, 17, 21, 0.95)' }}>
-        <h2 id="checkout-title" style={{ marginTop: 0, marginBottom: '8px' }}>Secure Checkout</h2>
+    <Modal isOpen={true} onClose={onCancel} title="Secure Checkout" maxWidth="400px">
+      <div>
         <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
           Payment for <strong>{itemName}</strong>.
         </p>
@@ -122,6 +122,6 @@ export default function MockCheckoutForm({ eventId, amountCents, itemName, onCon
           </div>
         </form>
       </div>
-    </div>
+    </Modal>
   );
 }

@@ -10,6 +10,7 @@ export default function ScanDashboard({ eventId }: { eventId: string }) {
   const [totalAdmitted, setTotalAdmitted] = useState(0);
   const [invalidScans, setInvalidScans] = useState(0);
   const [accountBreakdown, setAccountBreakdown] = useState<Record<string, number>>({});
+  const [scanVelocity, setScanVelocity] = useState<{ timestamp: Date; count: number }[]>([]);
 
   useEffect(() => {
     fetchScans();
@@ -52,6 +53,26 @@ export default function ScanDashboard({ eventId }: { eventId: string }) {
         breakdown[name] = (breakdown[name] || 0) + 1;
       });
       setAccountBreakdown(breakdown);
+
+      // Calculate Scan Velocity (last hour, 5 min intervals)
+      const velocity: Record<number, number> = {};
+      const now = Date.now();
+      const oneHourAgo = now - 3600000;
+
+      scans.forEach((s: any) => {
+        const t = new Date(s.scanned_at).getTime();
+        if (t >= oneHourAgo) {
+            const bucket = Math.floor(t / 300000) * 300000; // 5 min buckets
+            velocity[bucket] = (velocity[bucket] || 0) + 1;
+        }
+      });
+
+      const velocityArray = Object.keys(velocity).map(k => ({
+          timestamp: new Date(parseInt(k)),
+          count: velocity[parseInt(k)]
+      })).sort((a, b) => a.timestamp.getTime() - b.timestamp.getTime());
+      
+      setScanVelocity(velocityArray);
     }
     setLoading(false);
   }
@@ -82,6 +103,19 @@ export default function ScanDashboard({ eventId }: { eventId: string }) {
               <p style={{ margin: '0 0 4px 0', color: '#ef4444', fontSize: '0.9rem' }}>Invalid / Rejected</p>
               <p style={{ margin: 0, fontSize: '1.5rem', fontWeight: 'bold', color: '#ef4444' }}>{invalidScans}</p>
             </div>
+          </div>
+
+          <h3 style={{ margin: '0 0 12px 0', fontSize: '1rem', color: 'var(--text-secondary)' }}>Scan Velocity (Last Hour)</h3>
+          <div style={{ display: 'flex', alignItems: 'flex-end', gap: '5px', height: '100px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border)', padding: '10px', borderRadius: '8px', marginBottom: '24px' }}>
+            {scanVelocity.length === 0 ? <p style={{width: '100%', textAlign: 'center', color: 'var(--text-secondary)'}}>No recent activity</p> : 
+             scanVelocity.map((v, i) => (
+                <div key={i} title={`${v.count} scans at ${v.timestamp.toLocaleTimeString()}`} style={{
+                    flex: 1,
+                    background: 'var(--accent)',
+                    height: `${Math.min(100, (v.count / 10) * 100)}%`, // Normalized to max 10 per 5 min for display
+                    borderRadius: '2px 2px 0 0'
+                }}></div>
+            ))}
           </div>
 
           <h3 style={{ margin: '0 0 12px 0', fontSize: '1rem', color: 'var(--text-secondary)' }}>Scans by Account</h3>

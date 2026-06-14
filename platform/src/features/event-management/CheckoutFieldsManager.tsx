@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
+import Dropdown from '../../components/Dropdown';
 
 export default function CheckoutFieldsManager({ eventId }: { eventId: string }) {
   const { showToast } = useToast();
@@ -106,19 +107,20 @@ export default function CheckoutFieldsManager({ eventId }: { eventId: string }) 
           onChange={e => setLabel(e.target.value)} 
         />
         <div style={{ display: 'flex', gap: '12px' }}>
-          <select 
-            className="input-field" 
-            value={fieldType} 
-            onChange={e => setFieldType(e.target.value)}
-            style={{ flex: 1 }}
-          >
-            <option value="TEXT">Short Text</option>
-            <option value="EMAIL">Email Address</option>
-            <option value="PHONE">Phone Number</option>
-            <option value="AGE">Age</option>
-            <option value="COUNTRY">Country</option>
-            <option value="ZIP">ZIP Code</option>
-          </select>
+          <div style={{ flex: 1 }}>
+            <Dropdown
+              value={fieldType}
+              onChange={(val) => setFieldType(val)}
+              options={[
+                { value: 'TEXT', label: 'Short Text' },
+                { value: 'EMAIL', label: 'Email Address' },
+                { value: 'PHONE', label: 'Phone Number' },
+                { value: 'AGE', label: 'Age' },
+                { value: 'COUNTRY', label: 'Country' },
+                { value: 'ZIP', label: 'ZIP Code' }
+              ]}
+            />
+          </div>
           <label style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '0 16px' }}>
             <input 
               type="checkbox" 

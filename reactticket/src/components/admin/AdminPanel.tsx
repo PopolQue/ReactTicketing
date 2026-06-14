@@ -4,7 +4,6 @@ import { TicketTypeEditor } from './TicketTypeEditor';
 import { PromoCodeManager } from './PromoCodeManager';
 import { CapacityOverview } from './CapacityOverview';
 import { ScanAccountManager } from './ScanAccountManager';
-import { ScanDashboard } from './ScanDashboard';
 import { AuthService } from 'reactticket-core/services/AuthService';
 import { useScanAuth } from '../../hooks/useScanAuth';
 
@@ -65,7 +64,6 @@ export const AdminPanel: React.FC = () => {
           <h1>Admin Panel</h1>
           <button type="button" onClick={handleLogout} aria-label="Logout from Admin Panel">Logout</button>
       </div>
-      <ScanDashboard />
       <CapacityOverview />
       <TicketTypeEditor />
       <PromoCodeManager />

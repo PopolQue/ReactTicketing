@@ -46,19 +46,21 @@ export const ReactTicketProvider = ({
   event,
   adapter,
   onCheckout,
-  onTicketIssued
+  onTicketIssued,
+  authSession
 }: {
   children: ReactNode,
   event: EventConfig,
   adapter: StorageAdapter,
   onCheckout: (order: Order) => Promise<"confirmed" | "cancelled">,
   onTicketIssued?: (ticket: IssuedTicket, assets: any) => void,
+  authSession?: any,
 }) => {
   const getInitialState = () => {
     const initialState = {
       event,
       adapter,
-      authSession: null,
+      authSession: authSession || null,
       cart: { items: [], personalizations: {}, promoCode: undefined },
       promoDetails: null,
       ticketTypes: [],

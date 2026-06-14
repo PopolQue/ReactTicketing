@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import Modal from '../../components/Modal';
 
 export default function EntityClaims() {
   const [claims, setClaims] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [rejectingClaim, setRejectingClaim] = useState<any>(null);
+  const [rejectionReason, setRejectionReason] = useState('');
 
   const fetchClaims = async () => {
     setLoading(true);
@@ -41,11 +44,8 @@ export default function EntityClaims() {
     let updatePayload: any = { status: action };
 
     if (action === 'rejected') {
-      const reason = window.prompt("Please provide a reason for rejecting this claim:");
-      if (reason === null) return; // Administrator cancelled the prompt
-      if (reason.trim()) {
-        updatePayload.rejection_reason = reason.trim();
-      }
+      setRejectingClaim({ claimId, entityType, entityId, userId });
+      return; // Handled by the modal submit
     }
 
     // Update the claim status
@@ -59,6 +59,21 @@ export default function EntityClaims() {
       }).eq('id', entityId);
     }
 
+    fetchClaims();
+  };
+
+  const handleRejectSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!rejectingClaim) return;
+
+    let updatePayload: any = { status: 'rejected' };
+    if (rejectionReason.trim()) {
+      updatePayload.rejection_reason = rejectionReason.trim();
+    }
+
+    await supabase.from('entity_claims').update(updatePayload).eq('id', rejectingClaim.claimId);
+    setRejectingClaim(null);
+    setRejectionReason('');
     fetchClaims();
   };
 
@@ -123,6 +138,31 @@ export default function EntityClaims() {
           ))}
         </div>
       )}
+
+      <Modal 
+        isOpen={!!rejectingClaim} 
+        onClose={() => { setRejectingClaim(null); setRejectionReason(''); }} 
+        title="Reject Claim"
+      >
+        <form onSubmit={handleRejectSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Reason for Rejection (Optional)</label>
+            <textarea 
+              className="input-field" 
+              rows={3}
+              value={rejectionReason} 
+              onChange={e => setRejectionReason(e.target.value)} 
+              placeholder="e.g. The provided proof link does not explicitly mention this user."
+            />
+          </div>
+          <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+            <button type="button" onClick={() => { setRejectingClaim(null); setRejectionReason(''); }} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>
+            <button type="submit" className="btn-primary" style={{ flex: 1, backgroundColor: '#ef4444' }}>
+              Confirm Rejection
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }

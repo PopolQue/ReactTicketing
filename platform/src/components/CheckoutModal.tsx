@@ -3,6 +3,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements } from '@stripe/react-stripe-js';
 import MockCheckoutForm from './MockCheckoutForm';
 import StripeCheckoutForm from './StripeCheckoutForm';
+import Modal from './Modal';
 
 // Initialize stripe conditionally based on the environment variable
 const stripeKey = import.meta.env.VITE_STRIPE_PUBLIC_KEY;
@@ -66,13 +67,12 @@ export default function CheckoutModal({ eventId, amountCents, itemName, onConfir
 
   if (error || !clientSecret) {
     return (
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 1000, padding: '24px' }}>
-        <div className="glass-panel" role="alertdialog" aria-modal="true" style={{ padding: '40px', width: '100%', maxWidth: '400px', textAlign: 'center' }}>
-          <h3 style={{ color: '#ef4444' }}>Checkout Error</h3>
-          <p>{error || 'Could not connect to payment gateway.'}</p>
-          <button onClick={onCancel} className="btn-secondary" style={{ marginTop: '16px' }}>Go Back</button>
+      <Modal isOpen={true} onClose={onCancel} title="Checkout Error" maxWidth="400px">
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ color: '#ef4444', marginBottom: '16px' }}>{error || 'Could not connect to payment gateway.'}</p>
+          <button onClick={onCancel} className="btn-secondary">Go Back</button>
         </div>
-      </div>
+      </Modal>
     );
   }
 

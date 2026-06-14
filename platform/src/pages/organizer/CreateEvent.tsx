@@ -2,6 +2,7 @@ import React from 'react';
 import { useOutletContext } from 'react-router-dom';
 import type { Entity } from '../../components/EntitySwitcher';
 import VenueSelector from '../../components/VenueSelector';
+import Dropdown from '../../components/Dropdown';
 import { useEventForm } from '../../hooks/useEventForm';
 
 export default function CreateEvent() {
@@ -27,13 +28,17 @@ export default function CreateEvent() {
             </div>
             <div>
               <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Category</label>
-              <select name="category" value={formData.category} onChange={handleChange} className="input-field" style={{ width: '100%' }}>
-                <option value="clubnight">Clubnight</option>
-                <option value="concert">Concert</option>
-                <option value="festival">Festival</option>
-                <option value="workshop">Workshop</option>
-                <option value="other">Other</option>
-              </select>
+              <Dropdown 
+                value={formData.category} 
+                onChange={(val) => handleChange({ target: { name: 'category', value: val } } as any)}
+                options={[
+                  { value: 'clubnight', label: 'Clubnight' },
+                  { value: 'concert', label: 'Concert' },
+                  { value: 'festival', label: 'Festival' },
+                  { value: 'workshop', label: 'Workshop' },
+                  { value: 'other', label: 'Other' }
+                ]}
+              />
             </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>

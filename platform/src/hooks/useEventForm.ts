@@ -52,7 +52,7 @@ export function useEventForm(activeEntity: Entity | null) {
             name: formData.title,
             organizer_name: activeEntity.name,
             start_date: new Date(formData.start_date).toISOString(),
-            venue_id: formData.venue_id,
+            venue_id: formData.venue_id || null,
             city: formData.city,
             country: formData.country,
             description: formData.description,

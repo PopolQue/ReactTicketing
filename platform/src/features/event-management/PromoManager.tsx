@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
+import Dropdown from '../../components/Dropdown';
 
 export default function PromoManager({ eventId }: { eventId: string }) {
   const { showToast } = useToast();
@@ -81,11 +82,17 @@ export default function PromoManager({ eventId }: { eventId: string }) {
       <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
         <input required type="text" placeholder="Code (e.g. EARLYBIRD)" className="input-field" value={form.code} onChange={e => setForm({...form, code: e.target.value.toUpperCase()})} />
         <div style={{ display: 'flex', gap: '12px' }}>
-          <select className="input-field" value={form.discount_kind} onChange={e => setForm({...form, discount_kind: e.target.value})} style={{ flex: 1 }}>
-            <option value="percent_off">Percent Off (%)</option>
-            <option value="amount_off">Amount Off (€ cents)</option>
-            <option value="free">Free Ticket</option>
-          </select>
+          <div style={{ flex: 1 }}>
+            <Dropdown 
+              value={form.discount_kind} 
+              onChange={(val) => setForm({...form, discount_kind: val})}
+              options={[
+                { value: 'percent_off', label: 'Percent Off (%)' },
+                { value: 'amount_off', label: 'Amount Off (€ cents)' },
+                { value: 'free', label: 'Free Ticket' }
+              ]}
+            />
+          </div>
           {form.discount_kind !== 'free' && (
             <input required type="number" placeholder="Value" className="input-field" value={form.discount_value} onChange={e => setForm({...form, discount_value: e.target.value})} style={{ flex: 1 }} />
           )}

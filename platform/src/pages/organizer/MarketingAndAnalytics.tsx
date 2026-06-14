@@ -3,6 +3,8 @@ import { supabase } from '../../lib/supabase';
 import { BarChart, Activity, PieChart as PieChartIcon, Share2, Target } from 'lucide-react';
 import { useOutletContext } from 'react-router-dom';
 import type { Entity } from '../../components/EntitySwitcher';
+import Dropdown from '../../components/Dropdown';
+import ScanDashboard from '../../features/event-management/ScanDashboard';
 
 export default function MarketingAndAnalytics() {
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
@@ -13,6 +15,9 @@ export default function MarketingAndAnalytics() {
     googleAnalyticsId: '',
     tiktokPixelId: ''
   });
+  
+  const [events, setEvents] = useState<{ id: string, name: string }[]>([]);
+  const [selectedEventId, setSelectedEventId] = useState<string>('');
   
   const [analytics, setAnalytics] = useState({
     pageViews: 0,
@@ -50,13 +55,18 @@ export default function MarketingAndAnalytics() {
       // Fetch Events for Tickets & Demographics
       const { data: eventsData } = await supabase
         .from('events')
-        .select('id')
+        .select('id, name')
         .eq('organizer_id', activeEntity.id);
 
       let ticketsSold = 0;
       const demoCounts: Record<string, number> = {};
 
       if (eventsData && eventsData.length > 0) {
+        setEvents(eventsData);
+        if (!selectedEventId) {
+          setSelectedEventId(eventsData[0].id);
+        }
+
         const eventIds = eventsData.map(e => e.id);
         const { data: ticketsData } = await supabase
           .from('tickets')
@@ -212,6 +222,28 @@ export default function MarketingAndAnalytics() {
           </div>
         </div>
       </div>
+
+      <div style={{ marginTop: '32px' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+          <h3 style={{ margin: 0 }}>Event Scan Analytics</h3>
+          <div style={{ width: '300px' }}>
+            <Dropdown 
+              value={selectedEventId}
+              onChange={(val) => setSelectedEventId(val)}
+              options={events.map(e => ({ value: e.id, label: e.name }))}
+              placeholder="Select an Event..."
+            />
+          </div>
+        </div>
+        {selectedEventId ? (
+          <ScanDashboard eventId={selectedEventId} />
+        ) : (
+          <div className="glass-panel" style={{ padding: '24px', textAlign: 'center' }}>
+            <p style={{ color: 'var(--text-secondary)' }}>Please select an event to view scan analytics.</p>
+          </div>
+        )}
+      </div>
+
     </div>
   );
 }

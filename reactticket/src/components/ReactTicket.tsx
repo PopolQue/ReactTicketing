@@ -22,6 +22,7 @@ interface ReactTicketProps {
   qrParser?: (data: Uint8ClampedArray, width: number, height: number) => { data: string } | null;
   theme?: any;
   adminKey?: string;
+  authSession?: any;
   className?: string;
   style?: React.CSSProperties;
 }
@@ -52,7 +53,7 @@ export const ReactTicket = (props: ReactTicketProps) => {
   }
 
   return (
-    <ReactTicketProvider event={props.event} adapter={props.adapter} onCheckout={props.onCheckout} onTicketIssued={props.onTicketIssued}>
+    <ReactTicketProvider event={props.event} adapter={props.adapter} onCheckout={props.onCheckout} onTicketIssued={props.onTicketIssued} authSession={props.authSession}>
       <div className={`ReactTicket-root ${props.className || ''}`} style={props.style}>
         {renderMode(props.mode, props.qrParser)}
       </div>

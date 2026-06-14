@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
+import Dropdown from '../../components/Dropdown';
 
 export default function LineupManager({ eventId, availableArtists, eventArtists, setEventArtists }: { eventId: string, availableArtists: any[], eventArtists: any[], setEventArtists: any }) {
   const { showToast } = useToast();
@@ -52,12 +53,14 @@ export default function LineupManager({ eventId, availableArtists, eventArtists,
 
       <form onSubmit={handleAddArtist} style={{ display: 'flex', gap: '12px', marginTop: '16px', alignItems: 'flex-end' }}>
         <div style={{ flexGrow: 1 }}>
-          <select className="input-field" value={selectedArtistId} onChange={e => setSelectedArtistId(e.target.value)} required>
-            <option value="" disabled>Select an artist...</option>
-            {availableArtists.filter(a => !eventArtists.some(ea => ea.artist_id === a.id)).map(a => (
-              <option key={a.id} value={a.id}>{a.name}</option>
-            ))}
-          </select>
+          <Dropdown
+            value={selectedArtistId}
+            onChange={(val) => setSelectedArtistId(val)}
+            placeholder="Select an artist..."
+            options={availableArtists
+              .filter(a => !eventArtists.some(ea => ea.artist_id === a.id))
+              .map(a => ({ value: a.id, label: a.name }))}
+          />
         </div>
         <button type="submit" className="btn-secondary">+ Add to Lineup</button>
       </form>
