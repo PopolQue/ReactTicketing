@@ -10,8 +10,8 @@ export class ScanAccountService {
     const baseKey = await crypto.subtle.importKey("raw", pinBuffer, "PBKDF2", false, ["deriveBits"]);
     const bits = await crypto.subtle.deriveBits({
       name: "PBKDF2",
-      salt: salt,
-      iterations: 100000,
+      salt: salt as any,
+      iterations: 600000,
       hash: "SHA-256"
     }, baseKey, 256);
     

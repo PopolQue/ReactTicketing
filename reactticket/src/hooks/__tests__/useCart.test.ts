@@ -7,7 +7,7 @@ vi.mock('../useReactTicket', () => ({
 }));
 
 const mockDispatch = vi.fn();
-const mockEvent = { id: 'event1', settings: { scanSessionSecret: 'secret' }, name: 'Event' };
+const mockEvent = { id: 'event1', settings: { scanSessionSecret: 'secret', qrSigningSecret: 'qrsecret' }, name: 'Event' };
 const mockTicketTypes = [
   { id: 'gen', name: 'General', pricing: { kind: 'paid', priceInCents: 1000, currency: 'EUR' } }
 ];

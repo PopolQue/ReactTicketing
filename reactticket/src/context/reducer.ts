@@ -1,4 +1,4 @@
-import { CartItem, CartState } from './ReactTicketContext';
+import { CartItem, CartState, ReactTicketState } from './ReactTicketContext';
 import { TicketTypeConfig, TicketPersonalization } from 'reactticket-core/types/ticket.types';
 import { AdminSession, ScanSession } from 'reactticket-core/types/auth.types';
 import { PromoCode } from 'reactticket-core/types/promo.types';
@@ -13,7 +13,7 @@ export type Action =
   | { type: 'SET_PROMO_DETAILS'; payload: PromoCode | null }
   | { type: 'SET_PERSONALIZATION'; payload: { ticketTypeId: string; personalizations: TicketPersonalization[] } };
 
-export const reducer = (state: any, action: Action) => {
+export const reducer = (state: ReactTicketState, action: Action): ReactTicketState => {
   switch (action.type) {
     case 'SET_AUTH_SESSION':
       return { ...state, authSession: action.payload };

@@ -14,15 +14,16 @@ export class ScanService {
     let result: ScanResult = "invalid";
     let ticket: IssuedTicket | null = null;
     let ticketIdFromPayload: string | null = null;
+    let clockSkewSeconds: number | undefined = undefined;
 
     try {
         // 2. Parse payload & 3. Verify HMAC
         const parts = payload.split('.');
-        if (parts.length !== 4 || parts[0] !== 'TF1') {
+        if (parts.length !== 4 || (parts[0] !== 'TF1' && parts[0] !== 'ADM1')) {
             throw new Error("Invalid payload format");
         }
         
-        const [prefix, eventId, ticketId, signature] = parts;
+        const [prefix, payloadEventId, ticketId, signature] = parts;
         ticketIdFromPayload = ticketId;
         
         const enc = new TextEncoder();
@@ -34,51 +35,72 @@ export class ScanService {
         const signatureBuffer = new Uint8Array(binarySignature.length);
         for (let i = 0; i < binarySignature.length; i++) signatureBuffer[i] = binarySignature.charCodeAt(i);
         
-        const isValid = await crypto.subtle.verify("HMAC", key, signatureBuffer, enc.encode(`${prefix}.${eventId}.${ticketId}`));
+        const isValid = await crypto.subtle.verify("HMAC", key, signatureBuffer, enc.encode(`${prefix}.${payloadEventId}.${ticketId}`));
         if (!isValid) {
             throw new Error("Invalid signature");
         }
 
-        // 4. Fetch ticket
-        ticket = await this.adapter.getTicket(ticketId);
-        if (!ticket) {
-            throw new Error("Ticket not found");
-        }
-
-        // 5. Check status + window
-        const now = new Date();
-        const validFrom = ticket.validFrom ? new Date(ticket.validFrom) : null;
-        const validUntil = ticket.validUntil ? new Date(ticket.validUntil) : null;
-
-        if (ticket.status === "used") {
-            result = "already_used";
-        } else if (ticket.status === "cancelled") {
-            result = "cancelled";
-        } else if (validFrom && now.getTime() < validFrom.getTime()) {
-            result = "invalid"; // Too early
-        } else if (validUntil && now.getTime() > validUntil.getTime()) {
-            result = "expired";
+        if (this.adapter.validateTicketRpc) {
+           const rpcResult = await this.adapter.validateTicketRpc(ticketId, session.accountId, session.token, new Date());
+           result = rpcResult.result as ScanResult;
+           clockSkewSeconds = rpcResult.clock_skew_seconds;
         } else {
-            result = "admitted";
-            // 7. Update ticket status
-            await this.adapter.updateTicketStatus(ticket.id, "used");
+            // 4. Fetch ticket
+            ticket = await this.adapter.getTicket(ticketId);
+            if (!ticket) {
+                throw new Error("Ticket not found");
+            }
+
+            // 5. Check status + window
+            const now = new Date();
+            const validFrom = ticket.validFrom ? new Date(ticket.validFrom) : null;
+            const validUntil = ticket.validUntil ? new Date(ticket.validUntil) : null;
+
+            if (ticket.status === "used") {
+                result = "already_used";
+            } else if (ticket.status === "cancelled") {
+                result = "cancelled";
+            } else if (validFrom && now.getTime() < validFrom.getTime()) {
+                result = "invalid"; // Too early
+            } else if (validUntil && now.getTime() > validUntil.getTime()) {
+                result = "expired";
+            } else {
+                result = "admitted";
+                // 7. Update ticket status
+                await this.adapter.updateTicketStatus(ticket.id, "used");
+            }
         }
     } catch (e: any) {
         console.error("Ticket validation failed:", e.message);
         result = "invalid";
     }
 
-    // 6. Write ScanEvent
-    const scanEvent: ScanEvent = {
-        id: `scan_${Math.random().toString(36).substring(7)}`,
-        ticketId: ticket ? ticket.id : ticketIdFromPayload || 'unknown',
-        scannedAt: new Date(),
-        scannedByAccountId: session.accountId,
-        scannedByAccountName: session.accountUsername,
-        result: result,
-        payload: payload,
-    };
-    await this.adapter.saveScanEvent(scanEvent);
+    // 6. Write ScanEvent (only if we didn't use RPC, because RPC writes it)
+    let scanEvent: ScanEvent;
+    
+    if (this.adapter.validateTicketRpc) {
+        scanEvent = {
+            id: `scan_${Math.random().toString(36).substring(7)}`,
+            ticketId: ticketIdFromPayload || 'unknown',
+            scannedAt: new Date(),
+            scannedByAccountId: session.accountId,
+            scannedByAccountName: session.accountUsername,
+            result: result,
+            payload: payload,
+            clockSkewSeconds: clockSkewSeconds
+        };
+    } else {
+        scanEvent = {
+            id: `scan_${Math.random().toString(36).substring(7)}`,
+            ticketId: ticket ? ticket.id : ticketIdFromPayload || 'unknown',
+            scannedAt: new Date(),
+            scannedByAccountId: session.accountId,
+            scannedByAccountName: session.accountUsername,
+            result: result,
+            payload: payload,
+        };
+        await this.adapter.saveScanEvent(scanEvent);
+    }
 
     return scanEvent;
   }

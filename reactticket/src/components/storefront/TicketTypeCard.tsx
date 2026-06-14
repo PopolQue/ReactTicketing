@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { TicketTypeConfig } from 'reactticket-core/types/ticket.types';
 import { useCart } from '../../hooks/useCart';
 import { useReactTicket } from '../../hooks/useReactTicket';
 import { QuantitySelector } from './QuantitySelector';
 import { formatCurrency } from 'reactticket-core/utils/formatCurrency';
 
-export const TicketTypeCard = ({ type }: { type: TicketTypeConfig }) => {
+export const TicketTypeCard = React.memo(({ type }: { type: TicketTypeConfig }) => {
   const { items, addItem, removeItem } = useCart();
   const { adapter, event } = useReactTicket();
   const [soldOut, setSoldOut] = useState(false);
@@ -26,22 +26,39 @@ export const TicketTypeCard = ({ type }: { type: TicketTypeConfig }) => {
         setLoading(false);
     };
     checkCapacity();
-  }, [adapter, type]);
+  }, [adapter, type, event.id]);
 
   const cartItem = items.find(item => item.ticketTypeId === type.id);
   const quantity = cartItem ? cartItem.quantity : 0;
 
-  const handleQuantityChange = (newQty: number) => {
+  const handleQuantityChange = useCallback((newQty: number) => {
     if (newQty > quantity) {
       addItem(type.id, newQty - quantity);
     } else if (newQty < quantity) {
       removeItem(type.id); 
     }
-  };
+  }, [quantity, type.id, addItem, removeItem]);
 
   const price = type.pricing.kind === 'paid' ? formatCurrency(type.pricing.priceInCents, type.pricing.currency) : 'Free';
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return (
+    <div 
+      style={{ 
+        border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', 
+        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+        background: '#f8fafc', marginBottom: '15px', animation: 'pulse 1.5s infinite'
+      }}
+      role="status"
+      aria-busy="true"
+      aria-label="Loading ticket type"
+    >
+      <div style={{ flex: 1 }}>
+        <div style={{ height: '24px', background: '#e2e8f0', borderRadius: '4px', width: '50%', marginBottom: '8px' }}></div>
+        <div style={{ height: '16px', background: '#e2e8f0', borderRadius: '4px', width: '30%' }}></div>
+      </div>
+      <div style={{ width: '80px', height: '36px', background: '#e2e8f0', borderRadius: '8px' }}></div>
+    </div>
+  );
 
   return (
     <div 
@@ -61,4 +78,4 @@ export const TicketTypeCard = ({ type }: { type: TicketTypeConfig }) => {
       {!soldOut && <QuantitySelector value={quantity} onChange={handleQuantityChange} max={remainingCapacity} itemName={type.name} />}
     </div>
   );
-};
+});

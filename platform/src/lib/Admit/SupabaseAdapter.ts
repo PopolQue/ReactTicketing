@@ -202,4 +202,15 @@ export class SupabaseAdapter implements StorageAdapter {
     const { error } = await this.supabase.from("scan_accounts").update({ last_login_at: at.toISOString() }).eq("id", accountId);
     if (error) throw error;
   }
+
+  async validateTicketRpc(ticketId: string, accountId: string, token: string, scannedAt: Date): Promise<any> {
+    const { data, error } = await this.supabase.rpc('validate_ticket', {
+      p_ticket_id: ticketId,
+      p_scan_account_id: accountId,
+      p_session_token: token,
+      p_scanned_at: scannedAt.toISOString()
+    });
+    if (error) throw error;
+    return data;
+  }
 }

@@ -8,36 +8,21 @@ export const ScannerLogin: React.FC = () => {
   const { event } = useReactTicket();
   const { login, isLocked, lockRemainingSeconds } = useScanAuth(event.id);
   const [username, setUsername] = useState('');
-  const [displayPin, setDisplayPin] = useState('');
   const pinBuffer = useRef<Uint8Array>(new Uint8Array(MAX_PIN_LENGTH));
   const pinLength = useRef(0);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [clearSignal, setClearSignal] = useState(0); // Used to force-clear the native input
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (isSubmitting) return;
-
-    if (e.key === 'Backspace') {
-      e.preventDefault();
-      if (pinLength.current > 0) {
-        pinLength.current--;
-        pinBuffer.current[pinLength.current] = 0;
-        setDisplayPin('●'.repeat(pinLength.current));
+  const handlePinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const val = e.target.value;
+    if (val.length <= MAX_PIN_LENGTH) {
+      pinLength.current = val.length;
+      const encoder = new TextEncoder();
+      const bytes = encoder.encode(val);
+      for (let i = 0; i < MAX_PIN_LENGTH; i++) {
+        pinBuffer.current[i] = i < bytes.length ? bytes[i] : 0;
       }
-    } else if (/^[0-9]$/.test(e.key)) {
-      e.preventDefault();
-      if (pinLength.current < MAX_PIN_LENGTH) {
-        const encoder = new TextEncoder();
-        const byte = encoder.encode(e.key)[0];
-        pinBuffer.current[pinLength.current] = byte;
-        pinLength.current++;
-        setDisplayPin('●'.repeat(pinLength.current));
-      }
-    } else if (e.key === 'Enter') {
-        // Form submit will handle this
-    } else {
-        // Ignore other keys
-        if (e.key.length === 1) e.preventDefault();
     }
   };
 
@@ -51,9 +36,9 @@ export const ScannerLogin: React.FC = () => {
       await login(username, pinAsString);
     } catch (err: any) {
       setError(err.message || "Invalid login credentials.");
-      setDisplayPin('');
       pinBuffer.current.fill(0);
       pinLength.current = 0;
+      setClearSignal(s => s + 1);
     } finally {
       setIsSubmitting(false);
     }
@@ -80,19 +65,23 @@ export const ScannerLogin: React.FC = () => {
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             disabled={isSubmitting}
+            autoComplete="username"
+            required
           />
           <input
-            type="text"
+            key={clearSignal}
+            type="password"
             inputMode="numeric"
+            pattern="[0-9]*"
             placeholder="PIN"
             aria-label="PIN"
-            value={displayPin}
-            onKeyDown={handleKeyDown}
-            onChange={() => {}} // Controlled component needs this
+            onChange={handlePinChange}
             disabled={isSubmitting}
             maxLength={MAX_PIN_LENGTH}
+            autoComplete="current-password"
+            required
           />
-          <button type="submit" disabled={isSubmitting || !username || pinLength.current === 0} aria-busy={isSubmitting}>
+          <button type="submit" disabled={isSubmitting || !username} aria-busy={isSubmitting}>
             {isSubmitting ? 'Signing in...' : 'Sign in'}
           </button>
         </form>

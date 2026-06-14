@@ -1,24 +1,3 @@
-export async function deriveKey(pin: Uint8Array, salt: Uint8Array): Promise<CryptoKey> {
-  const baseKey = await crypto.subtle.importKey(
-    "raw",
-    pin,
-    "PBKDF2",
-    false,
-    ["deriveBits"]
-  );
-  const bits = await crypto.subtle.deriveBits(
-    {
-      name: "PBKDF2",
-      salt: salt,
-      iterations: 100000,
-      hash: "SHA-256",
-    },
-    baseKey,
-    256
-  );
-  return crypto.subtle.importKey("raw", bits, "HMAC", false, ["sign", "verify"]);
-}
-
 export async function generateHMAC(key: CryptoKey, data: string): Promise<ArrayBuffer> {
   const encoder = new TextEncoder();
   return crypto.subtle.sign("HMAC", key, encoder.encode(data));

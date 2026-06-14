@@ -12,6 +12,9 @@ export default defineConfig({
       'reactticket': path.resolve(__dirname, '../reactticket/src'),
     },
   },
+  esbuild: {
+    drop: ['console', 'debugger'],
+  },
   test: {
     environment: 'jsdom',
     globals: true,
@@ -23,8 +26,5 @@ export default defineConfig({
   },
   server: {
     allowedHosts: ["crescentlike-florencio-nonrustic.ngrok-free.dev"]
-  },
-  esbuild: {
-    drop: ['console', 'debugger']
   }
 })

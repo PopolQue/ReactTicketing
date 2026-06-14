@@ -54,6 +54,7 @@ export const useScanSession = (
                 setLastResult(scanEvent);
                 // Pause scanning for a bit to show result
                 setTimeout(() => {
+                  setLastResult(null);
                   if (animationFrameId.current !== null) { // Check if still scanning
                     animationFrameId.current = requestAnimationFrame(scanLoop);
                   }

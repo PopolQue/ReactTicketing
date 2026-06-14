@@ -1,14 +1,20 @@
 import React, { useState, useEffect } from 'react';
 import { useReactTicket } from '../../hooks/useReactTicket';
-import { IssuedTicket } from 'reactticket-core/types/ticket.types';
 
 export const CapacityOverview: React.FC = () => {
   const { ticketTypes, adapter, event } = useReactTicket();
-  const [issuedTickets, setIssuedTickets] = useState<IssuedTicket[]>([]);
+  const [issuedCounts, setIssuedCounts] = useState<Record<string, number>>({});
 
   useEffect(() => {
-    adapter.getIssuedTickets(event.id).then(setIssuedTickets);
-  }, [adapter, event.id]);
+    const fetchCounts = async () => {
+      const counts: Record<string, number> = {};
+      for (const type of ticketTypes) {
+        counts[type.id] = await adapter.countIssuedTickets(type.id, event.id);
+      }
+      setIssuedCounts(counts);
+    };
+    fetchCounts();
+  }, [adapter, event.id, ticketTypes]);
 
   const totalPotentialIncome = ticketTypes.reduce((sum, type) => {
     const price = (type.pricing as any)?.priceInCents || 0;
@@ -22,20 +28,29 @@ export const CapacityOverview: React.FC = () => {
         <thead>
           <tr style={{ borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
             <th style={{ padding: '10px' }}>Name</th>
-            <th style={{ padding: '10px' }}>Sold / Capacity</th>
+            <th style={{ padding: '10px', width: '40%' }}>Sold / Capacity</th>
             <th style={{ padding: '10px' }}>Potential Income (EUR)</th>
           </tr>
         </thead>
         <tbody>
           {ticketTypes.map((type) => {
-            const soldCount = issuedTickets.filter(t => t.ticketTypeId === type.id).length;
+            const soldCount = issuedCounts[type.id] || 0;
             const price = (type.pricing as any)?.priceInCents || 0;
             const potentialIncome = (type.capacity ?? 0) * price;
+            const capacity = type.capacity ?? 0;
+            const percent = capacity > 0 ? Math.min(100, (soldCount / capacity) * 100) : 0;
 
             return (
               <tr key={type.id} style={{ borderBottom: '1px solid #e2e8f0' }}>
                 <td style={{ padding: '10px' }}>{String(type.name || '')}</td>
-                <td style={{ padding: '10px' }}>{soldCount} / {type.capacity ?? '∞'}</td>
+                <td style={{ padding: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ flex: 1, height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                      <div style={{ width: `${percent}%`, height: '100%', background: percent >= 100 ? '#ef4444' : '#3b82f6' }}></div>
+                    </div>
+                    <span style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>{soldCount} / {capacity > 0 ? capacity : '∞'}</span>
+                  </div>
+                </td>
                 <td style={{ padding: '10px' }}>{(potentialIncome / 100).toFixed(2)}</td>
               </tr>
             );

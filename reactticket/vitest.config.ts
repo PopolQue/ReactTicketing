@@ -7,6 +7,11 @@ export default defineConfig({
     alias: {
       'reactticket-core': resolve(__dirname, '../reactticket-core/src')
     },
+    server: {
+      deps: {
+        inline: ['reactticket-core']
+      }
+    },
     coverage: {
       thresholds: { lines: 70, functions: 70 }
     }

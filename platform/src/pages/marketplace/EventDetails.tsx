@@ -6,6 +6,7 @@ import EventHero from '../../features/marketplace/EventHero';
 import EventAboutSection from '../../features/marketplace/EventAboutSection';
 import { useEventData } from '../../hooks/useEventData';
 import { SupabaseAdapter } from '../../lib/Admit/SupabaseAdapter';
+import { mapEventToAdmitConfig } from '../../lib/Admit/mappers';
 import CheckoutModal from '../../components/CheckoutModal';
 
 const ReactTicket = React.lazy(() => import('reactticket').then(m => ({ default: m.ReactTicket })));
@@ -21,6 +22,7 @@ export default function EventDetails() {
 
   // Adapter initialization
   const adapter = useMemo(() => new SupabaseAdapter(supabase), []);
+  const admitConfig = useMemo(() => event ? mapEventToAdmitConfig(event) : null, [event]);
 
   const [checkoutOrder, setCheckoutOrder] = useState<any | null>(null);
   const [checkoutResolve, setCheckoutResolve] = useState<((result: "confirmed" | "cancelled") => void) | null>(null);
@@ -37,6 +39,11 @@ export default function EventDetails() {
       setCheckoutOrder(order);
       setCheckoutResolve(() => resolve);
     });
+  };
+
+  const handleTicketIssued = (ticket: any, assets: any) => {
+    // Wiring to existing email handler (smoke test: PNG blob logged)
+    console.log(`[Email Handler] Ticket issued: ${ticket.id}. Sending PNG blob to buyer ${ticket.buyerEmail}...`, assets);
   };
 
   if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading...</div>;
@@ -88,21 +95,35 @@ export default function EventDetails() {
 
           <EventAboutSection event={event} eventArtists={eventArtists} customAccentColor={customAccentColor} />
 
-          <div className="react-ticket-container" style={{ '--rt-bg': customBgColor, '--rt-accent': customAccentColor } as any}>
-            <React.Suspense fallback={<div style={{ padding: '24px', textAlign: 'center' }}>Loading tickets...</div>}>
-              {typeof window !== 'undefined' ? (
-                <ReactTicket
-                  mode="storefront"
-                  event={event}
-                  adapter={adapter}
-                  onCheckout={handleCheckout}
-                  theme={theme}
-                />
+          {event.is_external ? (
+            <div style={{ padding: '40px', textAlign: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '12px', marginTop: '32px' }}>
+              <h3 style={{ marginBottom: '16px' }}>Tickets are available externally</h3>
+              {event.external_url ? (
+                <a href={event.external_url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '12px 24px', backgroundColor: customAccentColor, color: '#fff', textDecoration: 'none', borderRadius: '8px', fontWeight: 'bold' }}>
+                  Get Tickets
+                </a>
               ) : (
-                <div style={{ padding: '24px', textAlign: 'center' }}>Loading tickets...</div>
+                <p>Please refer to the organizer for ticketing information.</p>
               )}
-            </React.Suspense>
-          </div>
+            </div>
+          ) : (
+            <div className="react-ticket-container" style={{ '--rt-bg': customBgColor, '--rt-accent': customAccentColor } as any}>
+              <React.Suspense fallback={<div style={{ padding: '24px', textAlign: 'center' }}>Loading tickets...</div>}>
+                {typeof window !== 'undefined' && admitConfig ? (
+                  <ReactTicket
+                    mode="storefront"
+                    event={admitConfig}
+                    adapter={adapter}
+                    onCheckout={handleCheckout}
+                    onTicketIssued={handleTicketIssued}
+                    theme={theme}
+                  />
+                ) : (
+                  <div style={{ padding: '24px', textAlign: 'center' }}>Loading tickets...</div>
+                )}
+              </React.Suspense>
+            </div>
+          )}
         </div>
       </main>
     </div>

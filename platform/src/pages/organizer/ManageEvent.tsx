@@ -15,6 +15,7 @@ import ExportManager from '../../features/event-management/ExportManager';
 import CheckoutFieldsManager from '../../features/event-management/CheckoutFieldsManager';
 
 import { SupabaseAdapter } from '../../lib/Admit/SupabaseAdapter';
+import { mapEventToAdmitConfig } from '../../lib/Admit/mappers';
 
 const ReactTicket = React.lazy(() => import('reactticket').then(m => ({ default: m.ReactTicket })));
 
@@ -28,6 +29,7 @@ export default function ManageEvent() {
 
   // Adapter
   const adapter = useMemo(() => new SupabaseAdapter(supabase), []);
+  const admitConfig = useMemo(() => event ? mapEventToAdmitConfig(event) : null, [event]);
 
   // Local State for specific fetches
   const [subscriptionTier, setSubscriptionTier] = useState('free');
@@ -73,6 +75,8 @@ export default function ManageEvent() {
 
   if (eventLoading || tiersLoading) return <div style={{ padding: '24px' }}>Loading...</div>;
 
+  const isOrganizer = activeEntity?.id === event?.organizer_id;
+
   return (
     <div className="manage-event-page" style={{ maxWidth: '1000px' }}>
       <ManageEventHeader 
@@ -88,18 +92,25 @@ export default function ManageEvent() {
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           {/* ReactTicket Admin Module Integration */}
           <div className="glass-panel" style={{ padding: '24px' }}>
-            <React.Suspense fallback={<div>Loading admit admin...</div>}>
-              {typeof window !== 'undefined' ? (
-                <ReactTicket
-                  mode="admin"
-                  event={event}
-                  adapter={adapter}
-                  onCheckout={() => Promise.resolve('cancelled')}
-                />
-              ) : (
-                <div>Loading admit admin...</div>
-              )}
-            </React.Suspense>
+            {isOrganizer ? (
+              <React.Suspense fallback={<div>Loading admit admin...</div>}>
+                {typeof window !== 'undefined' && admitConfig ? (
+                  <ReactTicket
+                    mode="admin"
+                    event={admitConfig}
+                    adapter={adapter}
+                    theme={theme}
+                    onCheckout={() => Promise.resolve('cancelled')}
+                  />
+                ) : (
+                  <div>Loading admit admin...</div>
+                )}
+              </React.Suspense>
+            ) : (
+              <div style={{ padding: '24px', textAlign: 'center', color: '#ef4444' }}>
+                You do not have permission to access the admin panel for this event.
+              </div>
+            )}
           </div>
           <CheckoutFieldsManager eventId={id!} />
           <ExportManager eventId={id!} eventName={event?.name} />

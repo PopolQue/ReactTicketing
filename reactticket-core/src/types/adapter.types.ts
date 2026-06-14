@@ -43,4 +43,7 @@ export interface StorageAdapter {
   updateScanAccount(accountId: string, patch: Partial<ScanAccount>): Promise<void>;
   deleteScanAccount(accountId: string): Promise<void>;
   incrementScanAccountLoginTimestamp(accountId: string, at: Date): Promise<void>;
+
+  // Optional RPC overrides for atomicity
+  validateTicketRpc?(ticketId: string, accountId: string, token: string, scannedAt: Date): Promise<any>;
 }

@@ -70,7 +70,9 @@ export const ScanResult: React.FC<ScanResultProps> = ({ result, onDismiss }) => 
       case 'already_used': return '#f59e0b'; // amber-500
       case 'invalid':
       case 'cancelled':
+      case 'expired':
         return '#ef4444'; // red-500
+      case 'clock_skew_anomaly': return '#eab308'; // yellow-500
       default: return '#6b7280'; // gray-500
     }
   };
@@ -86,7 +88,10 @@ export const ScanResult: React.FC<ScanResultProps> = ({ result, onDismiss }) => 
       alignItems: 'center',
       padding: '20px',
       textAlign: 'center'
-    }}>
+    }}
+    role="alert"
+    aria-live="assertive"
+    >
       <h2>{result.result.replace('_', ' ').toUpperCase()}</h2>
       {ticket && (
         <div>

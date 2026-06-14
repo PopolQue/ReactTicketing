@@ -25,6 +25,7 @@ const eventConfig = {
     requireBuyerEmail: true,
     adminKey: "your_admin_key_hash", // Generated hash
     scanSessionSecret: "your_32_char_secret",
+    qrSigningSecret: "your_32_char_qr_secret",
   }
 };
 

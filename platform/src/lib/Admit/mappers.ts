@@ -202,6 +202,26 @@ export function mapEventToAdmitConfig(event: any): any {
   return {
     id: event.id,
     name: event.name,
-    theme: event.theme_customization
+    description: event.description,
+    venue: event.location_name,
+    startDate: event.start_time ? new Date(event.start_time) : new Date(),
+    endDate: event.end_time ? new Date(event.end_time) : undefined,
+    logoUrl: event.images?.[0] || undefined,
+    organizerName: event.organizer_profiles?.company_name || 'Independent Organizer',
+    timezone: event.timezone || 'UTC',
+    ticketTypes: [],
+    settings: {
+      maxOrderSize: event.settings?.maxOrderSize || 10,
+      requireBuyerEmail: true,
+      adminKey: '',
+      scanSessionSecret: 'dummy',
+      qrSigningSecret: 'dummy',
+    },
+    theme: {
+      bgColor: event.theme_customization?.bgColor,
+      accentColor: event.theme_customization?.accentColor,
+      textColor: event.theme_customization?.textColor,
+      cardColor: event.theme_customization?.cardColor
+    }
   };
 }

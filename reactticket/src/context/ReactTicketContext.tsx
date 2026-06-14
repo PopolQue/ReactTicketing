@@ -37,6 +37,7 @@ export interface ReactTicketContextValue {
   onTicketIssued?: (ticket: IssuedTicket, assets: any) => void;
 }
 
+export type ReactTicketState = Omit<ReactTicketContextValue, 'dispatch' | 'onCheckout' | 'onTicketIssued'>;
 
 export const ReactTicketContext = createContext<ReactTicketContextValue | undefined>(undefined);
 

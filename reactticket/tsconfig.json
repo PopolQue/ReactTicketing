@@ -10,8 +10,9 @@
     "skipLibCheck": true,
     "allowSyntheticDefaultImports": true,
     "declaration": true,
+    "outDir": "dist",
     "paths": {
-      "reactticket-core/*": ["../reactticket-core/src/*"]
+      "reactticket-core/*": ["../reactticket-core/dist/*"]
     }
   },
   "include": ["src"]

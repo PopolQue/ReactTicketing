@@ -2,15 +2,19 @@
   "name": "reactticket-core",
   "version": "1.0.0",
   "description": "Core ticketing business logic",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "type": "module",
   "scripts": {
+    "build": "tsc",
+    "postbuild": "cp src/utils/jsQR.* dist/utils/ || true",
     "test": "vitest run"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.108.1"
   },
   "devDependencies": {
-    "@vitest/coverage-v8": "^4.1.8"
+    "@vitest/coverage-v8": "^4.1.8",
+    "typescript": "^6.0.3"
   }
 }

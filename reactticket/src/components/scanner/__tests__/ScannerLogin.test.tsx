@@ -46,12 +46,9 @@ describe('ScannerLogin', () => {
     expect(usernameInput.value).toBe('scanner1');
 
     const pinInput = screen.getByPlaceholderText('PIN') as HTMLInputElement;
-    fireEvent.keyDown(pinInput, { key: '1' });
-    fireEvent.keyDown(pinInput, { key: '2' });
-    fireEvent.keyDown(pinInput, { key: '3' });
-    fireEvent.keyDown(pinInput, { key: '4' });
+    fireEvent.change(pinInput, { target: { value: '1234' } });
     
-    expect(pinInput.value).toBe('●●●●');
+    expect(pinInput.value).toBe('1234');
 
     const button = screen.getByRole('button', { name: 'Sign in' }) as HTMLButtonElement;
     expect(button.disabled).toBe(false);
@@ -64,10 +61,7 @@ describe('ScannerLogin', () => {
     fireEvent.change(usernameInput, { target: { value: 'scanner1' } });
 
     const pinInput = screen.getByPlaceholderText('PIN');
-    fireEvent.keyDown(pinInput, { key: '5' });
-    fireEvent.keyDown(pinInput, { key: '6' });
-    fireEvent.keyDown(pinInput, { key: '7' });
-    fireEvent.keyDown(pinInput, { key: '8' });
+    fireEvent.change(pinInput, { target: { value: '5678' } });
 
     const form = screen.getByRole('button', { name: 'Sign in' }).closest('form');
     fireEvent.submit(form!);
@@ -85,8 +79,7 @@ describe('ScannerLogin', () => {
     fireEvent.change(usernameInput, { target: { value: 'scanner1' } });
 
     const pinInput = screen.getByPlaceholderText('PIN');
-    fireEvent.keyDown(pinInput, { key: '0' });
-    fireEvent.keyDown(pinInput, { key: '0' });
+    fireEvent.change(pinInput, { target: { value: '00' } });
 
     const form = screen.getByRole('button', { name: 'Sign in' }).closest('form');
     fireEvent.submit(form!);

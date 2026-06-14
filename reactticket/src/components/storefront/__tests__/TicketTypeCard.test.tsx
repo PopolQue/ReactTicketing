@@ -34,14 +34,14 @@ describe('TicketTypeCard', () => {
 
   it('renders loading state initially', () => {
     render(<TicketTypeCard type={mockType} />);
-    expect(screen.getByText('Loading...')).toBeDefined();
+    expect(screen.getByRole('status', { name: 'Loading ticket type' })).toBeDefined();
   });
 
-  it('renders ticket details after loading', async () => {
+  it('renders ticket type information after loading', async () => {
     render(<TicketTypeCard type={mockType} />);
-    
+
     await waitFor(() => {
-      expect(screen.queryByText('Loading...')).toBeNull();
+      expect(screen.queryByRole('status', { name: 'Loading ticket type' })).toBeNull();
     });
 
     expect(screen.getByText('General Admission')).toBeDefined();
@@ -53,7 +53,7 @@ describe('TicketTypeCard', () => {
     render(<TicketTypeCard type={soldOutType} />);
     
     await waitFor(() => {
-      expect(screen.queryByText('Loading...')).toBeNull();
+      expect(screen.queryByRole('status', { name: 'Loading ticket type' })).toBeNull();
     });
 
     expect(screen.getByText('General Admission (Sold Out)')).toBeDefined();

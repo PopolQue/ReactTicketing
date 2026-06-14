@@ -20,12 +20,13 @@ export const VoucherInput: React.FC = () => {
         value={code}
         onChange={(e) => setCode(e.target.value)}
         placeholder="Enter voucher code"
+        aria-label="Voucher code"
         disabled={isLoading}
       />
-      <button onClick={handleApply} disabled={isLoading || !code}>
+      <button onClick={handleApply} disabled={isLoading || !code} aria-busy={isLoading} aria-label={isLoading ? 'Applying voucher...' : 'Apply voucher'}>
         {isLoading ? 'Applying...' : 'Apply'}
       </button>
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="error-message" role="alert">{error}</p>}
     </div>
   );
 };

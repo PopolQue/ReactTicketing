@@ -58,7 +58,21 @@ export class LocalStorageAdapter implements StorageAdapter {
     return data ? JSON.parse(data) : [];
   }
   async updateOrderStatus(orderId: string, status: Order["status"]): Promise<void> {
-    // FIXME
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('tf_') && key.endsWith('_orders')) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                const orders: Order[] = JSON.parse(data);
+                const index = orders.findIndex(o => o.id === orderId);
+                if (index > -1) {
+                    orders[index].status = status;
+                    localStorage.setItem(key, JSON.stringify(orders));
+                    return;
+                }
+            }
+        }
+    }
   }
 
   // Tickets
@@ -174,9 +188,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
   async countIssuedTickets(ticketTypeId: string, eventId: string): Promise<number> {
     const tickets = await this.getIssuedTickets(eventId);
-    console.log(`Debug: Counting tickets. Total in storage: ${tickets.length}, ticketTypeId: ${ticketTypeId}`);
     const filtered = tickets.filter(t => t.ticketTypeId === ticketTypeId && t.status !== 'cancelled');
-    console.log(`Debug: Filtered tickets:`, filtered);
     return filtered.length;
   }
 
@@ -263,7 +275,12 @@ export class LocalStorageAdapter implements StorageAdapter {
     localStorage.setItem('tf_scan_accounts', JSON.stringify(accounts));
   }
   async updateScanAccount(accountId: string, patch: Partial<ScanAccount>): Promise<void> {
-    // FIXME
+    const accounts = await this.listAllScanAccounts();
+    const index = accounts.findIndex(a => a.id === accountId);
+    if (index > -1) {
+      accounts[index] = { ...accounts[index], ...patch };
+      localStorage.setItem('tf_scan_accounts', JSON.stringify(accounts));
+    }
   }
   async deleteScanAccount(accountId: string): Promise<void> {
     const accounts = await this.listAllScanAccounts();
@@ -271,6 +288,11 @@ export class LocalStorageAdapter implements StorageAdapter {
     localStorage.setItem('tf_scan_accounts', JSON.stringify(updated));
   }
   async incrementScanAccountLoginTimestamp(accountId: string, at: Date): Promise<void> {
-    // FIXME
+    const accounts = await this.listAllScanAccounts();
+    const index = accounts.findIndex(a => a.id === accountId);
+    if (index > -1) {
+      accounts[index].lastLoginAt = at;
+      localStorage.setItem('tf_scan_accounts', JSON.stringify(accounts));
+    }
   }
 }

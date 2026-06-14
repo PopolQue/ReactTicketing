@@ -74,8 +74,8 @@ export class RestAdapter implements StorageAdapter {
   async getTicketsByOrder(orderId: string): Promise<IssuedTicket[]> {
     return this.request<IssuedTicket[]>(`/orders/${orderId}/tickets`);
   }
-  async getIssuedTickets(): Promise<IssuedTicket[]> {
-    return this.request<IssuedTicket[]>(`/tickets`);
+  async getIssuedTickets(eventId: string): Promise<IssuedTicket[]> {
+    return this.request<IssuedTicket[]>(`/events/${eventId}/tickets`);
   }
   async saveTicket(ticket: IssuedTicket): Promise<void> {
     await this.request(`/tickets`, {
@@ -107,7 +107,7 @@ export class RestAdapter implements StorageAdapter {
       body: JSON.stringify({ toEmail, newPersonalization }),
     });
   }
-  async countIssuedTickets(ticketTypeId: string): Promise<number> {
+  async countIssuedTickets(ticketTypeId: string, eventId: string): Promise<number> {
     const res = await this.request<{ count: number }>(`/ticket-types/${ticketTypeId}/issued-count`);
     return res.count;
   }

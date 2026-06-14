@@ -6,9 +6,7 @@ import { AuthService } from "./AuthService";
 export class TicketService {
   constructor(private adapter: StorageAdapter, private authService: AuthService) {}
 async issueTickets(orderId: string): Promise<IssuedTicket[]> {
-  console.log("Issuing tickets for order:", orderId);
   const order = await this.adapter.getOrder(orderId);
-  console.log("Order retrieved:", order);
   if (!order) {
       console.error("Order not found for issuance:", orderId);
       throw new Error("Order not found");
@@ -66,7 +64,7 @@ async deliverTicket(ticketId: string): Promise<void> {
 
   // Deriving HMAC key from secret
   const enc = new TextEncoder();
-  const keyData = enc.encode(this.authService.getSecret());
+  const keyData = enc.encode(this.authService.getQrSecret());
   const key = await crypto.subtle.importKey("raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
 
   // Payload: TF1.<eventId>.<ticketId>

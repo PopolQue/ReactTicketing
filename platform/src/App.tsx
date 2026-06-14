@@ -27,6 +27,7 @@ import OrganizerProfile from './pages/marketplace/OrganizerProfile'
 import Wallet from './pages/fan/Wallet'
 import ResaleMarket from './pages/marketplace/ResaleMarket'
 import ClaimPortal from './pages/marketplace/ClaimPortal'
+import ScanPage from './pages/marketplace/ScanPage'
 
 const Settings = React.lazy(() => import('./pages/organizer/Settings'))
 const ScanTickets = React.lazy(() => import('./pages/organizer/ScanTickets'))
@@ -35,6 +36,12 @@ const BlogsList = React.lazy(() => import('./pages/organizer/BlogsList'))
 const MarketingAndAnalytics = React.lazy(() => import('./pages/organizer/MarketingAndAnalytics'))
 import BlogFeed from './pages/marketplace/BlogFeed'
 import BlogPost from './pages/marketplace/BlogPost'
+
+// Legal & Utility Pages
+const Imprint = React.lazy(() => import('./pages/legal/Imprint'))
+const Privacy = React.lazy(() => import('./pages/legal/Privacy'))
+const Terms = React.lazy(() => import('./pages/legal/Terms'))
+const SitemapPage = React.lazy(() => import('./pages/legal/Sitemap'))
 
 // Venue Portal
 const VenueLayout = React.lazy(() => import('./pages/venue/VenueLayout'))
@@ -53,6 +60,12 @@ import { ErrorBoundary } from './components/ErrorBoundary'
 import ProtectedRoute from './components/ProtectedRoute'
 
 import MarketplaceLayout from './components/MarketplaceLayout'
+
+// Marketing Pages
+const ForArtists = React.lazy(() => import('./pages/marketing/ForArtists'))
+const ForFans = React.lazy(() => import('./pages/marketing/ForFans'))
+const ForOrganizers = React.lazy(() => import('./pages/marketing/ForOrganizers'))
+const ForVenues = React.lazy(() => import('./pages/marketing/ForVenues'))
 
 function App() {
   return (
@@ -77,6 +90,15 @@ function App() {
           <Route path="/blogs/:slug" element={<BlogPost />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/claim" element={<ClaimPortal />} />
+          <Route path="/scan/:id" element={<ScanPage />} />
+          <Route path="/for-artists" element={<ForArtists />} />
+          <Route path="/for-fans" element={<ForFans />} />
+          <Route path="/for-organizers" element={<ForOrganizers />} />
+          <Route path="/for-venues" element={<ForVenues />} />
+          <Route path="/imprint" element={<Imprint />} />
+          <Route path="/privacy" element={<Privacy />} />
+          <Route path="/terms" element={<Terms />} />
+          <Route path="/sitemap" element={<SitemapPage />} />
         </Route>
 
         {/* Organizer Portal */}

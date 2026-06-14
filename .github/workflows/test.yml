@@ -32,6 +32,24 @@ jobs:
           cd ../reactticket && npm run test -- --coverage
           cd ../platform && npm run test -- --coverage
           
+      - name: Upload Core Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: reactticket-core-coverage
+          path: reactticket-core/coverage/
+
+      - name: Upload React Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: reactticket-coverage
+          path: reactticket/coverage/
+
+      - name: Upload Platform Coverage
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-coverage
+          path: platform/coverage/
+
       - name: Test Supabase Migrations
         run: |
           supabase start

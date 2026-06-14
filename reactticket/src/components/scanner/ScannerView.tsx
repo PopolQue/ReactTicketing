@@ -54,14 +54,22 @@ export const ScannerView: React.FC<ScannerViewProps> = ({ qrParser }) => {
     <div className="ReactTicket-root scanner-view">
       <ScanAccountBadge />
       <div className="camera-view" style={{ position: 'relative', height: '400px', width: '100%', backgroundColor: '#000', overflow: 'hidden' }}>
-        <video ref={videoRef} autoPlay playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', display: isScanning ? 'block' : 'none' }} />
+        <video 
+           ref={videoRef} 
+           autoPlay 
+           playsInline 
+           style={{ width: '100%', height: '100%', objectFit: 'cover', display: isScanning ? 'block' : 'none' }} 
+           aria-label="Camera feed for scanning tickets"
+        />
         
         {isScanning && !lastResult && (
           <div style={{
               position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
               display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
               pointerEvents: 'none'
-          }}>
+          }}
+          aria-hidden="true"
+          >
               <div style={{
                   width: '200px', height: '200px',
                   border: '3px solid rgba(255, 255, 255, 0.8)',
@@ -76,7 +84,12 @@ export const ScannerView: React.FC<ScannerViewProps> = ({ qrParser }) => {
           <ScanResult result={lastResult} onDismiss={handleDismissResult} />
         )}
 
-        <button onClick={isScanning ? stopCamera : startCamera} style={{ position: 'absolute', bottom: '10px', left: '10px', right: '10px', padding: '15px', fontSize: '18px', fontWeight: 'bold' }}>
+        <button 
+           onClick={isScanning ? stopCamera : startCamera} 
+           style={{ position: 'absolute', bottom: '10px', left: '10px', right: '10px', padding: '15px', fontSize: '18px', fontWeight: 'bold' }}
+           aria-label={isScanning ? 'Stop Scanning' : 'Start Scanning'}
+           aria-pressed={isScanning}
+        >
             {isScanning ? 'Stop Scanning' : 'Start Scanning'}
         </button>
       </div>
