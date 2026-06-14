@@ -23,11 +23,17 @@
     "paths": {
       "@ReactTicket/*": [
         "../../reactticket/src/*"
+      ],
+      "reactticket-core/*": [
+        "../../reactticket-core/src/*"
       ]
     }
   },
   "include": [
     "src"
+  ],
+  "exclude": [
+    "**/__tests__"
   ],
   "references": [
     {

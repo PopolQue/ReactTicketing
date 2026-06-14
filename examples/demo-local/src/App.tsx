@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import jsQR from '../../../reactticket/src/utils/jsQR';
+import jsQR from 'reactticket-core/utils/jsQR';
 import { ReactTicket } from '@ReactTicket/index';
 import { LocalStorageAdapter } from 'reactticket-core/adapters/LocalStorageAdapter';
-import { TicketService } from '@ReactTicket/services/TicketService';
-import { AuthService } from '@ReactTicket/services/AuthService';
-import { ScanAccountService } from '@ReactTicket/services/ScanAccountService';
+import { TicketService } from 'reactticket-core/services/TicketService';
+import { AuthService } from 'reactticket-core/services/AuthService';
+import { ScanAccountService } from 'reactticket-core/services/ScanAccountService';
 import './App.css';
 
 const adapter = new LocalStorageAdapter();
