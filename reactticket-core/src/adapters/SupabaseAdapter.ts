@@ -97,6 +97,25 @@ export class SupabaseAdapter implements StorageAdapter {
     if (error) throw error;
   }
 
+  async saveTickets(tickets: IssuedTicket[]): Promise<void> {
+    const mappedTickets = tickets.map(t => ({
+      ...t,
+      event_id: t.eventId,
+      ticket_type_id: t.ticketTypeId,
+      order_id: t.orderId,
+      buyer_email: t.buyerEmail,
+      issued_at: t.issuedAt,
+      valid_from: t.validFrom,
+      valid_until: t.validUntil,
+      price_paid_cents: t.pricePaidCents
+    }));
+    const { error } = await this.supabase.rpc('create_tickets_transaction', {
+      p_tickets: mappedTickets
+    });
+    if (error) throw error;
+  }
+
+
   async updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void> {
     const { error } = await this.supabase
       .from('tickets')

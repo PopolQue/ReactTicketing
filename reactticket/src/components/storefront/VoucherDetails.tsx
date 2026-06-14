@@ -1,7 +1,7 @@
 import React from 'react';
 import { useVoucher } from '../../hooks/useVoucher';
 import { useCart } from '../../hooks/useCart'; // for totals
-import { formatCurrency } from '../../utils/formatCurrency';
+import { formatCurrency } from 'reactticket-core/utils/formatCurrency';
 
 export const VoucherDetails: React.FC = () => {
   const { promoDetails, removeVoucher } = useVoucher();

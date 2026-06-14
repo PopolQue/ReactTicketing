@@ -56,6 +56,10 @@ export class SupabaseAdapter implements StorageAdapter {
     return Promise.reject(new Error("Not implemented"));
   }
 
+  async saveTickets(tickets: IssuedTicket[]): Promise<void> {
+    return Promise.reject(new Error("Not implemented"));
+  }
+
   async updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void> {
     return Promise.reject(new Error("Not implemented"));
   }

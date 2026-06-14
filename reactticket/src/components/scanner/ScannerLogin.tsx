@@ -68,14 +68,15 @@ export const ScannerLogin: React.FC = () => {
   return (
     <div className="ReactTicket-root scanner-login">
       <h2>Scanner Login</h2>
-      {error && <p className="error-message">{error}</p>}
+      {error && <p className="error-message" role="alert">{error}</p>}
       {isLocked ? (
-        <p>Locked — retry in {lockRemainingSeconds}s</p>
+        <p aria-live="assertive">Locked — retry in {lockRemainingSeconds}s</p>
       ) : (
         <form onSubmit={handleSubmit}>
           <input
             type="text"
             placeholder="Username"
+            aria-label="Username"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             disabled={isSubmitting}
@@ -84,13 +85,14 @@ export const ScannerLogin: React.FC = () => {
             type="text"
             inputMode="numeric"
             placeholder="PIN"
+            aria-label="PIN"
             value={displayPin}
             onKeyDown={handleKeyDown}
             onChange={() => {}} // Controlled component needs this
             disabled={isSubmitting}
             maxLength={MAX_PIN_LENGTH}
           />
-          <button type="submit" disabled={isSubmitting || !username || pinLength.current === 0}>
+          <button type="submit" disabled={isSubmitting || !username || pinLength.current === 0} aria-busy={isSubmitting}>
             {isSubmitting ? 'Signing in...' : 'Sign in'}
           </button>
         </form>

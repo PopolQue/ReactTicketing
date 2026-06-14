@@ -83,6 +83,12 @@ export class RestAdapter implements StorageAdapter {
       body: JSON.stringify(ticket),
     });
   }
+  async saveTickets(tickets: IssuedTicket[]): Promise<void> {
+    await this.request(`/tickets/batch`, {
+      method: 'POST',
+      body: JSON.stringify(tickets),
+    });
+  }
   async updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void> {
     await this.request(`/tickets/${ticketId}/status`, {
       method: 'PATCH',

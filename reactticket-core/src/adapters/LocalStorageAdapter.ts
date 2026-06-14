@@ -91,6 +91,14 @@ export class LocalStorageAdapter implements StorageAdapter {
     tickets.push(ticket);
     localStorage.setItem(key, JSON.stringify(tickets));
   }
+  async saveTickets(newTickets: IssuedTicket[]): Promise<void> {
+    if (newTickets.length === 0) return;
+    const eventId = newTickets[0].eventId;
+    const key = this.getStorageKey(eventId, 'tickets');
+    const tickets = await this.getIssuedTickets(eventId);
+    tickets.push(...newTickets);
+    localStorage.setItem(key, JSON.stringify(tickets));
+  }
   async updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void> {
     // Need to find which event this ticket belongs to
     for (let i = 0; i < localStorage.length; i++) {

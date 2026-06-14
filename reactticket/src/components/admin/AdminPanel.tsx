@@ -42,16 +42,17 @@ export const AdminPanel: React.FC = () => {
   if (!isAuthenticated) {
     return (
       <div className="admin-login" style={{padding: '20px'}}>
-        <h2>Admin Authentication</h2>
+        <h2 id="admin-auth-heading">Admin Authentication</h2>
         <input
           type="password"
           placeholder="Enter admin password"
+          aria-labelledby="admin-auth-heading"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           disabled={isSubmitting}
           onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
         />
-        <button onClick={handleLogin} disabled={isSubmitting}>
+        <button type="button" onClick={handleLogin} disabled={isSubmitting} aria-busy={isSubmitting}>
             {isSubmitting ? 'Logging in...' : 'Login'}
         </button>
       </div>
@@ -62,7 +63,7 @@ export const AdminPanel: React.FC = () => {
     <div className="ReactTicket-root admin-panel">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1>Admin Panel</h1>
-          <button onClick={handleLogout}>Logout</button>
+          <button type="button" onClick={handleLogout} aria-label="Logout from Admin Panel">Logout</button>
       </div>
       <ScanDashboard />
       <CapacityOverview />

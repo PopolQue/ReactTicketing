@@ -27,6 +27,7 @@ async issueTickets(orderId: string): Promise<IssuedTicket[]> {
   }
 
   const tickets: IssuedTicket[] = [];
+  const ticketsToSave: IssuedTicket[] = [];
 
   for (const item of order.items) {
     const ticketType = (await this.adapter.getTicketTypes(order.eventId)).find(t => t.id === item.ticketTypeId);
@@ -46,10 +47,15 @@ async issueTickets(orderId: string): Promise<IssuedTicket[]> {
           status: "pending_delivery",
           pricePaidCents: item.unitPriceCents,
       };
-      await this.adapter.saveTicket(ticket);
+      ticketsToSave.push(ticket);
       tickets.push(ticket);
     }
   }
+  
+  if (ticketsToSave.length > 0) {
+    await this.adapter.saveTickets(ticketsToSave);
+  }
+
   return tickets;
 }
 

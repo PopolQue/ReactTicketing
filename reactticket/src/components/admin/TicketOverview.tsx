@@ -16,8 +16,8 @@ export const TicketOverview: React.FC = () => {
 
   const handleDeliver = async (ticketId: string) => {
     try {
-      const { AuthService } = await import('../../services/AuthService');
-      const { TicketService } = await import('../../services/TicketService');
+      const { AuthService } = await import('reactticket-core/services/AuthService');
+      const { TicketService } = await import('reactticket-core/services/TicketService');
       const authService = new AuthService(adapter, (event as any).settings);
       const ticketService = new TicketService(adapter, authService);
       await ticketService.deliverTicket(ticketId);
@@ -34,8 +34,8 @@ export const TicketOverview: React.FC = () => {
       return;
     }
     try {
-      const { AuthService } = await import('../../services/AuthService');
-      const { TicketService } = await import('../../services/TicketService');
+      const { AuthService } = await import('reactticket-core/services/AuthService');
+      const { TicketService } = await import('reactticket-core/services/TicketService');
       const authService = new AuthService(adapter, (event as any).settings);
       const ticketService = new TicketService(adapter, authService);
       const ticket = tickets.find(t => t.id === transferTicketId);

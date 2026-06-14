@@ -19,6 +19,7 @@ export interface StorageAdapter {
   getTicketsByOrder(orderId: string): Promise<IssuedTicket[]>;
   getIssuedTickets(eventId: string): Promise<IssuedTicket[]>;
   saveTicket(ticket: IssuedTicket): Promise<void>;
+  saveTickets(tickets: IssuedTicket[]): Promise<void>;
   updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void>;
   deliverTicket(ticketId: string, qrPayload: string): Promise<void>;
   transferTicket(ticketId: string, toEmail: string, newPersonalization: TicketPersonalization): Promise<void>;

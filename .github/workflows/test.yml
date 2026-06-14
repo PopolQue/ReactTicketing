@@ -30,3 +30,11 @@ jobs:
           # Supabase CLI automatically applies migrations from supabase/migrations on start.
           # We can also check status.
           supabase status
+          
+      - name: Install Playwright Browsers
+        run: |
+          cd platform && npx playwright install --with-deps
+          
+      - name: Run Playwright e2e tests
+        run: |
+          cd platform && npm run test:e2e

@@ -6,16 +6,25 @@ import EventCard from '../../components/EventCard';
 import ArtistCard from '../../components/ArtistCard';
 import VenueCard from '../../components/VenueCard';
 import OrganizerCard from '../../components/OrganizerCard';
+import { useDiscoverData } from '../../hooks/useDiscoverData';
+import type { TabType } from '../../hooks/useDiscoverData';
+import { useDiscoverFilters } from '../../hooks/useDiscoverFilters';
+import DiscoverTabs from '../../components/marketplace/DiscoverTabs';
+import CityFilterList from '../../components/marketplace/CityFilterList';
 
 export default function Discover() {
-  const [activeTab, setActiveTab] = useState<'events' | 'artists' | 'venues' | 'organizers'>('events');
-  const [results, setResults] = useState<unknown[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState<TabType>('events');
   const [user, setUser] = useState<unknown>(null);
 
-  // Search and Filter State
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCity, setSelectedCity] = useState<string | null>(null);
+  const { results, loading } = useDiscoverData(activeTab);
+  const {
+    searchQuery,
+    setSearchQuery,
+    selectedCity,
+    setSelectedCity,
+    uniqueCities,
+    filteredResults
+  } = useDiscoverFilters(results, activeTab);
 
   useEffect(() => {
     async function checkUser() {
@@ -25,75 +34,16 @@ export default function Discover() {
     checkUser();
   }, []);
 
-  useEffect(() => {
-    async function fetchData() {
-      setLoading(true);
-      setResults([]);
-      
-      try {
-        if (activeTab === 'events') {
-          const { data } = await supabase
-            .from('events')
-            .select(`*, organizer_profiles ( company_name )`)
-            .eq('published', true)
-            .eq('approval_status', 'approved')
-            .order('start_date', { ascending: true })
-            .limit(50);
-            
-          if (data) setResults(data);
-        } 
-        else if (activeTab === 'artists') {
-          const { data } = await supabase.from('artists').select('*').limit(50);
-          if (data) setResults(data);
-        }
-        else if (activeTab === 'venues') {
-          const { data } = await supabase.from('venues').select('*').order('is_verified', { ascending: false }).limit(50);
-          if (data) setResults(data);
-        }
-        else if (activeTab === 'organizers') {
-          const { data } = await supabase.from('organizers').select('*').limit(50);
-          if (data) setResults(data);
-        }
-      } catch (e) {
-        console.error("Error fetching data:", e);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchData();
-  }, [activeTab]);
-
   const handleLogout = async () => {
     await supabase.auth.signOut();
     setUser(null);
   };
 
-  // Derive unique cities (only relevant for events and venues)
-  const uniqueCities = Array.from(new Set(
-    results.map(r => r.city).filter(Boolean)
-  )) as string[];
-
-  // Filter based on search and selected city
-  const filteredResults = results.filter(item => {
-    const matchesCity = selectedCity ? item.city === selectedCity : true;
-    let matchesSearch = true;
-    
-    if (searchQuery !== '') {
-      const q = searchQuery.toLowerCase();
-      if (activeTab === 'events') {
-        matchesSearch = item.name.toLowerCase().includes(q) || (item.city && item.city.toLowerCase().includes(q)) || (item.venue && item.venue.toLowerCase().includes(q));
-      } else if (activeTab === 'artists') {
-        matchesSearch = item.name.toLowerCase().includes(q) || (item.genres && item.genres.join(' ').toLowerCase().includes(q));
-      } else if (activeTab === 'venues') {
-        matchesSearch = item.name.toLowerCase().includes(q) || (item.city && item.city.toLowerCase().includes(q));
-      } else if (activeTab === 'organizers') {
-        matchesSearch = item.company_name?.toLowerCase().includes(q);
-      }
-    }
-
-    return matchesCity && matchesSearch;
-  });
+  const handleTabChange = (tab: TabType) => {
+    setActiveTab(tab);
+    setSelectedCity(null);
+    setSearchQuery('');
+  };
 
   const getPlaceholder = () => {
     switch(activeTab) {
@@ -144,57 +94,15 @@ export default function Discover() {
         </div>
 
         {/* Tab Navigation */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginBottom: '40px', borderBottom: '1px solid var(--border)', paddingBottom: '16px' }}>
-          {(['events', 'artists', 'venues', 'organizers'] as const).map(tab => (
-            <button
-              key={tab}
-              onClick={() => { setActiveTab(tab); setSelectedCity(null); setSearchQuery(''); }}
-              style={{
-                background: 'none',
-                border: 'none',
-                padding: '8px 16px',
-                fontSize: '1.1rem',
-                fontWeight: activeTab === tab ? 600 : 400,
-                color: activeTab === tab ? 'white' : 'var(--text-secondary)',
-                cursor: 'pointer',
-                position: 'relative'
-              }}
-            >
-              {tab.charAt(0).toUpperCase() + tab.slice(1)}
-              {activeTab === tab && (
-                <div style={{ position: 'absolute', bottom: '-17px', left: 0, right: 0, height: '2px', backgroundColor: 'var(--accent)' }} />
-              )}
-            </button>
-          ))}
-        </div>
+        <DiscoverTabs activeTab={activeTab} onChangeTab={handleTabChange} />
 
         {/* Filters */}
-        {!loading && (activeTab === 'events' || activeTab === 'venues') && uniqueCities.length > 0 && (
-          <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '40px', justifyContent: 'center' }}>
-            <button
-              onClick={() => setSelectedCity(null)}
-              style={{
-                padding: '8px 16px', borderRadius: '20px', border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 500,
-                backgroundColor: selectedCity === null ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
-                color: selectedCity === null ? 'white' : 'var(--text-primary)'
-              }}
-            >
-              All Cities
-            </button>
-            {uniqueCities.map(city => (
-              <button
-                key={city}
-                onClick={() => setSelectedCity(city)}
-                style={{
-                  padding: '8px 16px', borderRadius: '20px', border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 500,
-                  backgroundColor: selectedCity === city ? 'var(--accent)' : 'rgba(255,255,255,0.05)',
-                  color: selectedCity === city ? 'white' : 'var(--text-primary)'
-                }}
-              >
-                {city}
-              </button>
-            ))}
-          </div>
+        {!loading && (activeTab === 'events' || activeTab === 'venues') && (
+          <CityFilterList
+            uniqueCities={uniqueCities}
+            selectedCity={selectedCity}
+            onSelectCity={setSelectedCity}
+          />
         )}
 
         {loading ? (

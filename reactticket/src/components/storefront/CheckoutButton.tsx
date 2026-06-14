@@ -13,8 +13,10 @@ export const CheckoutButton = () => {
 
   return (
     <button 
+      type="button"
       onClick={handleCheckout}
       disabled={isProcessing}
+      aria-busy={isProcessing}
       style={{
         width: '100%', padding: '16px', borderRadius: '8px', border: 'none',
         background: isProcessing ? '#64748b' : '#0f172a', color: 'white', fontSize: '16px', fontWeight: 'bold',

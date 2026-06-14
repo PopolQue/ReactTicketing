@@ -1,63 +1,25 @@
-import React, { useState } from 'react';
-import { supabase } from '../../lib/supabase';
-import { useNavigate } from 'react-router-dom';
+import React from 'react';
+import { useClaimsData } from '../../hooks/useClaimsData';
+import type { EntityType } from '../../hooks/useClaimsData';
+import ClaimsList from '../../components/marketplace/ClaimsList';
 
 export default function ClaimPortal() {
-  const navigate = useNavigate();
-  const [entityType, setEntityType] = useState<'artists' | 'organizers' | 'venues'>('artists');
-  const [searchQuery, setSearchQuery] = useState('');
-  const [searchResults, setSearchResults] = useState<any[]>([]);
-  const [submitting, setSubmitting] = useState(false);
-  const [proofUrl, setProofUrl] = useState('');
-  const [selectedEntity, setSelectedEntity] = useState<any>(null);
-  const [claimStatus, setClaimStatus] = useState<string | null>(null);
-
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!searchQuery.trim()) return;
-
-    // Search for entities that are NOT claimed yet
-    const { data } = await supabase
-      .from(entityType)
-      .select('*')
-      .ilike('name', `%${searchQuery}%`)
-      .is('claimed_by_user_id', null)
-      .limit(10);
-      
-    if (data) setSearchResults(data);
-  };
-
-  const submitClaim = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedEntity) return;
-    setSubmitting(true);
-
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      // Must be logged in to claim
-      navigate('/auth');
-      return;
-    }
-
-    const { error } = await supabase.from('entity_claims').insert([{
-      entity_type: entityType,
-      entity_id: selectedEntity.id,
-      user_id: user.id,
-      proof_url: proofUrl,
-      status: 'pending'
-    }]);
-
-    setSubmitting(false);
-
-    if (!error) {
-      setClaimStatus("Success! Your claim has been submitted and is pending admin review.");
-      setSelectedEntity(null);
-      setSearchQuery('');
-      setSearchResults([]);
-    } else {
-      setClaimStatus("Error submitting claim. Please try again.");
-    }
-  };
+  const {
+    entityType,
+    setEntityType,
+    searchQuery,
+    setSearchQuery,
+    searchResults,
+    submitting,
+    proofUrl,
+    setProofUrl,
+    selectedEntity,
+    setSelectedEntity,
+    claimStatus,
+    handleSearch,
+    submitClaim,
+    clearSearch
+  } = useClaimsData();
 
   return (
     <div style={{ padding: '40px 20px', maxWidth: '800px', margin: '0 auto', minHeight: '100vh' }}>
@@ -76,10 +38,10 @@ export default function ClaimPortal() {
       {!selectedEntity ? (
         <div className="glass-panel" style={{ padding: '32px' }}>
           <div style={{ display: 'flex', gap: '16px', marginBottom: '24px' }}>
-            {['artists', 'organizers', 'venues'].map(type => (
+            {(['artists', 'organizers', 'venues'] as EntityType[]).map(type => (
               <button 
                 key={type}
-                onClick={() => { setEntityType(type as any); setSearchResults([]); setSearchQuery(''); }}
+                onClick={() => { setEntityType(type); clearSearch(); }}
                 className={entityType === type ? 'btn-primary' : 'btn-secondary'}
                 style={{ flex: 1, textTransform: 'capitalize' }}
               >
@@ -100,26 +62,7 @@ export default function ClaimPortal() {
             <button type="submit" className="btn-primary">Search</button>
           </form>
 
-          {searchResults.length > 0 && (
-            <div style={{ marginTop: '24px', display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {searchResults.map(entity => (
-                <div key={entity.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-                    {entity.image_url ? (
-                      <img src={entity.image_url} alt={entity.name} style={{ width: '48px', height: '48px', borderRadius: '50%', objectFit: 'cover' }} />
-                    ) : (
-                      <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'rgba(255,255,255,0.1)' }}></div>
-                    )}
-                    <div>
-                      <span style={{ fontWeight: 600, fontSize: '1.1rem', display: 'block' }}>{entity.name}</span>
-                      {entity.city && <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{entity.city}</span>}
-                    </div>
-                  </div>
-                  <button onClick={() => setSelectedEntity(entity)} className="btn-secondary">Claim This Profile</button>
-                </div>
-              ))}
-            </div>
-          )}
+          <ClaimsList searchResults={searchResults} onSelectEntity={setSelectedEntity} />
         </div>
       ) : (
         <div className="glass-panel" style={{ padding: '32px' }}>
