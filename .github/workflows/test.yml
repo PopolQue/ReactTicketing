@@ -21,6 +21,7 @@ jobs:
           cd reactticket-core && npm install
           cd ../reactticket && npm install
           cd ../platform && npm install
+          cd ../mobile-scanner && npm install
           
       - name: Security Audit
         run: |
@@ -67,3 +68,7 @@ jobs:
           export VITE_SUPABASE_URL="http://127.0.0.1:54321"
           export VITE_SUPABASE_ANON_KEY=$(supabase status -o env | grep ANON_KEY | cut -d '=' -f2 | tr -d '"')
           npm run test:e2e
+
+      - name: Validate Mobile Scanner Build
+        run: |
+          cd mobile-scanner && npm run build

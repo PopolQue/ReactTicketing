@@ -11,7 +11,7 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC",
+  "license": "MIT",
   "type": "commonjs",
   "dependencies": {
     "@capacitor/android": "^8.4.0",
@@ -26,5 +26,8 @@
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^6.0.2"
+  },
+  "engines": {
+    "node": ">=20.0.0"
   }
 }

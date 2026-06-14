@@ -1,1 +1,2 @@
-ALTER TABLE promo_codes ADD COLUMN batch_id UUID; ALTER TABLE promo_codes ADD COLUMN batch_name TEXT;
+ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS batch_id UUID;
+ALTER TABLE promo_codes ADD COLUMN IF NOT EXISTS batch_name TEXT;

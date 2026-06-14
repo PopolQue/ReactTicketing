@@ -184,6 +184,9 @@ minimum_password_length = 8
 # are: `letters_digits`, `lower_upper_letters_digits`, `lower_upper_letters_digits_symbols`
 password_requirements = "lower_upper_letters_digits_symbols"
 
+[auth.password]
+leaked_password_protection = true
+
 # Configure passkey sign-ins.
 # [auth.passkey]
 # enabled = false

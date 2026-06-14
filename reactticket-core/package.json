@@ -5,6 +5,10 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "type": "module",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "build": "tsc",
     "postbuild": "cp src/utils/jsQR.* dist/utils/ || true",

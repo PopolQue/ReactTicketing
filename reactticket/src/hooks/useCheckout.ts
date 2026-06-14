@@ -9,7 +9,6 @@ export const useCheckout = (cartTotals: { subtotal: string, discount: string, to
   const { cart, dispatch, ticketTypes, adapter, event, onCheckout, onTicketIssued } = useReactTicket();
 
   const checkout = useCallback(async () => {
-    console.log("Checkout initiated, cart items:", cart.items);
     if (cart.items.length === 0) {
         alert("Cart is empty");
         return;
@@ -50,13 +49,10 @@ export const useCheckout = (cartTotals: { subtotal: string, discount: string, to
         createdAt: new Date(),
     };
 
-    console.log("Prepared order:", order);
     // REMOVED: await adapter.createOrder(order); // Do not insert until payment is confirmed
 
     if (onCheckout) {
-        console.log("Calling onCheckout...");
         const result = await onCheckout(order);
-        console.log("onCheckout result:", result);
         
         if (result === 'confirmed') {
             try {
@@ -92,8 +88,6 @@ export const useCheckout = (cartTotals: { subtotal: string, discount: string, to
                 console.error("Ticket issuance failed:", err);
                 alert(`Checkout failed: ${err.message}`);
             }
-        } else {
-            console.warn("Checkout not confirmed");
         }
     } else {
         console.error("onCheckout prop missing");

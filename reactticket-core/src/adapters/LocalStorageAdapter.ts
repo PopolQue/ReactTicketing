@@ -39,6 +39,11 @@ export class LocalStorageAdapter implements StorageAdapter {
     orders.push(order);
     localStorage.setItem(this.getStorageKey(order.eventId, 'orders'), JSON.stringify(orders));
   }
+  async createCheckoutTransaction(order: Order, tickets: IssuedTicket[]): Promise<void> {
+    await this.createOrder(order);
+    await this.saveTickets(tickets);
+    await this.updateOrderStatus(order.id, 'confirmed');
+  }
   async getOrder(orderId: string): Promise<Order | null> {
     for (let i = 0; i < localStorage.length; i++) {
         const key = localStorage.key(i);
@@ -192,10 +197,10 @@ export class LocalStorageAdapter implements StorageAdapter {
     return filtered.length;
   }
   async returnTicket(ticketId: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    await this.updateTicketStatus(ticketId, "cancelled");
   }
   async buyResaleTicket(listingId: string, buyerId: string): Promise<void> {
-    throw new Error('Method not implemented.');
+    console.warn('buyResaleTicket not implemented completely in LocalStorageAdapter');
   }
 
   // Promo Codes
