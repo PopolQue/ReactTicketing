@@ -43,9 +43,7 @@ export default function OrganizerProfile() {
 
   return (
     <div className="marketplace-page" style={{ minHeight: '100vh' }}>
-      <header style={{ padding: '24px 40px', borderBottom: '1px solid var(--border)' }}>
-        <Link to="/discover" className="btn-nav" style={{ padding: '8px 0', color: 'rgba(255,255,255,0.7)' }}>← Back to Discover</Link>
-      </header>
+      
 
       <main style={{ padding: '60px 40px', maxWidth: '1000px', margin: '0 auto' }}>
         

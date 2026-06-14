@@ -51,27 +51,31 @@ import { ToastProvider } from './components/Toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import ProtectedRoute from './components/ProtectedRoute'
 
+import MarketplaceLayout from './components/MarketplaceLayout'
+
 function App() {
   return (
     <ErrorBoundary>
       <ToastProvider>
         <Routes>
         {/* Public Fan Marketplace */}
-        <Route path="/" element={<Home />} />
-        <Route path="/discover" element={<Discover />} />
-        <Route path="/events/:id" element={<EventDetails />} />
-        <Route path="/artist/:id" element={<ArtistProfile />} />
-        <Route path="/venue/:id" element={<VenueProfile />} />
-        <Route path="/organizer/:id" element={<OrganizerProfile />} />
-        
-        <Route element={<ProtectedRoute />}>
-          <Route path="/wallet" element={<Wallet />} />
+        <Route element={<MarketplaceLayout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/discover" element={<Discover />} />
+          <Route path="/events/:id" element={<EventDetails />} />
+          <Route path="/artist/:id" element={<ArtistProfile />} />
+          <Route path="/venue/:id" element={<VenueProfile />} />
+          <Route path="/organizer/:id" element={<OrganizerProfile />} />
+          
+          <Route element={<ProtectedRoute />}>
+            <Route path="/wallet" element={<Wallet />} />
+          </Route>
+          <Route path="/resale" element={<ResaleMarket />} />
+          <Route path="/blogs" element={<BlogFeed />} />
+          <Route path="/blogs/:slug" element={<BlogPost />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/claim" element={<ClaimPortal />} />
         </Route>
-        <Route path="/resale" element={<ResaleMarket />} />
-        <Route path="/blogs" element={<BlogFeed />} />
-        <Route path="/blogs/:slug" element={<BlogPost />} />
-        <Route path="/auth" element={<Auth />} />
-        <Route path="/claim" element={<ClaimPortal />} />
 
         {/* Organizer Portal */}
         <Route element={<ProtectedRoute />}>

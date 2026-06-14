@@ -22,24 +22,7 @@ export default function Home() {
 
   return (
     <div className="landing-page" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-      <header style={{ padding: '24px 40px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative', zIndex: 10 }}>
-        <h2 style={{ margin: 0, letterSpacing: '-0.5px' }}>
-          Admit <span style={{ color: 'var(--accent)' }}>Marketplace</span>
-        </h2>
-        <nav style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
-          <Link to="/discover" className="btn-nav">Discover</Link>
-          <Link to="/resale" className="btn-nav">Secondary Market</Link>
-          {user ? (
-            <>
-              <Link to="/wallet" className="btn-secondary" style={{ textDecoration: 'none' }}>My Wallet</Link>
-              <Link to="/organizer" className="btn-secondary" style={{ textDecoration: 'none' }}>Organizer Dashboard</Link>
-              <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: 'var(--text-secondary)', cursor: 'pointer' }}>Logout</button>
-            </>
-          ) : (
-            <Link to="/auth" className="btn-primary" style={{ textDecoration: 'none' }}>Log In / Sign Up</Link>
-          )}
-        </nav>
-      </header>
+      
 
       <main style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', position: 'relative', padding: '60px 20px', overflow: 'hidden' }}>
         {/* Background glow effects */}

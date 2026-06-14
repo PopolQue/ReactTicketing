@@ -23,10 +23,7 @@ export default function BlogFeed() {
 
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '60px 20px', minHeight: '100vh' }}>
-      <header style={{ marginBottom: '40px', textAlign: 'center' }}>
-        <h1 style={{ fontSize: '3rem', marginBottom: '16px' }}>Community Blog</h1>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>Stories, announcements, and deep dives from the underground.</p>
-      </header>
+      
 
       {loading ? (
         <p style={{ textAlign: 'center' }}>Loading stories...</p>

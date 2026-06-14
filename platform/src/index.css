@@ -1,19 +1,29 @@
 :root {
-  --bg-color: #0f1115;
-  --panel-bg: #1a1d24;
+  --bg-color: #010f14;
+  --panel-bg: rgba(1, 15, 20, 0.75);
   --text-primary: #ffffff;
-  --text-secondary: #94a3b8;
-  --accent: #6366f1;
-  --accent-hover: #4f46e5;
-  --border: #2e3340;
-  
+  --text-secondary: #8c9fa8;
+  --accent: #346040;
+  --accent-hover: #34604095;
+  --border: #1a2a30;
+
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  /* Bloom Glow Effect */
+  --bloom-glow: 0 0 10px rgba(162, 170, 92, 0.6), 0 0 20px rgba(215, 179, 78, 0.4), 0 0 40px rgba(69, 38, 38, 0.2);
+  --bloom-text: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(255, 255, 255, 0.4);
+
+  /* Dither Pattern SVG Base64 (2x2 checker for sharp dither) */
+  --dither-pattern: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='2' height='2'%3E%3Cpath d='M0,0h1v1H0zm1,1h1v1H1z' fill='%23ffffff' fill-opacity='0.03'/%3E%3Cpath d='M1,0h1v1H1zm-1,1h1v1H0z' fill='%23000000' fill-opacity='0.15'/%3E%3C/svg%3E");
 }
 
 body {
   margin: 0;
   padding: 0;
   background-color: var(--bg-color);
+  background-image: var(--dither-pattern);
+  background-repeat: repeat;
+  background-attachment: fixed;
   color: var(--text-primary);
   font-family: var(--font-family);
   -webkit-font-smoothing: antialiased;
@@ -21,26 +31,45 @@ body {
 
 /* Premium aesthetic utilities */
 .glass-panel {
-  background: rgba(26, 29, 36, 0.7);
+  background: var(--panel-bg);
+  background-image: var(--dither-pattern);
   backdrop-filter: blur(12px);
   border: 1px solid var(--border);
   border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
 }
 
 .btn-primary {
   background: var(--accent);
   color: white;
-  border: none;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   padding: 10px 20px;
   border-radius: 8px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  box-shadow: var(--bloom-glow);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: var(--dither-pattern);
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .btn-primary:hover {
   background: var(--accent-hover);
   transform: translateY(-1px);
+  box-shadow: 0 0 15px rgba(90, 50, 50, 0.8), 0 0 30px rgba(90, 50, 50, 0.5), 0 0 50px rgba(90, 50, 50, 0.3);
+  text-shadow: var(--bloom-text);
 }
 
 .btn-secondary {
@@ -55,11 +84,13 @@ body {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .btn-secondary:hover {
-  border-color: var(--text-secondary);
-  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+  background: rgba(69, 38, 38, 0.15);
+  box-shadow: inset 0 0 20px rgba(69, 38, 38, 0.2), 0 0 10px rgba(69, 38, 38, 0.3);
 }
 
 .btn-nav {
@@ -76,31 +107,51 @@ body {
 
 .btn-nav:hover {
   background: rgba(255, 255, 255, 0.1);
+  text-shadow: var(--bloom-text);
 }
 
 .input-field {
   width: 100%;
   padding: 12px;
-  background: rgba(0, 0, 0, 0.2);
+  background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--border);
   border-radius: 8px;
   color: white;
   font-family: var(--font-family);
-  transition: border-color 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s;
   box-sizing: border-box;
 }
 
 .input-field:focus {
   outline: none;
   border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(69, 38, 38, 0.3), var(--bloom-glow);
 }
 
 .event-card-hover {
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
 }
 
 .event-card-hover:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4);
-  border-color: rgba(99, 102, 241, 0.5); /* Accent border on hover */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), var(--bloom-glow);
+  border-color: var(--accent);
+}
+
+/* Dither and Bloom Utility Classes */
+.bg-dither {
+  background-color: var(--bg-color);
+  background-image: var(--dither-pattern);
+  background-attachment: fixed;
+}
+
+.card-dither {
+  background-color: var(--panel-bg);
+  background-image: var(--dither-pattern);
+  border: 1px solid var(--border);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+.text-bloom {
+  text-shadow: var(--bloom-text);
 }

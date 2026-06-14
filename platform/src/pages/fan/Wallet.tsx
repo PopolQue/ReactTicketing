@@ -100,13 +100,7 @@ export default function Wallet() {
 
   return (
     <div className="wallet-page" style={{ minHeight: '100vh', padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
-      <header style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '40px', alignItems: 'center' }}>
-        <h1 style={{ fontSize: '2.5rem', margin: 0 }}>My Ticket Wallet</h1>
-        <div style={{ display: 'flex', gap: '16px' }}>
-          <Link to="/resale" className="btn-secondary" style={{ textDecoration: 'none', backgroundColor: 'transparent', border: '1px solid var(--accent)', color: 'var(--accent)' }}>Secondary Market</Link>
-          <Link to="/" className="btn-secondary" style={{ textDecoration: 'none' }}>Browse Events</Link>
-        </div>
-      </header>
+      
 
       {loading ? <p style={{ color: 'var(--text-secondary)' }}>Loading your tickets...</p> : (
         <>

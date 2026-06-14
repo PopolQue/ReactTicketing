@@ -77,16 +77,7 @@ export default function ResaleMarket() {
 
   return (
     <div className="resale-market-page" style={{ minHeight: '100vh', padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
-      <header style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', marginBottom: '40px', gap: '16px', alignItems: 'center' }}>
-        <div>
-          <h1 style={{ fontSize: '2.5rem', margin: 0 }}>Secondary Market</h1>
-          <p style={{ color: 'var(--text-secondary)', margin: '8px 0 0 0' }}>Securely buy tickets from other fans.</p>
-        </div>
-        <div style={{ display: 'flex', gap: '16px' }}>
-          <Link to="/" className="btn-secondary" style={{ textDecoration: 'none' }}>Primary Market</Link>
-          <Link to="/wallet" className="btn-secondary" style={{ textDecoration: 'none' }}>My Wallet</Link>
-        </div>
-      </header>
+      
 
       {loading ? <p style={{ color: 'var(--text-secondary)' }}>Loading listings...</p> : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>

@@ -21,8 +21,8 @@ INSERT INTO public.user_roles (user_id, role) VALUES
 ('22222222-2222-2222-2222-222222222222', 'admin');
 
 -- Insert Organizer Profiles
-INSERT INTO public.organizers (id, company_name, stripe_account_id, verified) VALUES
-('33333333-3333-3333-3333-333333333333', 'Starlight Productions', 'acct_12345', TRUE);
+INSERT INTO public.organizers (id, name, stripe_account_id, is_verified, claimed_by_user_id) VALUES
+('33333333-3333-3333-3333-333333333333', 'Starlight Productions', 'acct_12345', TRUE, '33333333-3333-3333-3333-333333333333');
 
 -- Insert Events
 INSERT INTO public.events (id, organizer_id, organizer_name, name, description, venue, start_date, timezone_id, published, approval_status, images) VALUES

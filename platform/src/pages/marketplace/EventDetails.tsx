@@ -56,9 +56,7 @@ export default function EventDetails() {
 
   return (
     <div className="event-details-page" style={{ minHeight: '100vh', backgroundColor: customBgColor, transition: 'background-color 0.5s' }}>
-      <header style={{ padding: '24px 40px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>
-        <Link to="/discover" className="btn-nav" style={{ padding: '8px 0', color: 'rgba(255,255,255,0.7)' }}>← Back to Marketplace</Link>
-      </header>
+      
 
       <EventHero 
         event={event} 

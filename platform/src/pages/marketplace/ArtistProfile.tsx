@@ -46,9 +46,7 @@ export default function ArtistProfile() {
 
   return (
     <div className="marketplace-page" style={{ minHeight: '100vh' }}>
-      <header style={{ padding: '24px 40px', borderBottom: '1px solid var(--border)' }}>
-        <Link to="/discover" className="btn-nav" style={{ padding: '8px 0', color: 'rgba(255,255,255,0.7)' }}>← Back to Discover</Link>
-      </header>
+      
 
       <div style={{ position: 'relative', height: '300px', width: '100%', overflow: 'hidden' }}>
         <div style={{ 
