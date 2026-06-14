@@ -9,6 +9,7 @@ const Dashboard = React.lazy(() => import('./pages/organizer/Dashboard'))
 const EventsList = React.lazy(() => import('./pages/organizer/EventsList'))
 const CreateEvent = React.lazy(() => import('./pages/organizer/CreateEvent'))
 const ManageEvent = React.lazy(() => import('./pages/organizer/ManageEvent'))
+const PromosFullPage = React.lazy(() => import('./pages/organizer/PromosFullPage'))
 
 // Auth
 import Auth from './pages/auth/Auth'
@@ -27,6 +28,7 @@ import OrganizerProfile from './pages/marketplace/OrganizerProfile'
 import Wallet from './pages/fan/Wallet'
 import ResaleMarket from './pages/marketplace/ResaleMarket'
 import ClaimPortal from './pages/marketplace/ClaimPortal'
+import WriterApplication from './pages/marketplace/WriterApplication'
 import ScanPage from './pages/marketplace/ScanPage'
 
 const Settings = React.lazy(() => import('./pages/organizer/Settings'))
@@ -55,6 +57,9 @@ const SupportDesk = React.lazy(() => import('./pages/admin/SupportDesk'))
 const SuperAdminLayout = React.lazy(() => import('./pages/superadmin/SuperAdminLayout'))
 const AdminManagement = React.lazy(() => import('./pages/superadmin/AdminManagement'))
 const EntityClaims = React.lazy(() => import('./pages/admin/EntityClaims'))
+const WriterApplicationsReview = React.lazy(() => import('./pages/admin/WriterApplicationsReview'))
+const WriterLayout = React.lazy(() => import('./pages/writer/WriterLayout'))
+const WriterDashboard = React.lazy(() => import('./pages/writer/WriterDashboard'))
 import { ToastProvider } from './components/Toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -90,6 +95,7 @@ function App() {
           <Route path="/blogs/:slug" element={<BlogPost />} />
           <Route path="/auth" element={<Auth />} />
           <Route path="/claim" element={<ClaimPortal />} />
+          <Route path="/apply/writer" element={<WriterApplication />} />
           <Route path="/scan/:id" element={<ScanPage />} />
           <Route path="/for-artists" element={<ForArtists />} />
           <Route path="/for-fans" element={<ForFans />} />
@@ -108,6 +114,7 @@ function App() {
             <Route path="events" element={<EventsList />} />
             <Route path="events/new" element={<CreateEvent />} />
             <Route path="events/:id" element={<ManageEvent />} />
+            <Route path="events/:id/promos" element={<PromosFullPage />} />
             <Route path="scan" element={<ScanTickets />} />
             <Route path="settings" element={<Settings />} />
             <Route path="marketing" element={<MarketingAndAnalytics />} />
@@ -121,6 +128,11 @@ function App() {
           <Route path="/artist" element={<ArtistLayout />}>
             <Route index element={<ArtistDashboard />} />
             <Route path="edit" element={<ArtistEditProfile />} />
+          </Route>
+
+          {/* Writer Portal */}
+          <Route path="/writer" element={<WriterLayout />}>
+            <Route index element={<WriterDashboard />} />
           </Route>
         </Route>
 
@@ -141,6 +153,7 @@ function App() {
             <Route path="events" element={<EventReview />} />
             <Route path="support" element={<SupportDesk />} />
             <Route path="claims" element={<EntityClaims />} />
+            <Route path="writer-applications" element={<WriterApplicationsReview />} />
           </Route>
         </Route>
 

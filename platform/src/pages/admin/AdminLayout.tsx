@@ -89,6 +89,18 @@ export default function AdminLayout() {
           >
             Entity Claims
           </Link>
+          <Link 
+            to="/admin/writer-applications" 
+            style={{ 
+              padding: '12px 16px', 
+              borderRadius: '8px', 
+              textDecoration: 'none', 
+              color: 'white',
+              backgroundColor: isActive('/admin/writer-applications') ? 'rgba(255,255,255,0.1)' : 'transparent'
+            }}
+          >
+            Writer Apps
+          </Link>
         </nav>
 
         <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>

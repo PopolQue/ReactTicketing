@@ -10,11 +10,33 @@ export default function BlogFeed() {
     async function fetchPublishedBlogs() {
       const { data } = await supabase
         .from('blogs')
-        .select('*, organizers(name)')
+        .select('*')
         .eq('published', true)
         .order('created_at', { ascending: false });
 
-      setBlogs(data || []);
+      if (data) {
+        // Fetch author details manually since author_id could be an organizer or a writer
+        const authorIds = [...new Set(data.map(b => b.author_id))].filter(Boolean);
+        
+        let authorsMap: Record<string, string> = {};
+        
+        if (authorIds.length > 0) {
+          const { data: orgs } = await supabase.from('organizer_profiles').select('id, company_name').in('id', authorIds);
+          const { data: writers } = await supabase.from('writer_profiles').select('id, pen_name').in('id', authorIds);
+          
+          orgs?.forEach(o => authorsMap[o.id] = o.company_name);
+          writers?.forEach(w => authorsMap[w.id] = w.pen_name);
+        }
+
+        const enrichedBlogs = data.map(b => ({
+          ...b,
+          author_name: authorsMap[b.author_id] || 'Anonymous'
+        }));
+        
+        setBlogs(enrichedBlogs);
+      } else {
+        setBlogs([]);
+      }
       setLoading(false);
     }
     fetchPublishedBlogs();
@@ -43,7 +65,7 @@ export default function BlogFeed() {
                 <h2 style={{ fontSize: '2rem', marginBottom: '16px', color: 'var(--accent)' }}>{blog.title}</h2>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '24px', lineHeight: '1.6' }}>{blog.excerpt}</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                  <span>By {blog.organizers?.name || 'Anonymous'}</span>
+                  <span>By {blog.author_name}</span>
                   <span>{new Date(blog.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                 </div>
               </article>

@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 
 export interface DropdownOption {
   value: string;
@@ -15,13 +16,18 @@ interface DropdownProps {
 
 export default function Dropdown({ options, value, onChange, placeholder = "Select an option", className = "" }: DropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
+  const [dropdownStyles, setDropdownStyles] = useState<React.CSSProperties>({});
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
 
   const selectedOption = options.find(opt => opt.value === value);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+      const isOutsideButton = dropdownRef.current && !dropdownRef.current.contains(event.target as Node);
+      const isOutsideMenu = menuRef.current && !menuRef.current.contains(event.target as Node);
+      
+      if (isOutsideButton && (!menuRef.current || isOutsideMenu)) {
         setIsOpen(false);
       }
     }
@@ -33,7 +39,17 @@ export default function Dropdown({ options, value, onChange, placeholder = "Sele
     <div className={`custom-dropdown ${className}`} ref={dropdownRef} style={{ position: 'relative', width: '100%' }}>
       <button
         type="button"
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => {
+          if (!isOpen && dropdownRef.current) {
+            const rect = dropdownRef.current.getBoundingClientRect();
+            setDropdownStyles({
+              top: rect.bottom + window.scrollY + 8,
+              left: rect.left + window.scrollX,
+              width: rect.width,
+            });
+          }
+          setIsOpen(!isOpen);
+        }}
         className="input-field"
         style={{
           width: '100%',
@@ -60,17 +76,19 @@ export default function Dropdown({ options, value, onChange, placeholder = "Sele
         </svg>
       </button>
 
-      {isOpen && (
-        <div style={{
+      {isOpen && createPortal(
+        <div 
+          ref={menuRef}
+          style={{
           position: 'absolute',
-          top: 'calc(100% + 8px)',
-          left: 0,
-          right: 0,
+          top: dropdownStyles.top,
+          left: dropdownStyles.left,
+          width: dropdownStyles.width,
           backgroundColor: '#111111',
           border: '1px solid var(--border)',
           borderRadius: '12px',
           boxShadow: '0 10px 40px rgba(0,0,0,0.5)',
-          zIndex: 100,
+          zIndex: 99999,
           overflow: 'hidden',
           animation: 'slideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1)'
         }}>
@@ -114,7 +132,8 @@ export default function Dropdown({ options, value, onChange, placeholder = "Sele
               </li>
             ))}
           </ul>
-        </div>
+        </div>,
+        document.body
       )}
       <style>{`
         @keyframes slideDown {

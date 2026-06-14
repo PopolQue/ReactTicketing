@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
 import Dropdown from '../../components/Dropdown';
+import { Link } from 'react-router-dom';
+import { ExternalLink } from 'lucide-react';
 
 export default function PromoManager({ eventId }: { eventId: string }) {
   const { showToast } = useToast();
@@ -56,12 +58,17 @@ export default function PromoManager({ eventId }: { eventId: string }) {
 
   return (
     <div className="glass-panel" style={{ padding: '24px' }}>
-      <h3>Promo Codes</h3>
-      <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '16px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h3 style={{ margin: 0 }}>Promo Codes</h3>
+        <Link to={`/organizer/events/${eventId}/promos`} className="btn-secondary" style={{ padding: '6px 12px', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '0.85rem', textDecoration: 'none' }}>
+          Batches & Export <ExternalLink size={14} />
+        </Link>
+      </div>
+      <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', marginBottom: '16px', marginTop: '-8px' }}>
         Create discount codes for your event.
       </p>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px', maxHeight: '250px', overflowY: 'auto' }}>
         {promos.length === 0 ? <p style={{ color: 'var(--text-secondary)' }}>No promo codes added yet.</p> : promos.map((p: any) => (
           <div key={p.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '12px', backgroundColor: 'rgba(0,0,0,0.2)', borderRadius: '8px' }}>
             <div>

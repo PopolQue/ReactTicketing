@@ -2,6 +2,7 @@ import React from 'react';
 import { useClaimsData } from '../../hooks/useClaimsData';
 import type { EntityType } from '../../hooks/useClaimsData';
 import ClaimsList from '../../components/marketplace/ClaimsList';
+import { Link } from 'react-router-dom';
 
 export default function ClaimPortal() {
   const {
@@ -30,6 +31,14 @@ export default function ClaimPortal() {
         Are you an Artist, Organizer, or Venue? Claim your automatically generated page to get access to analytics, 
         event management, and more.
       </p>
+
+      <div className="glass-panel" style={{ padding: '24px', marginBottom: '32px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'rgba(52, 96, 64, 0.1)', border: '1px solid rgba(52, 96, 64, 0.3)' }}>
+        <div>
+          <h3 style={{ margin: '0 0 4px 0', color: 'var(--accent)' }}>Are you a Writer or Critic?</h3>
+          <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.95rem' }}>Join the Admit editorial team and publish your reviews directly on the platform.</p>
+        </div>
+        <Link to="/apply/writer" className="btn-primary" style={{ textDecoration: 'none' }}>Apply Now</Link>
+      </div>
 
       {claimStatus && (
         <div className="glass-panel" style={{ padding: '16px', marginBottom: '24px', border: '1px solid var(--accent)' }}>

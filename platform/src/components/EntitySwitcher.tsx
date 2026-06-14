@@ -5,7 +5,7 @@ import { supabase } from '../lib/supabase';
 export type Entity = {
   id: string;
   name: string;
-  type: 'organizer' | 'artist' | 'venue';
+  type: 'organizer' | 'artist' | 'venue' | 'writer';
 };
 
 export default function EntitySwitcher({ onEntityChange }: { onEntityChange?: (e: Entity | null) => void }) {
@@ -40,6 +40,10 @@ export default function EntitySwitcher({ onEntityChange }: { onEntityChange?: (e
     const { data: venues } = await supabase.from('venues').select('id, name').eq('claimed_by_user_id', user.id);
     if (venues) venues.forEach(v => fetchedEntities.push({ ...v, type: 'venue' }));
 
+    // Fetch Writers
+    const { data: writers } = await supabase.from('writer_profiles').select('id, pen_name').eq('id', user.id);
+    if (writers) writers.forEach(w => fetchedEntities.push({ id: w.id, name: w.pen_name, type: 'writer' }));
+
     setEntities(fetchedEntities);
 
     const storedId = localStorage.getItem('active_entity_id');
@@ -61,6 +65,8 @@ export default function EntitySwitcher({ onEntityChange }: { onEntityChange?: (e
       } else if (location.pathname.startsWith('/artist') && selectedEntity.type !== 'artist') {
         navigate(`/${selectedEntity.type}`);
       } else if (location.pathname.startsWith('/venue') && selectedEntity.type !== 'venue') {
+        navigate(`/${selectedEntity.type}`);
+      } else if (location.pathname.startsWith('/writer') && selectedEntity.type !== 'writer') {
         navigate(`/${selectedEntity.type}`);
       }
     } else {
@@ -104,6 +110,9 @@ export default function EntitySwitcher({ onEntityChange }: { onEntityChange?: (e
         </optgroup>
         <optgroup label="Venues">
           {entities.filter(e => e.type === 'venue').map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
+        </optgroup>
+        <optgroup label="Writers">
+          {entities.filter(e => e.type === 'writer').map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
         </optgroup>
       </select>
     </div>

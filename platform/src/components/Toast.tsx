@@ -21,7 +21,7 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
       {children}
       {toast && (
         <div style={{
-          position: 'fixed', bottom: '24px', right: '24px', zIndex: 9999,
+          position: 'fixed', bottom: '24px', right: '24px', zIndex: 999999,
           padding: '16px 24px', borderRadius: '8px', color: 'white', fontWeight: 500,
           backgroundColor: toast.type === 'error' ? '#ef4444' : toast.type === 'success' ? '#10b981' : '#3b82f6',
           boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.3)',

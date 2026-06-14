@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
 import TicketCard from '../../components/TicketCard';
+import Modal from '../../components/Modal';
 
 export default function Wallet() {
   const { showToast } = useToast();
@@ -131,41 +132,36 @@ export default function Wallet() {
       )}
 
       {/* Resale Modal Overlay */}
-      {resellTicket && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.8)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 100 }}>
-          <div className="glass-panel" style={{ padding: '40px', width: '100%', maxWidth: '400px' }}>
-            <h2 style={{ marginTop: 0, marginBottom: '8px' }}>List for Resale</h2>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-              Selling ticket for <strong>{resellTicket.events?.name}</strong>.
+      <Modal isOpen={!!resellTicket} onClose={() => setResellTicket(null)} title="List for Resale" maxWidth="400px">
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
+          Selling ticket for <strong>{resellTicket?.events?.name}</strong>.
+        </p>
+        <form onSubmit={handleListForResale} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Asking Price (€)</label>
+            <input 
+              required 
+              type="number" 
+              step="0.01" 
+              min="1" 
+              max={resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : undefined}
+              className="input-field" 
+              value={askingPrice} 
+              onChange={e => setAskingPrice(e.target.value)} 
+              placeholder={`Max €${resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : ''}`} 
+            />
+            <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '8px' }}>
+              Maximum allowed resale price (10% cap): €{resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : '0.00'}
             </p>
-            <form onSubmit={handleListForResale} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-              <div>
-                <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Asking Price (€)</label>
-                <input 
-                  required 
-                  type="number" 
-                  step="0.01" 
-                  min="1" 
-                  max={resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : undefined}
-                  className="input-field" 
-                  value={askingPrice} 
-                  onChange={e => setAskingPrice(e.target.value)} 
-                  placeholder={`Max €${resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : ''}`} 
-                />
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '8px' }}>
-                  Maximum allowed resale price (10% cap): €{resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : '0.00'}
-                </p>
-              </div>
-              <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-                <button type="button" onClick={() => setResellTicket(null)} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>
-                <button type="submit" disabled={listingLoading} className="btn-primary" style={{ flex: 1 }}>
-                  {listingLoading ? 'Listing...' : 'Confirm Listing'}
-                </button>
-              </div>
-            </form>
           </div>
-        </div>
-      )}
+          <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
+            <button type="button" onClick={() => setResellTicket(null)} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>
+            <button type="submit" disabled={listingLoading} className="btn-primary" style={{ flex: 1 }}>
+              {listingLoading ? 'Listing...' : 'Confirm Listing'}
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 }
