@@ -18,11 +18,19 @@ jobs:
           
       - name: Install dependencies
         run: |
-          cd platform && npm install
+          cd reactticket-core && npm install
+          cd ../reactticket && npm install
+          cd ../platform && npm install
+          
+      - name: Security Audit
+        run: |
+          cd platform && npm audit --audit-level=high
           
       - name: Run vitest
         run: |
-          cd platform && npm run test
+          cd reactticket-core && npm run test -- --coverage
+          cd ../reactticket && npm run test -- --coverage
+          cd ../platform && npm run test -- --coverage
           
       - name: Test Supabase Migrations
         run: |

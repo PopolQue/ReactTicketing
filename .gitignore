@@ -1,7 +1,7 @@
 # .gitignore
 
 secrets
-
+codebase-analysis-docs/
 design/
 
 # Dependencies

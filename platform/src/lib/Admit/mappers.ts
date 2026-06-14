@@ -1,7 +1,4 @@
-import type { TicketTypeConfig, IssuedTicket, Order } from 'reactticket-core';
-import type { ScanAccount } from 'reactticket-core';
-import type { ScanEvent } from 'reactticket-core';
-import type { PromoCode, PromoBatch } from 'reactticket-core';
+import type { TicketTypeConfig, IssuedTicket, Order, ScanAccount, ScanEvent, PromoCode, PromoBatch } from 'reactticket-core';
 
 export function mapDbRowToTicketTypeConfig(row: any): TicketTypeConfig {
   return {
@@ -85,6 +82,21 @@ export function mapScanAccountPatchToRow(patch: Partial<ScanAccount>): any {
   return row;
 }
 
+export function mapDbRowToOrder(row: any): Order {
+  return {
+    id: row.id,
+    eventId: row.event_id,
+    items: row.items,
+    buyerEmail: row.buyer_email,
+    promoCode: row.promo_code,
+    subtotalCents: row.subtotal_cents,
+    discountCents: row.discount_cents,
+    totalCents: row.total_cents,
+    status: row.status,
+    createdAt: row.created_at ? new Date(row.created_at) : new Date()
+  };
+}
+
 export function mapOrderToRow(order: Order): any {
   return {
     id: order.id,
@@ -97,6 +109,25 @@ export function mapOrderToRow(order: Order): any {
     total_cents: order.totalCents,
     status: order.status,
     created_at: order.createdAt?.toISOString()
+  };
+}
+
+export function mapDbRowToTicket(row: any): IssuedTicket {
+  return {
+    id: row.id,
+    eventId: row.event_id,
+    ticketTypeId: row.ticket_type_id,
+    orderId: row.order_id,
+    personalization: row.personalization,
+    buyerEmail: row.buyer_email,
+    issuedAt: row.issued_at ? new Date(row.issued_at) : new Date(),
+    validFrom: row.valid_from ? new Date(row.valid_from) : undefined,
+    validUntil: row.valid_until ? new Date(row.valid_until) : undefined,
+    status: row.status,
+    qrPayload: row.qr_payload,
+    pricePaidCents: row.price_paid_cents,
+    transferHistory: row.transfer_history,
+    ownerId: row.owner_id
   };
 }
 
@@ -119,6 +150,20 @@ export function mapTicketToRow(ticket: IssuedTicket): any {
   };
 }
 
+export function mapDbRowToScanEvent(row: any): ScanEvent {
+  return {
+    id: row.id,
+    ticketId: row.ticket_id,
+    scannedAt: new Date(row.scanned_at),
+    scannedByAccountId: row.scanned_by_account_id,
+    scannedByAccountName: row.scanned_by_account_name,
+    result: row.result,
+    payload: row.payload,
+    clockSkewSeconds: row.clock_skew_seconds,
+    location: row.location
+  };
+}
+
 export function mapScanEventToRow(scan: ScanEvent): any {
   return {
     id: scan.id,
@@ -130,6 +175,26 @@ export function mapScanEventToRow(scan: ScanEvent): any {
     payload: scan.payload,
     clock_skew_seconds: scan.clockSkewSeconds,
     location: scan.location
+  };
+}
+
+export function mapDbRowToPromoBatch(row: any): PromoBatch {
+  return {
+    id: row.id,
+    eventId: row.event_id,
+    config: row.config,
+    codes: row.codes,
+    createdAt: new Date(row.created_at)
+  };
+}
+
+export function mapPromoBatchToRow(batch: PromoBatch): any {
+  return {
+    id: batch.id,
+    event_id: batch.eventId,
+    config: batch.config,
+    codes: batch.codes,
+    created_at: batch.createdAt.toISOString()
   };
 }
 

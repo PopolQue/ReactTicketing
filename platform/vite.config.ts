@@ -10,6 +10,9 @@ export default defineConfig({
     globals: true,
     setupFiles: './src/setupTests.ts',
     exclude: ['e2e/**', 'node_modules/**'],
+    coverage: {
+      thresholds: { lines: 70, functions: 70 }
+    }
   },
   server: {
     allowedHosts: ["crescentlike-florencio-nonrustic.ngrok-free.dev"]

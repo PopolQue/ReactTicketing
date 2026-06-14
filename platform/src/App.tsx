@@ -1,21 +1,22 @@
+import React, { Suspense } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import './App.css'
 import './index.css'
 
 // Organizer Components
-import OrganizerLayout from './pages/organizer/OrganizerLayout'
-import Dashboard from './pages/organizer/Dashboard'
-import EventsList from './pages/organizer/EventsList'
-import CreateEvent from './pages/organizer/CreateEvent'
-import ManageEvent from './pages/organizer/ManageEvent'
+const OrganizerLayout = React.lazy(() => import('./pages/organizer/OrganizerLayout'))
+const Dashboard = React.lazy(() => import('./pages/organizer/Dashboard'))
+const EventsList = React.lazy(() => import('./pages/organizer/EventsList'))
+const CreateEvent = React.lazy(() => import('./pages/organizer/CreateEvent'))
+const ManageEvent = React.lazy(() => import('./pages/organizer/ManageEvent'))
 
 // Auth
 import Auth from './pages/auth/Auth'
 
 // Artist Portal
-import ArtistLayout from './pages/artist/ArtistLayout'
-import ArtistDashboard from './pages/artist/ArtistDashboard'
-import ArtistEditProfile from './pages/artist/ArtistEditProfile'
+const ArtistLayout = React.lazy(() => import('./pages/artist/ArtistLayout'))
+const ArtistDashboard = React.lazy(() => import('./pages/artist/ArtistDashboard'))
+const ArtistEditProfile = React.lazy(() => import('./pages/artist/ArtistEditProfile'))
 
 import Home from './pages/marketplace/Home'
 import Discover from './pages/marketplace/Discover'
@@ -27,26 +28,26 @@ import Wallet from './pages/fan/Wallet'
 import ResaleMarket from './pages/marketplace/ResaleMarket'
 import ClaimPortal from './pages/marketplace/ClaimPortal'
 
-import Settings from './pages/organizer/Settings'
-import ScanTickets from './pages/organizer/ScanTickets'
-import ArtistsList from './pages/organizer/ArtistsList'
-import BlogsList from './pages/organizer/BlogsList'
-import MarketingAndAnalytics from './pages/organizer/MarketingAndAnalytics'
+const Settings = React.lazy(() => import('./pages/organizer/Settings'))
+const ScanTickets = React.lazy(() => import('./pages/organizer/ScanTickets'))
+const ArtistsList = React.lazy(() => import('./pages/organizer/ArtistsList'))
+const BlogsList = React.lazy(() => import('./pages/organizer/BlogsList'))
+const MarketingAndAnalytics = React.lazy(() => import('./pages/organizer/MarketingAndAnalytics'))
 import BlogFeed from './pages/marketplace/BlogFeed'
 import BlogPost from './pages/marketplace/BlogPost'
 
 // Venue Portal
-import VenueLayout from './pages/venue/VenueLayout'
-import VenueDashboard from './pages/venue/VenueDashboard'
+const VenueLayout = React.lazy(() => import('./pages/venue/VenueLayout'))
+const VenueDashboard = React.lazy(() => import('./pages/venue/VenueDashboard'))
 
 // Admin & Support
-import ContactSupport from './pages/support/ContactSupport'
-import AdminLayout from './pages/admin/AdminLayout'
-import EventReview from './pages/admin/EventReview'
-import SupportDesk from './pages/admin/SupportDesk'
-import SuperAdminLayout from './pages/superadmin/SuperAdminLayout'
-import AdminManagement from './pages/superadmin/AdminManagement'
-import EntityClaims from './pages/admin/EntityClaims'
+const ContactSupport = React.lazy(() => import('./pages/support/ContactSupport'))
+const AdminLayout = React.lazy(() => import('./pages/admin/AdminLayout'))
+const EventReview = React.lazy(() => import('./pages/admin/EventReview'))
+const SupportDesk = React.lazy(() => import('./pages/admin/SupportDesk'))
+const SuperAdminLayout = React.lazy(() => import('./pages/superadmin/SuperAdminLayout'))
+const AdminManagement = React.lazy(() => import('./pages/superadmin/AdminManagement'))
+const EntityClaims = React.lazy(() => import('./pages/admin/EntityClaims'))
 import { ToastProvider } from './components/Toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import ProtectedRoute from './components/ProtectedRoute'
@@ -57,7 +58,8 @@ function App() {
   return (
     <ErrorBoundary>
       <ToastProvider>
-        <Routes>
+        <Suspense fallback={<div style={{padding: '24px'}}>Loading module...</div>}>
+          <Routes>
         {/* Public Fan Marketplace */}
         <Route element={<MarketplaceLayout />}>
           <Route path="/" element={<Home />} />
@@ -128,6 +130,7 @@ function App() {
           </Route>
         </Route>
       </Routes>
+        </Suspense>
     </ToastProvider>
     </ErrorBoundary>
   )

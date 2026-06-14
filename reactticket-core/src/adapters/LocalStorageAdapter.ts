@@ -79,7 +79,18 @@ export class LocalStorageAdapter implements StorageAdapter {
     return null;
   }
   async getTicketsByOrder(orderId: string): Promise<IssuedTicket[]> {
-    return []; // FIXME
+    const results: IssuedTicket[] = [];
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
+            const data = localStorage.getItem(key);
+            if (data) {
+                const tickets: IssuedTicket[] = JSON.parse(data);
+                results.push(...tickets.filter(t => t.orderId === orderId));
+            }
+        }
+    }
+    return results;
   }
   async getIssuedTickets(eventId: string): Promise<IssuedTicket[]> {
     const data = localStorage.getItem(this.getStorageKey(eventId, 'tickets'));
@@ -219,7 +230,9 @@ export class LocalStorageAdapter implements StorageAdapter {
   async getScanEvents(eventId: string): Promise<ScanEvent[]> {
     const data = localStorage.getItem('tf_scan_events');
     const events: ScanEvent[] = data ? JSON.parse(data) : [];
-    return events.filter(e => e.id.startsWith('scan_')); // FIXME: EventId filtering
+    const eventTickets = await this.getIssuedTickets(eventId);
+    const validTicketIds = new Set(eventTickets.map(t => t.id));
+    return events.filter(e => validTicketIds.has(e.ticketId));
   }
 
   // Scan Accounts
