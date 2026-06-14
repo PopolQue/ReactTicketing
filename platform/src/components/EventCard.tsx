@@ -30,7 +30,7 @@ export default function EventCard({ event }: { event: any }) {
           {new Date(event.start_date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })} • {event.venue}{event.city ? `, ${event.city}` : ''}{event.country ? `, ${event.country}` : ''}
         </p>
         <p style={{ margin: 0, fontSize: '0.95rem', color: 'var(--accent)', fontWeight: 600 }}>
-          By {event.organizer_profiles?.company_name || 'Independent Organizer'}
+          By {event.organizers?.name || 'Independent Organizer'}
         </p>
       </div>
     </Link>

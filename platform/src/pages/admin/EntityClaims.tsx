@@ -10,7 +10,7 @@ export default function EntityClaims() {
     const { data: claimsData } = await supabase
       .from('entity_claims')
       .select('*')
-      .eq('status', 'pending')
+      .in('status', ['pending', 'proof_submitted'])
       .order('created_at', { ascending: false });
     
     if (claimsData) {
@@ -37,9 +37,19 @@ export default function EntityClaims() {
     fetchClaims();
   }, []);
 
-  const handleAction = async (claimId: string, entityType: string, entityId: string, userId: string, action: 'approved' | 'rejected') => {
+  const handleAction = async (claimId: string, entityType: string, entityId: string, userId: string, action: 'approved' | 'rejected' | 'awaiting_proof') => {
+    let updatePayload: any = { status: action };
+
+    if (action === 'rejected') {
+      const reason = window.prompt("Please provide a reason for rejecting this claim:");
+      if (reason === null) return; // Administrator cancelled the prompt
+      if (reason.trim()) {
+        updatePayload.rejection_reason = reason.trim();
+      }
+    }
+
     // Update the claim status
-    await supabase.from('entity_claims').update({ status: action }).eq('id', claimId);
+    await supabase.from('entity_claims').update(updatePayload).eq('id', claimId);
 
     if (action === 'approved') {
       // Transfer ownership of the entity profile to the user
@@ -60,7 +70,7 @@ export default function EntityClaims() {
       
       {claims.length === 0 ? (
         <div className="glass-panel" style={{ padding: '40px', textAlign: 'center' }}>
-          <p style={{ color: 'var(--text-secondary)' }}>There are no pending claims to review.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>There are no claims needing review right now.</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -82,20 +92,32 @@ export default function EntityClaims() {
               </div>
               
               <div style={{ display: 'flex', gap: '8px' }}>
-                <button 
-                  onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'rejected')} 
-                  className="btn-secondary" 
-                  style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
-                >
-                  Reject
-                </button>
-                <button 
-                  onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'approved')} 
-                  className="btn-primary"
-                  style={{ backgroundColor: '#10b981' }}
-                >
-                  Approve
-                </button>
+                {claim.status === 'pending' && (
+                  <button 
+                    onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'awaiting_proof')} 
+                    className="btn-primary"
+                  >
+                    Initiate Review
+                  </button>
+                )}
+                {claim.status === 'proof_submitted' && (
+                  <>
+                    <button 
+                      onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'rejected')} 
+                      className="btn-secondary" 
+                      style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+                    >
+                      Reject
+                    </button>
+                    <button 
+                      onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'approved')} 
+                      className="btn-primary"
+                      style={{ backgroundColor: '#10b981' }}
+                    >
+                      Approve
+                    </button>
+                  </>
+                )}
               </div>
             </div>
           ))}

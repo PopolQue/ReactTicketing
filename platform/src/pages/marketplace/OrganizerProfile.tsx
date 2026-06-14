@@ -15,13 +15,13 @@ export default function OrganizerProfile() {
   useEffect(() => {
     async function fetchProfile() {
       // Fetch Organizer
-      const { data: orgData } = await supabase.from('organizer_profiles').select('*').eq('id', id).single();
+      const { data: orgData } = await supabase.from('organizers').select('*').eq('id', id).single();
       if (orgData) setOrganizer(orgData);
 
       // Fetch Upcoming Events
       const { data: eventsData } = await supabase
         .from('events')
-        .select('*, organizer_profiles(company_name)')
+        .select('*, organizers(name)')
         .eq('organizer_id', id)
         .eq('published', true)
         .eq('approval_status', 'approved')

@@ -16,7 +16,7 @@ export function useDiscoverData(activeTab: TabType) {
         if (activeTab === 'events') {
           const { data } = await supabase
             .from('events')
-            .select(`*, organizer_profiles ( company_name )`)
+            .select(`*, organizers ( name )`)
             .eq('published', true)
             .eq('approval_status', 'approved')
             .order('start_date', { ascending: true })

@@ -11,7 +11,7 @@ export default function BlogPost() {
     async function fetchBlog() {
       const { data } = await supabase
         .from('blogs')
-        .select('*, author_id(company_name)')
+        .select('*, organizers(name)')
         .eq('slug', slug)
         .eq('published', true)
         .single();

@@ -18,7 +18,9 @@ export default function ClaimPortal() {
     claimStatus,
     handleSearch,
     submitClaim,
-    clearSearch
+    clearSearch,
+    myClaims,
+    markProofSubmitted
   } = useClaimsData();
 
   return (
@@ -32,6 +34,32 @@ export default function ClaimPortal() {
       {claimStatus && (
         <div className="glass-panel" style={{ padding: '16px', marginBottom: '24px', border: '1px solid var(--accent)' }}>
           {claimStatus}
+        </div>
+      )}
+
+      {myClaims.length > 0 && (
+        <div className="glass-panel" style={{ padding: '32px', marginBottom: '32px' }}>
+          <h2 style={{ fontSize: '1.8rem', marginBottom: '16px' }}>My Claims</h2>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+            {myClaims.map(claim => (
+              <div key={claim.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '16px', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px' }}>
+                <div>
+                  <h3 style={{ margin: '0 0 4px 0' }}>{claim.entity?.name || 'Unknown'} <span style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>({claim.entity_type})</span></h3>
+                  <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Status: <strong style={{ color: claim.status === 'approved' ? '#10b981' : claim.status === 'rejected' ? '#ef4444' : 'var(--accent)' }}>{claim.status}</strong></p>
+                  {claim.status === 'rejected' && claim.rejection_reason && (
+                    <p style={{ margin: '8px 0 0 0', fontSize: '0.9rem', color: '#ef4444', backgroundColor: 'rgba(239, 68, 68, 0.1)', padding: '8px', borderRadius: '4px' }}>
+                      <strong>Reason:</strong> {claim.rejection_reason}
+                    </p>
+                  )}
+                </div>
+                {claim.status === 'awaiting_proof' && (
+                  <button onClick={() => markProofSubmitted(claim.id)} className="btn-primary" style={{ fontSize: '0.9rem', padding: '8px 16px' }}>
+                    I've added the proof
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
         </div>
       )}
 

@@ -44,7 +44,26 @@ export default function EventDetails() {
   const handleTicketIssued = (ticket: any, assets: any) => {
     // Wiring to existing email handler (smoke test: PNG blob logged)
     console.log(`[Email Handler] Ticket issued: ${ticket.id}. Sending PNG blob to buyer ${ticket.buyerEmail}...`, assets);
+    
+    // Fire Marketing Pixels
+    const pixels = event?.organizers?.marketing_pixels;
+    if (pixels) {
+      if (pixels.metaPixelId) console.log(`[Meta Pixel] Firing Purchase event to ID: ${pixels.metaPixelId}`);
+      if (pixels.googleAnalyticsId) console.log(`[GA4] Firing purchase event to ID: ${pixels.googleAnalyticsId}`);
+      if (pixels.tiktokPixelId) console.log(`[TikTok] Firing CompletePayment event to ID: ${pixels.tiktokPixelId}`);
+    }
   };
+
+  useEffect(() => {
+    if (event) {
+      // Record Page View
+      supabase.from('page_views').insert([{
+        event_id: event.id,
+        organizer_id: event.organizer_id,
+        user_agent: navigator.userAgent
+      }]).then();
+    }
+  }, [event]);
 
   if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading...</div>;
   if (!event) return <div style={{ padding: '60px', textAlign: 'center' }}>Event not found.</div>;
@@ -90,7 +109,7 @@ export default function EventDetails() {
         <div className="glass-panel" style={{ padding: '40px', backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(20px)' }}>
           <h1 style={{ fontSize: '3rem', margin: '0 0 16px 0' }}>{event.name}</h1>
           <p style={{ color: customAccentColor, fontSize: '1.2rem', margin: '0 0 24px 0', fontWeight: 600 }}>
-            Presented by {event.organizer_profiles?.company_name || 'Independent Organizer'}
+            Presented by {event.organizers?.name || 'Independent Organizer'}
           </p>
 
           <EventAboutSection event={event} eventArtists={eventArtists} customAccentColor={customAccentColor} />

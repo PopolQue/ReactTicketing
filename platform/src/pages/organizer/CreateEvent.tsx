@@ -20,9 +20,21 @@ export default function CreateEvent() {
 
       <div className="glass-panel" style={{ padding: '24px' }}>
         <form onSubmit={createEvent} style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-          <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Event Title</label>
-            <input required type="text" name="title" value={formData.title} onChange={handleChange} className="input-field" placeholder="e.g. Neon Nights Vol. 4" />
+          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: '16px' }}>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Event Title</label>
+              <input required type="text" name="title" value={formData.title} onChange={handleChange} className="input-field" placeholder="e.g. Neon Nights Vol. 4" />
+            </div>
+            <div>
+              <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Category</label>
+              <select name="category" value={formData.category} onChange={handleChange} className="input-field" style={{ width: '100%' }}>
+                <option value="clubnight">Clubnight</option>
+                <option value="concert">Concert</option>
+                <option value="festival">Festival</option>
+                <option value="workshop">Workshop</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
           </div>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
             <div>

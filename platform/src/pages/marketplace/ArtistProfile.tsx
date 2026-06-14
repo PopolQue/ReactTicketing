@@ -22,7 +22,7 @@ export default function ArtistProfile() {
       // Fetch Upcoming Events
       const { data: eventArtists } = await supabase
         .from('event_artists')
-        .select('events(*, organizer_profiles(company_name))')
+        .select('events(*, organizers(name))')
         .eq('artist_id', id);
 
       if (eventArtists) {

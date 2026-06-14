@@ -11,7 +11,7 @@ export function useEvent(id: string | undefined) {
     setLoading(true);
     const { data, error } = await supabase
       .from('events')
-      .select('*, organizer_profiles(company_name)')
+      .select('*, organizers(name)')
       .eq('id', id)
       .single();
 

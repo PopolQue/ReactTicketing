@@ -15,11 +15,12 @@ export function useEventForm(activeEntity: Entity | null) {
     city: '',
     country: '',
     description: '',
+    category: 'other',
     is_external: false,
     external_ticket_url: ''
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
     setFormData({ ...formData, [e.target.name]: value });
   };
@@ -57,6 +58,7 @@ export function useEventForm(activeEntity: Entity | null) {
             description: formData.description,
             organizer_id: activeEntity.id,
             timezone_id: 'gmt1_berlin',
+            category: formData.category,
             published: false,
             is_external: formData.is_external,
             external_ticket_url: formData.is_external ? formData.external_ticket_url : null

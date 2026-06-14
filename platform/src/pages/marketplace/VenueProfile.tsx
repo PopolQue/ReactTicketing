@@ -22,7 +22,7 @@ export default function VenueProfile() {
       // Fetch Upcoming Events
       const { data: eventsData } = await supabase
         .from('events')
-        .select('*, organizer_profiles(company_name)')
+        .select('*, organizers(name)')
         .eq('venue_id', id)
         .eq('published', true)
         .eq('approval_status', 'approved')

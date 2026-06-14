@@ -99,20 +99,36 @@ export default function Discover() {
             ))}
           </div>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
+          <div style={{ width: '100%' }}>
             {filteredResults.length === 0 ? (
-              <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '60px', border: '1px dashed var(--border)', borderRadius: '12px' }}>
+              <div style={{ textAlign: 'center', padding: '60px', border: '1px dashed var(--border)', borderRadius: '12px' }}>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>No results found matching your criteria.</p>
                 <button onClick={() => { setSearchQuery(''); setSelectedCity(null); }} className="btn-secondary" style={{ marginTop: '16px' }}>Clear Filters</button>
               </div>
+            ) : activeTab === 'events' ? (
+              <>
+                {[{ id: 'clubnight', title: 'Clubnights' }, { id: 'concert', title: 'Concerts' }, { id: 'festival', title: 'Festivals' }, { id: 'workshop', title: 'Workshops' }, { id: 'other', title: 'More Events' }].map(cat => {
+                  const categoryEvents = filteredResults.filter((e: any) => (e.category || 'other') === cat.id);
+                  if (categoryEvents.length === 0) return null;
+                  return (
+                    <div key={cat.id} style={{ marginBottom: '48px' }}>
+                      <h2 style={{ fontSize: '2rem', marginBottom: '24px', paddingBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>{cat.title}</h2>
+                      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
+                        {categoryEvents.map((item: any) => <EventCard key={item.id} event={item} />)}
+                      </div>
+                    </div>
+                  );
+                })}
+              </>
             ) : (
-              filteredResults.map((item) => {
-                if (activeTab === 'events') return <EventCard key={item.id} event={item} />;
-                if (activeTab === 'artists') return <ArtistCard key={item.id} artist={item} />;
-                if (activeTab === 'venues') return <VenueCard key={item.id} venue={item} />;
-                if (activeTab === 'organizers') return <OrganizerCard key={item.id} organizer={item} />;
-                return null;
-              })
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
+                {filteredResults.map((item: any) => {
+                  if (activeTab === 'artists') return <ArtistCard key={item.id} artist={item} />;
+                  if (activeTab === 'venues') return <VenueCard key={item.id} venue={item} />;
+                  if (activeTab === 'organizers') return <OrganizerCard key={item.id} organizer={item} />;
+                  return null;
+                })}
+              </div>
             )}
           </div>
         )}

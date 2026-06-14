@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { BarChart, Activity, PieChart as PieChartIcon, Share2, Target } from 'lucide-react';
+import { useOutletContext } from 'react-router-dom';
+import type { Entity } from '../../components/EntitySwitcher';
 
 export default function MarketingAndAnalytics() {
+  const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
   const [pixels, setPixels] = useState({
@@ -11,31 +14,98 @@ export default function MarketingAndAnalytics() {
     tiktokPixelId: ''
   });
   
-  // Simulated analytics data
-  const [analytics] = useState({
-    pageViews: 12450,
-    conversionRate: 4.2,
-    bounceRate: 42,
-    topTrafficSource: 'Instagram',
-    demographics: {
-      '18-24': 45,
-      '25-34': 35,
-      '35-44': 15,
-      '45+': 5
-    }
+  const [analytics, setAnalytics] = useState({
+    pageViews: 0,
+    conversionRate: 0,
+    bounceRate: 0,
+    topTrafficSource: 'Direct',
+    demographics: {} as Record<string, number>
   });
 
   useEffect(() => {
-    // In a real app, we would fetch the user's saved marketing settings from Supabase
-    // For now, we simulate loading the settings
-    setTimeout(() => {
-      setLoading(false);
-    }, 600);
-  }, []);
+    async function fetchData() {
+      if (!activeEntity) return;
 
-  const handleSavePixels = (e: React.FormEvent) => {
+      // Fetch pixels
+      const { data: orgData } = await supabase
+        .from('organizers')
+        .select('marketing_pixels')
+        .eq('id', activeEntity.id)
+        .single();
+
+      if (orgData?.marketing_pixels) {
+        setPixels({
+          metaPixelId: orgData.marketing_pixels.metaPixelId || '',
+          googleAnalyticsId: orgData.marketing_pixels.googleAnalyticsId || '',
+          tiktokPixelId: orgData.marketing_pixels.tiktokPixelId || ''
+        });
+      }
+
+      // Fetch Page Views
+      const { count: pageViewsCount } = await supabase
+        .from('page_views')
+        .select('*', { count: 'exact', head: true })
+        .eq('organizer_id', activeEntity.id);
+
+      // Fetch Events for Tickets & Demographics
+      const { data: eventsData } = await supabase
+        .from('events')
+        .select('id')
+        .eq('organizer_id', activeEntity.id);
+
+      let ticketsSold = 0;
+      const demoCounts: Record<string, number> = {};
+
+      if (eventsData && eventsData.length > 0) {
+        const eventIds = eventsData.map(e => e.id);
+        const { data: ticketsData } = await supabase
+          .from('tickets')
+          .select('personalization')
+          .in('event_id', eventIds);
+
+        if (ticketsData) {
+          ticketsSold = ticketsData.length;
+          ticketsData.forEach(t => {
+            const age = t.personalization?.Age || 'Unknown';
+            demoCounts[age] = (demoCounts[age] || 0) + 1;
+          });
+        }
+      }
+
+      const totalDemos = Object.values(demoCounts).reduce((a, b) => a + b, 0);
+      const demoPercentages: Record<string, number> = {};
+      if (totalDemos > 0) {
+        Object.entries(demoCounts).forEach(([age, count]) => {
+          demoPercentages[age] = Math.round((count / totalDemos) * 100);
+        });
+      } else {
+        demoPercentages['18-24'] = 0;
+      }
+
+      const pv = pageViewsCount || 0;
+      const convRate = pv > 0 ? ((ticketsSold / pv) * 100).toFixed(1) : 0;
+
+      setAnalytics({
+        pageViews: pv,
+        conversionRate: Number(convRate),
+        bounceRate: 0,
+        topTrafficSource: 'Direct',
+        demographics: Object.keys(demoPercentages).length > 0 ? demoPercentages : { '18-24': 0, '25-34': 0 }
+      });
+
+      setLoading(false);
+    }
+    fetchData();
+  }, [activeEntity]);
+
+  const handleSavePixels = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Simulate saving to the backend
+    if (!activeEntity) return;
+
+    await supabase.from('organizers').update({
+      marketing_pixels: pixels
+    }).eq('id', activeEntity.id);
+
     setSaved(true);
     setTimeout(() => setSaved(false), 3000);
   };

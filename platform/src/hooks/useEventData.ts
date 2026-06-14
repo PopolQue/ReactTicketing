@@ -17,7 +17,7 @@ export function useEventData(eventId: string | undefined) {
     async function fetchEventDetails() {
       const { data, error } = await supabase
         .from('events')
-        .select(`*, organizer_profiles(company_name)`)
+        .select(`*, organizers(name, marketing_pixels)`)
         .eq('id', eventId)
         .single();
 

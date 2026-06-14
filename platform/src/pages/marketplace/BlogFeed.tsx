@@ -10,7 +10,7 @@ export default function BlogFeed() {
     async function fetchPublishedBlogs() {
       const { data } = await supabase
         .from('blogs')
-        .select('*, author_id(company_name)')
+        .select('*, organizers(name)')
         .eq('published', true)
         .order('created_at', { ascending: false });
 
@@ -43,7 +43,7 @@ export default function BlogFeed() {
                 <h2 style={{ fontSize: '2rem', marginBottom: '16px', color: 'var(--accent)' }}>{blog.title}</h2>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', marginBottom: '24px', lineHeight: '1.6' }}>{blog.excerpt}</p>
                 <div style={{ display: 'flex', justifyContent: 'space-between', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-                  <span>By {blog.author_id?.company_name || 'Anonymous'}</span>
+                  <span>By {blog.organizers?.name || 'Anonymous'}</span>
                   <span>{new Date(blog.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                 </div>
               </article>

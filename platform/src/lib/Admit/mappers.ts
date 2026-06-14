@@ -207,7 +207,7 @@ export function mapEventToAdmitConfig(event: any): any {
     startDate: event.start_time ? new Date(event.start_time) : new Date(),
     endDate: event.end_time ? new Date(event.end_time) : undefined,
     logoUrl: event.images?.[0] || undefined,
-    organizerName: event.organizer_profiles?.company_name || 'Independent Organizer',
+    organizerName: event.organizers?.name || 'Independent Organizer',
     timezone: event.timezone || 'UTC',
     ticketTypes: [],
     settings: {

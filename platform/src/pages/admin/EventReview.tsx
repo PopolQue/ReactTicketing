@@ -16,7 +16,7 @@ export default function EventReview() {
     // Fetch events that organizers have "published" but still need approval
     const { data } = await supabase
       .from('events')
-      .select('*, organizer_profiles(company_name)')
+      .select('*, organizers(name)')
       .eq('published', true)
       .eq('approval_status', 'pending')
       .order('start_date', { ascending: true });
@@ -67,7 +67,7 @@ export default function EventReview() {
                   {event.is_external && <span style={{ fontSize: '0.7rem', backgroundColor: '#6366f1', padding: '2px 6px', borderRadius: '4px' }}>EXTERNAL</span>}
                 </div>
                 <p style={{ color: 'var(--text-secondary)', margin: '0 0 8px 0', fontSize: '0.9rem' }}>
-                  Organizer: {event.organizer_profiles?.company_name || 'Unknown'} | Date: {new Date(event.start_date).toLocaleString()}
+                  Organizer: {event.organizers?.name || 'Unknown'} | Date: {new Date(event.start_date).toLocaleString()}
                 </p>
                 <p style={{ margin: 0, fontSize: '0.95rem' }}>{event.description}</p>
               </div>
