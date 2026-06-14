@@ -191,6 +191,12 @@ export class LocalStorageAdapter implements StorageAdapter {
     const filtered = tickets.filter(t => t.ticketTypeId === ticketTypeId && t.status !== 'cancelled');
     return filtered.length;
   }
+  async returnTicket(ticketId: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
+  async buyResaleTicket(listingId: string, buyerId: string): Promise<void> {
+    throw new Error('Method not implemented.');
+  }
 
   // Promo Codes
   async getPromoCode(code: string): Promise<PromoCode | null> {

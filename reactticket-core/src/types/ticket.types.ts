@@ -17,6 +17,7 @@ export interface TicketTypeConfig {
   description?: string;
   pricing: TicketPricingModel;
   capacity?: number;
+  soldCount?: number;
   maxPerOrder?: number;
   saleStartDate?: Date;
   saleEndDate?: Date;

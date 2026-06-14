@@ -1,44 +1,42 @@
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
-import { useAuthRedirect } from '../../hooks/useAuthRedirect';
 
-export default function SignUpForm() {
+export default function SignUpForm({ onSwitchToLogin }: { onSwitchToLogin: () => void }) {
   const { showToast } = useToast();
-  const { redirectAfterSignup } = useAuthRedirect();
-  const [accountType, setAccountType] = useState<'fan' | 'organizer' | 'artist'>('fan');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [companyName, setCompanyName] = useState(''); 
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [phone, setPhone] = useState('');
+  const [otpMode, setOtpMode] = useState(false);
+  const [token, setToken] = useState('');
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSSO = async (provider: 'google' | 'apple') => {
+    setLoading(true);
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({ provider, options: { redirectTo: window.location.origin } });
+      if (error) throw error;
+    } catch (err: any) {
+      showToast("Error during SSO: " + err.message, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePhoneSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError(null);
-
     try {
-      const { data, error } = await supabase.auth.signUp({ email, password });
-      if (error) throw error;
-
-      if (data?.user && accountType === 'organizer') {
-        const { error: profileError } = await supabase
-          .from('organizers')
-          .insert([
-            { claimed_by_user_id: data.user.id, name: companyName || 'My Ticketing Co', is_verified: true }
-          ]);
-          
-        if (profileError) {
-           console.error("Profile creation error:", profileError);
-           throw new Error("Account created, but failed to setup organizer profile. Try logging in.");
-        }
+      if (otpMode) {
+        const { error } = await supabase.auth.verifyOtp({ phone, token, type: 'sms' });
+        if (error) throw error;
+        // The listener in Navbar or App handles redirect on auth state change
+      } else {
+        const { error } = await supabase.auth.signInWithOtp({ phone });
+        if (error) throw error;
+        setOtpMode(true);
+        showToast("SMS sent! Enter the code.", 'success');
       }
-
-      redirectAfterSignup(accountType);
     } catch (err: any) {
-      showToast("Error during signup: " + err.message, 'error');
-      setError(err.message);
+      showToast(err.message, 'error');
     } finally {
       setLoading(false);
     }
@@ -46,74 +44,58 @@ export default function SignUpForm() {
 
   return (
     <>
-      <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-        <h2 style={{ margin: '0 0 8px 0' }}>Create an Account</h2>
-        <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Join the future of ticketing</p>
+      <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+        <h2 style={{ margin: '0 0 8px 0' }}>Typo-Proof Sign Up</h2>
+        <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Forget manual passwords. Securely connect with SSO or your phone number.</p>
       </div>
 
-      <div style={{ display: 'flex', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '8px', padding: '4px', marginBottom: '24px' }}>
-        <button 
-          type="button"
-          onClick={() => setAccountType('fan')}
-          style={{ flex: 1, padding: '8px 4px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 500, transition: '0.2s', backgroundColor: accountType === 'fan' ? 'var(--accent)' : 'transparent', color: accountType === 'fan' ? 'white' : 'var(--text-secondary)' }}
-        >
-          Fan
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', marginBottom: '32px' }}>
+        <button onClick={() => handleSSO('apple')} disabled={loading} className="btn-secondary" style={{ width: '100%', padding: '16px', fontSize: '1.1rem', backgroundColor: '#000', color: '#fff', borderColor: '#333' }}>
+           Continue with Apple
         </button>
-        <button 
-          type="button"
-          onClick={() => setAccountType('organizer')}
-          style={{ flex: 1, padding: '8px 4px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 500, transition: '0.2s', backgroundColor: accountType === 'organizer' ? 'var(--accent)' : 'transparent', color: accountType === 'organizer' ? 'white' : 'var(--text-secondary)' }}
-        >
-          Organizer
-        </button>
-        <button 
-          type="button"
-          onClick={() => setAccountType('artist')}
-          style={{ flex: 1, padding: '8px 4px', borderRadius: '6px', border: 'none', cursor: 'pointer', fontWeight: 500, transition: '0.2s', backgroundColor: accountType === 'artist' ? 'var(--accent)' : 'transparent', color: accountType === 'artist' ? 'white' : 'var(--text-secondary)' }}
-        >
-          Artist
+        <button onClick={() => handleSSO('google')} disabled={loading} className="btn-secondary" style={{ width: '100%', padding: '16px', fontSize: '1.1rem', backgroundColor: '#fff', color: '#000' }}>
+          G Continue with Google
         </button>
       </div>
-      
-      {error && (
-        <div style={{ padding: '12px', backgroundColor: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444', color: '#fca5a5', borderRadius: '8px', marginBottom: '16px', fontSize: '0.9rem' }}>
-          {error}
-        </div>
-      )}
 
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        {accountType === 'organizer' && (
+      <div style={{ display: 'flex', alignItems: 'center', margin: '24px 0', color: 'var(--text-secondary)' }}>
+        <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border)' }} />
+        <span style={{ padding: '0 16px', fontSize: '0.9rem' }}>OR PHONE NUMBER</span>
+        <div style={{ flex: 1, height: '1px', backgroundColor: 'var(--border)' }} />
+      </div>
+
+      <form onSubmit={handlePhoneSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+        {!otpMode ? (
+          <input 
+            required 
+            type="tel" 
+            placeholder="+1 234 567 8900" 
+            className="input-field"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+          />
+        ) : (
           <input 
             required 
             type="text" 
-            placeholder="Company / Organizer Name" 
+            placeholder="Enter 6-digit SMS code" 
             className="input-field"
-            value={companyName}
-            onChange={(e) => setCompanyName(e.target.value)}
+            value={token}
+            onChange={(e) => setToken(e.target.value)}
           />
         )}
-        <input 
-          required 
-          type="email" 
-          placeholder="Email address" 
-          className="input-field"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-        <input 
-          required 
-          type="password" 
-          placeholder="Password (min 6 chars)" 
-          className="input-field"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          minLength={6}
-        />
 
-        <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '8px', width: '100%', opacity: loading ? 0.7 : 1 }}>
-          {loading ? 'Please wait...' : 'Create Account'}
+        <button type="submit" disabled={loading} className="btn-primary" style={{ width: '100%', padding: '16px', fontSize: '1.1rem' }}>
+          {loading ? 'Please wait...' : (otpMode ? 'Verify SMS Code' : 'Send SMS Code')}
         </button>
       </form>
+
+      <div style={{ textAlign: 'center', marginTop: '24px', fontSize: '0.9rem' }}>
+        <span style={{ color: 'var(--text-secondary)' }}>Already have an account? </span>
+        <button onClick={onSwitchToLogin} style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', fontWeight: 'bold' }}>
+          Log In
+        </button>
+      </div>
     </>
   );
 }

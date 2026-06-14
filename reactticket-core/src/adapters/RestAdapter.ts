@@ -111,6 +111,15 @@ export class RestAdapter implements StorageAdapter {
     const res = await this.request<{ count: number }>(`/ticket-types/${ticketTypeId}/issued-count`);
     return res.count;
   }
+  async returnTicket(ticketId: string): Promise<void> {
+    await this.request(`/tickets/${ticketId}/return`, { method: 'POST' });
+  }
+  async buyResaleTicket(listingId: string, buyerId: string): Promise<void> {
+    await this.request(`/resale/${listingId}/buy`, {
+      method: 'POST',
+      body: JSON.stringify({ buyerId }),
+    });
+  }
 
   // Promo Codes
   async getPromoCode(code: string): Promise<PromoCode | null> {

@@ -24,6 +24,8 @@ export interface StorageAdapter {
   deliverTicket(ticketId: string, qrPayload: string): Promise<void>;
   transferTicket(ticketId: string, toEmail: string, newPersonalization: TicketPersonalization): Promise<void>;
   countIssuedTickets(ticketTypeId: string, eventId: string): Promise<number>;
+  returnTicket(ticketId: string): Promise<void>;
+  buyResaleTicket(listingId: string, buyerId: string): Promise<void>;
 
   // Promo Codes
   getPromoCode(code: string): Promise<PromoCode | null>;

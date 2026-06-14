@@ -17,8 +17,8 @@ async issueTickets(orderId: string): Promise<IssuedTicket[]> {
       const ticketTypes = await this.adapter.getTicketTypes(order.eventId);
       const ticketType = ticketTypes.find(t => t.id === item.ticketTypeId);
       if (ticketType && ticketType.capacity !== undefined) {
-          const issuedCount = await this.adapter.countIssuedTickets(item.ticketTypeId, order.eventId);
-          if (issuedCount + item.quantity > ticketType.capacity) {
+          const currentSold = ticketType.soldCount || 0;
+          if (currentSold + item.quantity > ticketType.capacity) {
               throw new Error(`Insufficient capacity for ticket type: ${ticketType.name}`);
           }
       }
@@ -85,6 +85,14 @@ async transferTicket(ticketId: string, toEmail: string, newPersonalization: impo
       throw new Error("Cannot transfer a ticket that has already been delivered or cancelled.");
   }
   await this.adapter.transferTicket(ticketId, toEmail, newPersonalization);
+}
+
+async returnTicket(ticketId: string): Promise<void> {
+  await this.adapter.returnTicket(ticketId);
+}
+
+async buyResaleTicket(listingId: string, buyerId: string): Promise<void> {
+  await this.adapter.buyResaleTicket(listingId, buyerId);
 }
 
 }
