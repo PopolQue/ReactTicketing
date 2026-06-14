@@ -70,6 +70,34 @@ export default function Wallet() {
     }
   };
 
+  const renderTicketList = (ticketList: any[]) => {
+    return (
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '32px' }}>
+        {ticketList.map(ticket => {
+          const activeListing = Array.isArray(ticket.resale_listings) 
+            ? ticket.resale_listings.find((l: any) => l.is_active) 
+            : (ticket.resale_listings?.is_active ? ticket.resale_listings : null);
+
+          return (
+            <TicketCard 
+              key={ticket.id} 
+              ticket={ticket} 
+              activeListing={activeListing} 
+              handleCancelListing={handleCancelListing} 
+              setResellTicket={setResellTicket} 
+            />
+          );
+        })}
+      </div>
+    );
+  };
+
+  const now = new Date();
+  const upcomingTickets = tickets.filter(t => new Date(t.events?.start_date || 0) >= now)
+    .sort((a, b) => new Date(a.events?.start_date || 0).getTime() - new Date(b.events?.start_date || 0).getTime());
+  const pastTickets = tickets.filter(t => new Date(t.events?.start_date || 0) < now)
+    .sort((a, b) => new Date(b.events?.start_date || 0).getTime() - new Date(a.events?.start_date || 0).getTime());
+
   return (
     <div className="wallet-page" style={{ minHeight: '100vh', padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
       <header style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '40px', alignItems: 'center' }}>
@@ -81,31 +109,31 @@ export default function Wallet() {
       </header>
 
       {loading ? <p style={{ color: 'var(--text-secondary)' }}>Loading your tickets...</p> : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))', gap: '32px' }}>
+        <>
           {tickets.length === 0 ? (
-            <div style={{ gridColumn: '1 / -1', textAlign: 'center', padding: '80px', border: '1px dashed var(--border)', borderRadius: '12px' }}>
+            <div style={{ textAlign: 'center', padding: '80px', border: '1px dashed var(--border)', borderRadius: '12px' }}>
               <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '16px' }}>Your wallet is completely empty.</p>
               <Link to="/" className="btn-primary" style={{ textDecoration: 'none' }}>Find an Event</Link>
             </div>
           ) : (
-            tickets.map(ticket => {
-              // Check if ticket has an active resale listing
-              const activeListing = Array.isArray(ticket.resale_listings) 
-                ? ticket.resale_listings.find((l: any) => l.is_active) 
-                : (ticket.resale_listings?.is_active ? ticket.resale_listings : null);
-
-              return (
-                <TicketCard 
-                  key={ticket.id} 
-                  ticket={ticket} 
-                  activeListing={activeListing} 
-                  handleCancelListing={handleCancelListing} 
-                  setResellTicket={setResellTicket} 
-                />
-              );
-            })
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
+              {upcomingTickets.length > 0 && (
+                <div>
+                  <h2 style={{ fontSize: '1.8rem', marginBottom: '24px', paddingBottom: '12px', borderBottom: '1px solid var(--border)' }}>Upcoming Events</h2>
+                  {renderTicketList(upcomingTickets)}
+                </div>
+              )}
+              {pastTickets.length > 0 && (
+                <div>
+                  <h2 style={{ fontSize: '1.8rem', marginBottom: '24px', paddingBottom: '12px', borderBottom: '1px solid var(--border)', color: 'var(--text-secondary)' }}>Past Events</h2>
+                  <div style={{ opacity: 0.7 }}>
+                    {renderTicketList(pastTickets)}
+                  </div>
+                </div>
+              )}
+            </div>
           )}
-        </div>
+        </>
       )}
 
       {/* Resale Modal Overlay */}
