@@ -12,32 +12,32 @@ const ManageEvent = React.lazy(() => import('./pages/organizer/ManageEvent'))
 const PromosFullPage = React.lazy(() => import('./pages/organizer/PromosFullPage'))
 
 // Auth
-import Auth from './pages/auth/Auth'
+const Auth = React.lazy(() => import('./pages/auth/Auth'))
 
 // Artist Portal
 const ArtistLayout = React.lazy(() => import('./pages/artist/ArtistLayout'))
 const ArtistDashboard = React.lazy(() => import('./pages/artist/ArtistDashboard'))
 const ArtistEditProfile = React.lazy(() => import('./pages/artist/ArtistEditProfile'))
 
-import Home from './pages/marketplace/Home'
-import Discover from './pages/marketplace/Discover'
-import EventDetails from './pages/marketplace/EventDetails'
-import ArtistProfile from './pages/marketplace/ArtistProfile'
-import VenueProfile from './pages/marketplace/VenueProfile'
-import OrganizerProfile from './pages/marketplace/OrganizerProfile'
-import Wallet from './pages/fan/Wallet'
-import ResaleMarket from './pages/marketplace/ResaleMarket'
-import ClaimPortal from './pages/marketplace/ClaimPortal'
-import WriterApplication from './pages/marketplace/WriterApplication'
-import ScanPage from './pages/marketplace/ScanPage'
+const Home = React.lazy(() => import('./pages/marketplace/Home'))
+const Discover = React.lazy(() => import('./pages/marketplace/Discover'))
+const EventDetails = React.lazy(() => import('./pages/marketplace/EventDetails'))
+const ArtistProfile = React.lazy(() => import('./pages/marketplace/ArtistProfile'))
+const VenueProfile = React.lazy(() => import('./pages/marketplace/VenueProfile'))
+const OrganizerProfile = React.lazy(() => import('./pages/marketplace/OrganizerProfile'))
+const Wallet = React.lazy(() => import('./pages/fan/Wallet'))
+const ResaleMarket = React.lazy(() => import('./pages/marketplace/ResaleMarket'))
+const ClaimPortal = React.lazy(() => import('./pages/marketplace/ClaimPortal'))
+const WriterApplication = React.lazy(() => import('./pages/marketplace/WriterApplication'))
+const ScanPage = React.lazy(() => import('./pages/marketplace/ScanPage'))
 
 const Settings = React.lazy(() => import('./pages/organizer/Settings'))
 const ScanTickets = React.lazy(() => import('./pages/organizer/ScanTickets'))
 const ArtistsList = React.lazy(() => import('./pages/organizer/ArtistsList'))
 const BlogsList = React.lazy(() => import('./pages/organizer/BlogsList'))
 const MarketingAndAnalytics = React.lazy(() => import('./pages/organizer/MarketingAndAnalytics'))
-import BlogFeed from './pages/marketplace/BlogFeed'
-import BlogPost from './pages/marketplace/BlogPost'
+const BlogFeed = React.lazy(() => import('./pages/marketplace/BlogFeed'))
+const BlogPost = React.lazy(() => import('./pages/marketplace/BlogPost'))
 
 // Legal & Utility Pages
 const Imprint = React.lazy(() => import('./pages/legal/Imprint'))

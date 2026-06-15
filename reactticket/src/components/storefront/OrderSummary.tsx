@@ -12,7 +12,7 @@ export const OrderSummary = () => {
   const firstPaidType = ticketTypes.find(t => t.pricing.kind === 'paid') as any;
   const currency = firstPaidType ? firstPaidType.pricing.currency : 'USD';
   return (
-    <div style={{ marginTop: '20px', padding: '20px', borderTop: '1px solid #e2e8f0' }}>
+    <div style={{ marginTop: '20px', padding: '20px', borderTop: '1px solid #e2e8f0' }} role="region" aria-label={t('store.order.summary')} aria-live="polite">
       <h3 style={{ margin: '0 0 10px 0' }}>{t('store.order.summary')}</h3>
       <div style={{ display: 'flex', justifyContent: 'space-between' }}>
         <span>{t('store.cart.subtotal')}:</span> <span>{formatCurrency(totals.subtotalCents, currency, locale)}</span>

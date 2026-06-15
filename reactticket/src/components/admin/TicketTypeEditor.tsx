@@ -23,14 +23,14 @@ export const TicketTypeEditor: React.FC = () => {
   } = useTicketTypeEditor();
 
   return (
-    <section style={{ marginTop: '20px' }}>
+    <section style={{ marginTop: '20px' }} role="region" aria-label="Ticket Type Editor">
       <h3>Ticket Types Configuration</h3>
       <label>
         <input type="checkbox" checked={showArchived} onChange={e => setShowArchived(e.target.checked)} />
         Show Archived
       </label>
       <div style={{ overflowX: 'auto', width: '100%' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', minWidth: '800px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px', minWidth: '800px' }} aria-label="Ticket Types">
           <thead>
             <tr style={{ borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
               <th style={{ padding: '10px' }}>Name</th>

@@ -91,6 +91,7 @@ export const ScanResult: React.FC<ScanResultProps> = ({ result, onDismiss }) => 
     }}
     role="alert"
     aria-live="assertive"
+    aria-label={`Scan Result: ${result.result.replace('_', ' ')}`}
     >
       <h2>{result.result.replace('_', ' ').toUpperCase()}</h2>
       {ticket && (
@@ -101,7 +102,7 @@ export const ScanResult: React.FC<ScanResultProps> = ({ result, onDismiss }) => 
         </div>
       )}
       <p>Scanned by: {result.scannedByAccountName}</p>
-      <button onClick={onDismiss} style={{ marginTop: '20px' }}>Scan Next</button>
+      <button onClick={onDismiss} style={{ marginTop: '20px' }} aria-label="Scan Next Ticket">Scan Next</button>
     </div>
   );
 };

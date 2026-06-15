@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS public.blogs CASCADE;
+DROP TABLE IF EXISTS public.event_artists CASCADE;
+DROP TABLE IF EXISTS public.artists CASCADE;

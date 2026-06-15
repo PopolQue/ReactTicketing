@@ -51,7 +51,7 @@ export const ScannerLogin: React.FC = () => {
   }, []);
 
   return (
-    <div className="ReactTicket-root scanner-login">
+    <div className="ReactTicket-root scanner-login" role="region" aria-label="Scanner Login">
       <h2>Scanner Login</h2>
       {error && <p className="error-message" role="alert">{error}</p>}
       {isLocked ? (

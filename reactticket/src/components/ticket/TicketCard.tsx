@@ -5,13 +5,13 @@ import { TicketDownload } from './TicketDownload';
 
 export const TicketCard = ({ ticket, eventName }: { ticket: IssuedTicket, eventName: string }) => {
   return (
-    <div className="tf-ticket-card">
+    <div className="tf-ticket-card" role="region" aria-label={`Ticket for ${eventName}`}>
       <h2>{eventName}</h2>
       <p>Ticket ID: {ticket.id}</p>
       {ticket.qrPayload ? (
         <QRCode payload={ticket.qrPayload} />
       ) : (
-        <div className="rt-ticket-pending-msg">
+        <div className="rt-ticket-pending-msg" role="status">
           QR Code will be generated closer to the event.
         </div>
       )}

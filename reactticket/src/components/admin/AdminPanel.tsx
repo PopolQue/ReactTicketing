@@ -40,7 +40,7 @@ export const AdminPanel: React.FC = () => {
 
   if (!isAuthenticated) {
     return (
-      <div className="admin-login" style={{padding: '20px'}}>
+      <div className="admin-login" style={{padding: '20px'}} role="region" aria-label="Admin Login">
         <h2 id="admin-auth-heading">Admin Authentication</h2>
         <input
           type="password"
@@ -59,7 +59,7 @@ export const AdminPanel: React.FC = () => {
   }
 
   return (
-    <div className="ReactTicket-root admin-panel">
+    <div className="ReactTicket-root admin-panel" role="region" aria-label="Admin Panel">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <h1>Admin Panel</h1>
           <button type="button" onClick={handleLogout} aria-label="Logout from Admin Panel">Logout</button>

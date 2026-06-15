@@ -8,9 +8,8 @@ const ThrowError = () => {
 };
 describe('ErrorBoundary Component', () => {
   it('renders children when there is no error', () => {
-
     render(<ErrorBoundary>
-        <div data-testid="safe-child">{t("safe")}</div>
+        <div data-testid="safe-child">Safe Child</div>
       </ErrorBoundary>);
     expect(screen.getByTestId('safe-child')).toBeInTheDocument();
   });
@@ -20,7 +19,7 @@ describe('ErrorBoundary Component', () => {
     render(<ErrorBoundary>
         <ThrowError />
       </ErrorBoundary>);
-    expect(screen.getByText('Something went wrong.')).toBeInTheDocument();
+    expect(screen.getByText('Something went wrong')).toBeInTheDocument();
     spy.mockRestore();
   });
 });

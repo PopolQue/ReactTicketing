@@ -25,13 +25,15 @@ jobs:
           
       - name: Security Audit
         run: |
-          cd platform && npm audit --audit-level=high
+          cd reactticket-core && npm audit --audit-level=high
+          cd ../reactticket && npm audit --audit-level=high
+          cd ../platform && npm audit --audit-level=high
           
       - name: Run vitest
         run: |
-          cd reactticket-core && npm run test -- --coverage
-          cd ../reactticket && npm run test -- --coverage
-          cd ../platform && npm run test -- --coverage
+          cd reactticket-core && npx vitest run --coverage
+          cd ../reactticket && npx vitest run --coverage
+          cd ../platform && npx vitest run --coverage
           
       - name: Upload Core Coverage
         uses: actions/upload-artifact@v4
@@ -68,6 +70,10 @@ jobs:
           export VITE_SUPABASE_URL="http://127.0.0.1:54321"
           export VITE_SUPABASE_ANON_KEY=$(supabase status -o env | grep ANON_KEY | cut -d '=' -f2 | tr -d '"')
           npm run test:e2e
+
+      - name: Validate size limits
+        run: |
+          cd reactticket && npm run size
 
       - name: Validate Mobile Scanner Build
         run: |

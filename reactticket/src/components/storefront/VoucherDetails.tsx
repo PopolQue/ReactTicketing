@@ -33,13 +33,13 @@ export const VoucherDetails: React.FC = () => {
   };
 
   return (
-    <div className="voucher-details">
+    <div className="voucher-details" role="region" aria-label="Voucher Details">
       <h4>Voucher Applied</h4>
       <p>
         <strong>{promoDetails.code}</strong> - <span>{renderDiscount()}</span>
       </p>
       <p>Discount: {formatCurrency(totals.discountCents, currency, locale)}</p>
-      <button onClick={removeVoucher}>Remove</button>
+      <button onClick={removeVoucher} aria-label="Remove voucher">Remove</button>
     </div>
   );
 };

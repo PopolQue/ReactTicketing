@@ -22,7 +22,7 @@ export const PromoCodeManager: React.FC = () => {
   } = usePromoBatches();
 
   return (
-    <section style={{ marginTop: '20px' }}>
+    <section style={{ marginTop: '20px' }} role="region" aria-label="Promo Code Manager">
       <h3>Promo Code Batches</h3>
       <PromoBatchForm 
         newBatch={newBatch}

@@ -11,7 +11,9 @@ async prepareTickets(order: any): Promise<IssuedTicket[]> {
       const ticketTypes = await this.adapter.getTicketTypes(order.eventId);
       const ticketType = ticketTypes.find(t => t.id === item.ticketTypeId);
       if (ticketType && ticketType.capacity !== undefined) {
-          const currentSold = ticketType.soldCount || 0;
+          const currentSold = ticketType.soldCount !== undefined 
+              ? ticketType.soldCount 
+              : await this.adapter.countIssuedTickets(ticketType.id, order.eventId);
           if (currentSold + item.quantity > ticketType.capacity) {
               throw new Error(`Insufficient capacity for ticket type: ${ticketType.name}`);
           }
@@ -64,6 +66,7 @@ async deliverTicket(ticketId: string): Promise<void> {
   const ticket = await this.adapter.getTicket(ticketId);
   if (!ticket) throw new Error("Ticket not found");
   if (ticket.status === "cancelled") throw new Error("Cannot deliver cancelled ticket");
+  if (ticket.status === "used") throw new Error("Cannot deliver used ticket");
 
   // Deriving HMAC key from secret
   const enc = new TextEncoder();

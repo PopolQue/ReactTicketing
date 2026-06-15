@@ -14,10 +14,10 @@ export const ScanDashboard: React.FC = () => {
   );
 
   return (
-    <section className="ReactTicket-root scan-dashboard">
+    <section className="ReactTicket-root scan-dashboard" role="region" aria-label="Scan Dashboard">
       <h2>Scan Dashboard</h2>
       {/* Analytics charts would go here */}
-      <p>Data: {JSON.stringify(summary)}</p>
+      <p aria-live="polite">Data: {JSON.stringify(summary)}</p>
     </section>
   );
 };

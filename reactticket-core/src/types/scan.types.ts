@@ -7,15 +7,15 @@ export type ScanResult =
   | "clock_skew_anomaly";
 
 export interface ScanEvent {
-  id: string;
-  ticketId: string;
-  scannedAt: Date;
-  scannedByAccountId: string;
-  scannedByAccountName: string;
-  result: ScanResult;
-  clockSkewSeconds?: number;
-  location?: string;
-  payload?: string;
+  readonly id: string;
+  readonly ticketId: string;
+  readonly scannedAt: Date;
+  readonly scannedByAccountId: string;
+  readonly scannedByAccountName: string;
+  readonly result: ScanResult;
+  readonly clockSkewSeconds?: number;
+  readonly location?: string;
+  readonly payload?: string;
 }
 
 export interface AnalyticsSummary {

@@ -71,7 +71,7 @@ export class LocalStorageAdapter implements StorageAdapter {
                 const orders: Order[] = JSON.parse(data);
                 const index = orders.findIndex(o => o.id === orderId);
                 if (index > -1) {
-                    orders[index].status = status;
+                    orders[index] = { ...orders[index], status };
                     localStorage.setItem(key, JSON.stringify(orders));
                     return;
                 }
@@ -139,7 +139,7 @@ export class LocalStorageAdapter implements StorageAdapter {
                 const tickets: IssuedTicket[] = JSON.parse(data);
                 const index = tickets.findIndex(t => t.id === ticketId);
                 if (index > -1) {
-                    tickets[index].status = status;
+                    tickets[index] = { ...tickets[index], status };
                     localStorage.setItem(key, JSON.stringify(tickets));
                     return;
                 }
@@ -157,8 +157,7 @@ export class LocalStorageAdapter implements StorageAdapter {
                 const tickets: IssuedTicket[] = JSON.parse(data);
                 const index = tickets.findIndex(t => t.id === ticketId);
                 if (index > -1) {
-                    tickets[index].status = 'delivered';
-                    tickets[index].qrPayload = qrPayload;
+                    tickets[index] = { ...tickets[index], status: 'delivered', qrPayload };
                     localStorage.setItem(key, JSON.stringify(tickets));
                     return;
                 }
@@ -177,13 +176,15 @@ export class LocalStorageAdapter implements StorageAdapter {
                 const index = tickets.findIndex(t => t.id === ticketId);
                 if (index > -1) {
                     const ticket = tickets[index];
-                    if (!ticket.transferHistory) ticket.transferHistory = [];
-                    ticket.transferHistory.push({
-                        fromEmail: ticket.personalization.email,
-                        toEmail: toEmail,
-                        at: new Date()
-                    });
-                    ticket.personalization = newPersonalization;
+                    const transferHistory = [
+                        ...(ticket.transferHistory || []),
+                        {
+                            fromEmail: ticket.personalization.email,
+                            toEmail: toEmail,
+                            at: new Date()
+                        }
+                    ];
+                    tickets[index] = { ...ticket, transferHistory, personalization: newPersonalization };
                     localStorage.setItem(key, JSON.stringify(tickets));
                     return;
                 }
@@ -302,7 +303,7 @@ export class LocalStorageAdapter implements StorageAdapter {
     const accounts = await this.listAllScanAccounts();
     const index = accounts.findIndex(a => a.id === accountId);
     if (index > -1) {
-      accounts[index].lastLoginAt = at;
+      accounts[index] = { ...accounts[index], lastLoginAt: at };
       localStorage.setItem('tf_scan_accounts', JSON.stringify(accounts));
     }
   }

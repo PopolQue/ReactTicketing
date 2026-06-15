@@ -89,12 +89,13 @@ export const PricingInput: React.FC<PricingInputProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '5px' }} role="group" aria-label="Ticket Pricing Input">
       <div style={{ display: 'flex', gap: '5px', alignItems: 'center' }}>
         <select 
           value={mode} 
           onChange={(e) => setMode(e.target.value as 'customer' | 'organizer')}
           style={{ padding: '5px', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+          aria-label="Pricing Mode"
         >
           <option value="customer">What Customers Pay</option>
           <option value="organizer">What You Get</option>
@@ -107,12 +108,14 @@ export const PricingInput: React.FC<PricingInputProps> = ({
           placeholder="Amount" 
           value={inputValue} 
           onChange={handleInputChange} 
+          aria-label="Price Amount"
         />
         
         <select 
           value={currency} 
           onChange={e => onCurrencyChange(e.target.value)}
           style={{ padding: '5px', borderRadius: '4px', border: '1px solid #cbd5e1' }}
+          aria-label="Currency"
         >
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
@@ -120,7 +123,7 @@ export const PricingInput: React.FC<PricingInputProps> = ({
           <option value="CAD">CAD</option>
         </select>
       </div>
-      <div style={{ fontSize: '11px', color: '#64748b', maxWidth: '300px', lineHeight: '1.4' }}>
+      <div style={{ fontSize: '11px', color: '#64748b', maxWidth: '300px', lineHeight: '1.4' }} aria-live="polite">
         {getBreakdown()}
       </div>
     </div>

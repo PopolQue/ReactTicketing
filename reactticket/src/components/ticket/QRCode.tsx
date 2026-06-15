@@ -14,7 +14,7 @@ export const QRCode = ({ payload }: { payload: string }) => {
     }
   }, [payload]);
 
-  if (!dataUri) return <div className="tf-qr-code-placeholder" style={{ width: 150, height: 150, background: '#eee' }} />;
+  if (!dataUri) return <div className="tf-qr-code-placeholder" style={{ width: 150, height: 150, background: '#eee' }} role="status" aria-busy="true" aria-label="Generating QR Code" />;
 
-  return <img src={dataUri} alt="QR Code" className="tf-qr-code" />;
+  return <img src={dataUri} alt="Ticket QR Code" className="tf-qr-code" role="img" />;
 };

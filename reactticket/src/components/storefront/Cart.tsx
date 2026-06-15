@@ -19,7 +19,7 @@ export const Cart: React.FC = () => {
   const currency = firstPaidType ? firstPaidType.pricing.currency : 'USD';
 
   return (
-    <div style={{ marginTop: '30px', padding: '20px', border: '1px solid #e2e8f0', borderRadius: '12px' }}>
+    <div style={{ marginTop: '30px', padding: '20px', border: '1px solid #e2e8f0', borderRadius: '12px' }} role="region" aria-label="Shopping Cart">
       <h3>{t('store.cart.title')}</h3>
       <table style={{ width: '100%', borderCollapse: 'collapse' }} aria-label={t('store.cart.title')}>
         <tbody>
@@ -47,7 +47,7 @@ export const Cart: React.FC = () => {
       <div style={{ marginTop: '20px' }}>
         {promoDetails ? <VoucherDetails /> : <VoucherInput />}
       </div>
-      <div style={{ marginTop: '10px', textAlign: 'right' }}>
+      <div style={{ marginTop: '10px', textAlign: 'right' }} aria-live="polite">
         <p>{t('store.cart.subtotal')}: {formatCurrency(totals.subtotalCents, currency, locale)}</p>
         {promoDetails && <p>{t('store.cart.discount')}: -{formatCurrency(totals.discountCents, currency, locale)}</p>}
         <strong>{t('store.cart.total')}: {formatCurrency(totals.totalCents, currency, locale)}</strong>

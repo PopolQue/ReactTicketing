@@ -22,9 +22,9 @@ export const CapacityOverview: React.FC = () => {
   }, 0);
 
   return (
-    <section>
+    <section role="region" aria-label="Capacity & Potential Sales Overview">
       <h3>Capacity & Potential Sales Overview</h3>
-      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }}>
+      <table style={{ width: '100%', borderCollapse: 'collapse', marginBottom: '20px' }} aria-label="Capacity & Potential Sales Overview">
         <thead>
           <tr style={{ borderBottom: '2px solid #e2e8f0', textAlign: 'left' }}>
             <th style={{ padding: '10px' }}>Name</th>
@@ -45,7 +45,13 @@ export const CapacityOverview: React.FC = () => {
                 <td style={{ padding: '10px' }}>{String(type.name || '')}</td>
                 <td style={{ padding: '10px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <div style={{ flex: 1, height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+                    <div style={{ flex: 1, height: '8px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}
+                         role="progressbar"
+                         aria-valuenow={percent}
+                         aria-valuemin={0}
+                         aria-valuemax={100}
+                         aria-label={`${type.name} capacity utilization: ${percent.toFixed(0)}%`}
+                    >
                       <div style={{ width: `${percent}%`, height: '100%', background: percent >= 100 ? '#ef4444' : '#3b82f6' }}></div>
                     </div>
                     <span style={{ fontSize: '12px', whiteSpace: 'nowrap' }}>{soldCount} / {capacity > 0 ? capacity : '∞'}</span>

@@ -1,0 +1,2 @@
+DROP FUNCTION IF EXISTS public.rls_auto_enable() CASCADE;
+CREATE EXTENSION IF NOT EXISTS pg_net;

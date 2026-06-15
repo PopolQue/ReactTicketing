@@ -12,5 +12,5 @@ export const TicketDownload = ({ ticket, eventName }: { ticket: IssuedTicket, ev
     a.click();
     URL.revokeObjectURL(url);
   };
-  return <button onClick={handleDownload} className="tf-ticket-download">Download Ticket</button>;
+  return <button onClick={handleDownload} className="tf-ticket-download" aria-label={`Download ticket ${ticket.id} for ${eventName}`}>Download Ticket</button>;
 };

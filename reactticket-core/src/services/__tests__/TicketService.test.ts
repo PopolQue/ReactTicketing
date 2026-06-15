@@ -23,6 +23,7 @@ describe('TicketService', () => {
 
     mockAuthService = {
       getSecret: vi.fn().mockReturnValue('super-secret-key'),
+      getQrSecret: vi.fn().mockReturnValue('super-secret-qr-key'),
     };
 
     ticketService = new TicketService(mockAdapter as StorageAdapter, mockAuthService as AuthService);
@@ -109,6 +110,11 @@ describe('TicketService', () => {
     it('should throw an error if ticket is cancelled', async () => {
       (mockAdapter.getTicket as any).mockResolvedValue({ status: 'cancelled' });
       await expect(ticketService.deliverTicket('tkt_1')).rejects.toThrow('Cannot deliver cancelled ticket');
+    });
+
+    it('should throw an error if ticket is used', async () => {
+      (mockAdapter.getTicket as any).mockResolvedValue({ status: 'used' });
+      await expect(ticketService.deliverTicket('tkt_1')).rejects.toThrow('Cannot deliver used ticket');
     });
 
     it('should successfully deliver a ticket and generate QR payload', async () => {

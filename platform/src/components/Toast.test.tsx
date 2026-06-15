@@ -1,8 +1,9 @@
-import { useLanguage } from "../contexts/LanguageContext";
 import React, { useEffect } from 'react';
 import { render, screen, act } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
 import { ToastProvider, useToast } from './Toast';
+import { LanguageProvider, useLanguage } from '../contexts/LanguageContext';
+
 const ToastConsumer = ({
   message,
   type
@@ -24,9 +25,11 @@ const ToastConsumer = ({
 describe('Toast Component', () => {
   it('renders a toast message and automatically removes it', () => {
     vi.useFakeTimers();
-    render(<ToastProvider>
+    render(<LanguageProvider>
+      <ToastProvider>
         <ToastConsumer message="Test Success!" type="success" />
-      </ToastProvider>);
+      </ToastProvider>
+    </LanguageProvider>);
 
     // Toast should be in the document
     const toastElement = screen.getByText('Test Success!');

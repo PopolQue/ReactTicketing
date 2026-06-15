@@ -1,0 +1,7 @@
+DROP TABLE IF EXISTS public.scan_accounts CASCADE;
+DROP TABLE IF EXISTS public.scan_events CASCADE;
+DROP TABLE IF EXISTS public.tickets CASCADE;
+DROP TABLE IF EXISTS public.orders CASCADE;
+DROP TABLE IF EXISTS public.ticket_types CASCADE;
+DROP TABLE IF EXISTS public.events CASCADE;
+DROP TABLE IF EXISTS public.timezones CASCADE;

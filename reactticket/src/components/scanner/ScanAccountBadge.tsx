@@ -9,9 +9,9 @@ export const ScanAccountBadge: React.FC = () => {
   if (authSession?.role !== 'scan') return null;
 
   return (
-    <div className="ReactTicket-root scan-account-badge">
+    <div className="ReactTicket-root scan-account-badge" role="region" aria-label="Scan Account Info">
        <span>{authSession.accountUsername}</span>
-       <button onClick={logout}>Log out</button>
+       <button onClick={logout} aria-label="Log out scan session">Log out</button>
     </div>
   );
 };

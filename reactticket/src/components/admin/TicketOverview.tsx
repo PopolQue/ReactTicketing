@@ -50,10 +50,10 @@ export const TicketOverview: React.FC = () => {
   };
 
   return (
-    <section style={{ marginTop: '20px', position: 'relative' }}>
+    <section style={{ marginTop: '20px', position: 'relative' }} role="region" aria-label="Ticket Overview">
       <h3>Ticket Overview</h3>
       <div style={{ overflowX: 'auto', width: '100%' }}>
-        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }}>
+        <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '600px' }} aria-label="Issued Tickets List">
           <thead>
             <tr style={{ textAlign: 'left', borderBottom: '1px solid #e2e8f0' }}>
               <th style={{ padding: '8px' }}>QR Code</th>
@@ -68,7 +68,7 @@ export const TicketOverview: React.FC = () => {
               <tr key={ticket.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
                 <td style={{ padding: '8px' }}>
                   {ticket.qrPayload ? (
-                    <img src={QRGenerator.generate(ticket.qrPayload)} alt="QR Code" style={{ width: '50px', height: '50px' }} />
+                    <img src={QRGenerator.generate(ticket.qrPayload)} alt={`QR Code for ticket ${ticket.id}`} style={{ width: '50px', height: '50px' }} />
                   ) : (
                     <span style={{ fontSize: '0.8rem', color: '#666' }}>Pending Delivery</span>
                   )}
@@ -94,10 +94,10 @@ export const TicketOverview: React.FC = () => {
                 <td style={{ padding: '8px' }}>
                   {ticket.status === 'pending_delivery' && (
                     <div style={{ display: 'flex', gap: '5px', flexWrap: 'wrap' }}>
-                      <button onClick={() => handleDeliver(ticket.id)} style={{ fontSize: '0.8rem', padding: '4px 8px', cursor: 'pointer', whiteSpace: 'nowrap' }}>
+                      <button type="button" onClick={() => handleDeliver(ticket.id)} style={{ fontSize: '0.8rem', padding: '4px 8px', cursor: 'pointer', whiteSpace: 'nowrap' }} aria-label={`Deliver QR for ticket ${ticket.id}`}>
                         Deliver QR
                       </button>
-                      <button onClick={() => setTransferTicketId(ticket.id)} style={{ fontSize: '0.8rem', padding: '4px 8px', cursor: 'pointer' }}>
+                      <button type="button" onClick={() => setTransferTicketId(ticket.id)} style={{ fontSize: '0.8rem', padding: '4px 8px', cursor: 'pointer' }} aria-label={`Transfer ticket ${ticket.id}`}>
                         Transfer
                       </button>
                     </div>
@@ -110,17 +110,17 @@ export const TicketOverview: React.FC = () => {
       </div>
 
       {transferTicketId && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }} role="dialog" aria-modal="true" aria-labelledby="transfer-ticket-title">
           <div style={{ background: 'white', padding: '20px', borderRadius: '8px', width: '300px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <h4 style={{ margin: '0 0 10px 0' }}>Transfer Ticket</h4>
-            <input placeholder="Name" value={transferForm.name} onChange={e => setTransferForm({...transferForm, name: e.target.value})} style={{ padding: '8px' }} />
-            <input placeholder="Surname" value={transferForm.surname} onChange={e => setTransferForm({...transferForm, surname: e.target.value})} style={{ padding: '8px' }} />
-            <input placeholder="Email" type="email" value={transferForm.email} onChange={e => setTransferForm({...transferForm, email: e.target.value})} style={{ padding: '8px' }} />
-            <input placeholder="Country" value={transferForm.country} onChange={e => setTransferForm({...transferForm, country: e.target.value})} style={{ padding: '8px' }} />
-            <input placeholder="City" value={transferForm.city} onChange={e => setTransferForm({...transferForm, city: e.target.value})} style={{ padding: '8px' }} />
+            <h4 id="transfer-ticket-title" style={{ margin: '0 0 10px 0' }}>Transfer Ticket</h4>
+            <input placeholder="Name" value={transferForm.name} onChange={e => setTransferForm({...transferForm, name: e.target.value})} style={{ padding: '8px' }} aria-label="Recipient Name" />
+            <input placeholder="Surname" value={transferForm.surname} onChange={e => setTransferForm({...transferForm, surname: e.target.value})} style={{ padding: '8px' }} aria-label="Recipient Surname" />
+            <input placeholder="Email" type="email" value={transferForm.email} onChange={e => setTransferForm({...transferForm, email: e.target.value})} style={{ padding: '8px' }} aria-label="Recipient Email" />
+            <input placeholder="Country" value={transferForm.country} onChange={e => setTransferForm({...transferForm, country: e.target.value})} style={{ padding: '8px' }} aria-label="Recipient Country" />
+            <input placeholder="City" value={transferForm.city} onChange={e => setTransferForm({...transferForm, city: e.target.value})} style={{ padding: '8px' }} aria-label="Recipient City" />
             <div style={{ display: 'flex', gap: '10px', marginTop: '10px' }}>
-              <button onClick={submitTransfer} style={{ flex: 1, padding: '8px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Confirm</button>
-              <button onClick={() => setTransferTicketId(null)} style={{ flex: 1, padding: '8px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
+              <button type="button" onClick={submitTransfer} style={{ flex: 1, padding: '8px', background: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Confirm</button>
+              <button type="button" onClick={() => setTransferTicketId(null)} style={{ flex: 1, padding: '8px', background: '#ef4444', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Cancel</button>
             </div>
           </div>
         </div>

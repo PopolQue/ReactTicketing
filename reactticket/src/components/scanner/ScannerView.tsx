@@ -38,10 +38,10 @@ export const ScannerView: React.FC<ScannerViewProps> = ({ qrParser }) => {
 
   if (isExpired) {
     return (
-        <div className="ReactTicket-root scanner-view" style={{padding: '20px', textAlign: 'center'}}>
+        <div className="ReactTicket-root scanner-view" style={{padding: '20px', textAlign: 'center'}} role="alert" aria-live="assertive">
             <h2>Session Expired</h2>
             <p>Your scanning session has expired. Please log in again.</p>
-            <button onClick={logout} style={{ marginTop: '20px', padding: '15px', fontSize: '18px', fontWeight: 'bold' }}>Log In</button>
+            <button onClick={logout} style={{ marginTop: '20px', padding: '15px', fontSize: '18px', fontWeight: 'bold' }} aria-label="Log back in to scanner">Log In</button>
         </div>
     )
   }
@@ -51,7 +51,7 @@ export const ScannerView: React.FC<ScannerViewProps> = ({ qrParser }) => {
   };
 
   return (
-    <div className="ReactTicket-root scanner-view">
+    <div className="ReactTicket-root scanner-view" role="region" aria-label="Ticket Scanner View">
       <ScanAccountBadge />
       <div className="camera-view" style={{ position: 'relative', height: '400px', width: '100%', backgroundColor: '#000', overflow: 'hidden' }}>
         <video 

@@ -39,20 +39,20 @@ export interface TicketPersonalization {
 }
 
 export interface IssuedTicket {
-  id: string;
-  eventId: string;
-  ticketTypeId: string;
-  orderId: string;
-  personalization: TicketPersonalization;
-  buyerEmail: string;
-  issuedAt: Date;
-  validFrom?: Date;
-  validUntil?: Date;
-  status: "pending_delivery" | "delivered" | "used" | "cancelled" | "transferred";
-  qrPayload?: string;
-  transferHistory?: TransferRecord[];
-  promoCodeUsed?: string;
-  pricePaidCents: number;
+  readonly id: string;
+  readonly eventId: string;
+  readonly ticketTypeId: string;
+  readonly orderId: string;
+  readonly personalization: TicketPersonalization;
+  readonly buyerEmail: string;
+  readonly issuedAt: Date;
+  readonly validFrom?: Date;
+  readonly validUntil?: Date;
+  readonly status: "pending_delivery" | "delivered" | "used" | "cancelled" | "transferred";
+  readonly qrPayload?: string;
+  readonly transferHistory?: TransferRecord[];
+  readonly promoCodeUsed?: string;
+  readonly pricePaidCents: number;
 }
 
 export interface TransferRecord {
@@ -62,16 +62,16 @@ export interface TransferRecord {
 }
 
 export interface Order {
-  id: string;
-  eventId: string;
-  items: OrderItem[];
-  buyerEmail: string;
-  promoCode?: string;
-  subtotalCents: number;
-  discountCents: number;
-  totalCents: number;
-  status: "pending" | "confirmed" | "refunded";
-  createdAt: Date;
+  readonly id: string;
+  readonly eventId: string;
+  readonly items: OrderItem[];
+  readonly buyerEmail: string;
+  readonly promoCode?: string;
+  readonly subtotalCents: number;
+  readonly discountCents: number;
+  readonly totalCents: number;
+  readonly status: "pending" | "confirmed" | "refunded";
+  readonly createdAt: Date;
 }
 
 export interface OrderItem {
