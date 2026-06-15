@@ -7,17 +7,23 @@ BEGIN
   -- First, ensure the pg_net extension is enabled (already default in Supabase)
   
   -- Use pg_net to invoke the edge function asynchronously
-  perform net.http_post(
-      url := coalesce(
-          current_setting('app.settings.edge_function_base_url', true),
-          'http://127.0.0.1:54321/functions/v1' -- fallback for local
-      ) || '/send-support-email',
-      headers := jsonb_build_object(
-          'Content-Type', 'application/json',
-          'Authorization', 'Bearer ' || current_setting('app.settings.service_role_key', true)
-      ),
-      body := jsonb_build_object('record', row_to_json(NEW))
-  );
+  IF EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'net') THEN
+    EXECUTE 'SELECT net.http_post(
+        url := $1,
+        headers := $2,
+        body := $3
+    )'
+    USING 
+        coalesce(
+            current_setting('app.settings.edge_function_base_url', true),
+            'http://127.0.0.1:54321/functions/v1' -- fallback for local
+        ) || '/send-support-email',
+        jsonb_build_object(
+            'Content-Type', 'application/json',
+            'Authorization', 'Bearer ' || coalesce(current_setting('app.settings.service_role_key', true), '')
+        ),
+        jsonb_build_object('record', row_to_json(NEW));
+  END IF;
 
   RETURN NEW;
 END;
