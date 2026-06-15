@@ -47,7 +47,7 @@ describe('TicketTypeList Component', () => {
     ]);
 
     render(
-      <ReactTicketProvider event={mockEvent} adapter={mockAdapter} onCheckout={vi.fn()}>
+      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
         <TicketTypeList />
       </ReactTicketProvider>
     );

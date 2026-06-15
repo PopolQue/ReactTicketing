@@ -49,7 +49,7 @@ describe('ScanAccountManager Component', () => {
 
   it('successfully creates account', async () => {
     render(
-      <ReactTicketProvider event={mockEvent} adapter={mockAdapter} onCheckout={vi.fn()}>
+      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
         <ScanAccountManager />
       </ReactTicketProvider>
     );
@@ -69,7 +69,7 @@ describe('ScanAccountManager Component', () => {
 
   it('successfully updates account', async () => {
     render(
-      <ReactTicketProvider event={mockEvent} adapter={mockAdapter} onCheckout={vi.fn()}>
+      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
         <ScanAccountManager />
       </ReactTicketProvider>
     );
@@ -91,7 +91,7 @@ describe('ScanAccountManager Component', () => {
 
   it('successfully deletes account', async () => {
     render(
-      <ReactTicketProvider event={mockEvent} adapter={mockAdapter} onCheckout={vi.fn()}>
+      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
         <ScanAccountManager />
       </ReactTicketProvider>
     );
@@ -109,7 +109,7 @@ describe('ScanAccountManager Component', () => {
 
   it('successfully resets PIN', async () => {
     render(
-      <ReactTicketProvider event={mockEvent} adapter={mockAdapter} onCheckout={vi.fn()}>
+      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
         <ScanAccountManager />
       </ReactTicketProvider>
     );

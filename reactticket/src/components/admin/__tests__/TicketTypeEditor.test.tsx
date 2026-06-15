@@ -33,7 +33,7 @@ describe('TicketTypeEditor Component', () => {
     });
 
     render(
-      <ReactTicketProvider event={{ id: 'evt_1' }} adapter={{ name: 'memory' } as any} onCheckout={vi.fn()}>
+      <ReactTicketProvider event={{ id: 'evt_1' } as any} adapter={{ name: 'memory' } as any} onCheckout={vi.fn()}>
         <TicketTypeEditor />
       </ReactTicketProvider>
     );

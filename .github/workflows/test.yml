@@ -29,6 +29,11 @@ jobs:
           cd ../reactticket && npm audit --audit-level=high
           cd ../platform && npm audit --audit-level=high
           
+      - name: Build Libraries
+        run: |
+          cd reactticket-core && npm run build
+          cd ../reactticket && npm run build
+
       - name: Run vitest
         run: |
           cd reactticket-core && npx vitest run --coverage

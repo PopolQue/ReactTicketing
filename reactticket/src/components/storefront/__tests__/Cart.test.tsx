@@ -36,7 +36,7 @@ vi.mock('../../context/I18nContext', () => ({
 describe('Cart Component', () => {
   it('renders correctly with items', () => {
     render(
-      <ReactTicketProvider event={{ id: 'evt_1' }} adapter={{ name: 'memory' } as any} onCheckout={vi.fn()}>
+      <ReactTicketProvider event={{ id: 'evt_1' } as any} adapter={{ name: 'memory' } as any} onCheckout={vi.fn()}>
         <TestComponent />
       </ReactTicketProvider>
     );

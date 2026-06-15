@@ -98,8 +98,8 @@ describe('usePromoBatches', () => {
     vi.stubGlobal('URL', { createObjectURL: vi.fn(), revokeObjectURL: vi.fn() });
     const mockAnchor = { href: '', download: '', click: vi.fn(), setAttribute: vi.fn() };
     vi.spyOn(document, 'createElement').mockReturnValue(mockAnchor as any);
-    vi.spyOn(document.body, 'appendChild').mockImplementation(() => {});
-    vi.spyOn(document.body, 'removeChild').mockImplementation(() => {});
+    vi.spyOn(document.body, 'appendChild').mockImplementation((() => {}) as any);
+    vi.spyOn(document.body, 'removeChild').mockImplementation((() => {}) as any);
 
     act(() => {
       result.current.exportCSV(mockBatch as any);
