@@ -1,7 +1,11 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { renderHook, act } from '@testing-library/react';
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { LanguageProvider, useLanguage } from './LanguageContext';
 import React from 'react';
+
 
 describe('LanguageContext', () => {
   it('throws error when used outside provider', () => {

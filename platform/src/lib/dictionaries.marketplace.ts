@@ -6,7 +6,7 @@ export const dictionariesMarketplace = {
           badge: "THE FUTURE OF TICKETING",
           title1: "Unforgettable",
           title2: "Experiences Await",
-          subtitle: "Discover underground club nights, massive festivals, and intimate live shows. Securely buy and seamlessly resell tickets on the world's most elegant marketplace.",
+          subtitle: "Discover underground club nights, festivals, and intimate live-shows. Securely buy and resell tickets on the world's most elegant marketplace.",
           cta: {
             discover: "Start Discovering",
             host: "Host an Event"

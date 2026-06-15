@@ -133,3 +133,92 @@ body {
 .text-bloom {
   text-shadow: var(--bloom-text);
 }
+
+/* Ensure the styling of the platform dominates over reactticket component library */
+.ReactTicket-root {
+  color: var(--text-primary) !important;
+  font-family: var(--font-family) !important;
+}
+
+.ReactTicket-root,
+.ReactTicket-root * {
+  border-color: var(--border) !important;
+}
+
+/* Override light mode backgrounds to match platform's dark glassmorphic theme */
+.ReactTicket-root .stat-card,
+.ReactTicket-root table,
+.ReactTicket-root tr,
+.ReactTicket-root td,
+.ReactTicket-root th,
+.ReactTicket-root div[style*="background"],
+.ReactTicket-root section[style*="background"] {
+  background-color: rgba(255, 255, 255, 0.02) !important;
+  background: rgba(255, 255, 255, 0.02) !important;
+  border-color: var(--border) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Ensure form/batch layout form containers match glass-panel */
+.ReactTicket-root div[style*="background: rgb(248, 250, 252)"],
+.ReactTicket-root div[style*="background:#f8fafc"],
+.ReactTicket-root div[style*="background: #f8fafc"],
+.ReactTicket-root div[style*="background: rgb(241, 245, 249)"],
+.ReactTicket-root div[style*="background:#f1f5f9"],
+.ReactTicket-root div[style*="background: #f1f5f9"] {
+  background: var(--panel-bg) !important;
+  background-color: var(--panel-bg) !important;
+  backdrop-filter: blur(12px) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px !important;
+}
+
+/* Headers and text styling overrides */
+.ReactTicket-root th {
+  border-bottom: 2px solid var(--border) !important;
+  color: var(--text-primary) !important;
+  padding: 12px !important;
+}
+
+.ReactTicket-root td {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  color: var(--text-secondary) !important;
+  padding: 12px !important;
+}
+
+.ReactTicket-root button {
+  background: var(--accent) !important;
+  background-color: var(--accent) !important;
+  color: white !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  box-shadow: var(--bloom-glow) !important;
+}
+
+.ReactTicket-root button:hover {
+  background: var(--accent-hover) !important;
+  background-color: var(--accent-hover) !important;
+}
+
+/* Inputs styling overrides */
+.ReactTicket-root input,
+.ReactTicket-root select,
+.ReactTicket-root textarea {
+  background: rgba(0, 0, 0, 0.3) !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 8px !important;
+  color: white !important;
+  padding: 10px !important;
+}
+
+.ReactTicket-root input:focus,
+.ReactTicket-root select:focus,
+.ReactTicket-root textarea:focus {
+  border-color: var(--accent) !important;
+  outline: none !important;
+}

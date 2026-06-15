@@ -116,7 +116,7 @@ export function InviteManager({
           <h3>{t("generateNewInvite")}</h3>
           
           {scope === 'all' && <select className="input-field" value={entityType} onChange={e => setEntityType(e.target.value as any)}>
-              <option value="organizer">{t("organizer")}</option>
+              <option value="organizer">{t("organizerSingular")}</option>
               <option value="artist">{t("artist")}</option>
               <option value="venue">{t("venue")}</option>
             </select>}

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1781510493006" clover="3.2.0">
-  <project timestamp="1781510493007" name="All files">
+<coverage generated="1781532773141" clover="3.2.0">
+  <project timestamp="1781532773142" name="All files">
     <metrics statements="973" coveredstatements="764" conditionals="621" coveredconditionals="369" methods="280" coveredmethods="206" elements="1874" coveredelements="1339" complexity="0" loc="973" ncloc="973" packages="10" files="49" classes="49"/>
     <package name="src">
       <metrics statements="0" coveredstatements="0" conditionals="0" coveredconditionals="0" methods="0" coveredmethods="0"/>
@@ -540,13 +540,13 @@
       <file name="TicketTypeCard.tsx" path="/Users/davidcutura/Projects/ReactTicketing/reactticket/src/components/storefront/TicketTypeCard.tsx">
         <metrics statements="27" coveredstatements="23" conditionals="24" coveredconditionals="15" methods="5" coveredmethods="3"/>
         <line num="9" count="1" type="stmt"/>
-        <line num="10" count="6" type="stmt"/>
-        <line num="11" count="6" type="stmt"/>
-        <line num="12" count="6" type="stmt"/>
-        <line num="13" count="6" type="stmt"/>
-        <line num="14" count="6" type="cond" truecount="1" falsecount="1"/>
-        <line num="15" count="6" type="stmt"/>
-        <line num="17" count="6" type="stmt"/>
+        <line num="10" count="5" type="stmt"/>
+        <line num="11" count="5" type="stmt"/>
+        <line num="12" count="5" type="stmt"/>
+        <line num="13" count="5" type="stmt"/>
+        <line num="14" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="15" count="5" type="stmt"/>
+        <line num="17" count="5" type="stmt"/>
         <line num="18" count="5" type="stmt"/>
         <line num="19" count="5" type="cond" truecount="1" falsecount="1"/>
         <line num="20" count="5" type="stmt"/>
@@ -556,16 +556,16 @@
         <line num="26" count="5" type="stmt"/>
         <line num="28" count="5" type="stmt"/>
         <line num="30" count="5" type="stmt"/>
-        <line num="33" count="6" type="stmt"/>
-        <line num="34" count="6" type="cond" truecount="1" falsecount="1"/>
-        <line num="36" count="6" type="stmt"/>
+        <line num="33" count="5" type="stmt"/>
+        <line num="34" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="36" count="5" type="stmt"/>
         <line num="37" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="38" count="0" type="stmt"/>
         <line num="39" count="0" type="cond" truecount="0" falsecount="2"/>
         <line num="40" count="0" type="stmt"/>
-        <line num="44" count="6" type="cond" truecount="1" falsecount="1"/>
-        <line num="46" count="6" type="cond" truecount="2" falsecount="0"/>
-        <line num="65" count="3" type="stmt"/>
+        <line num="44" count="5" type="cond" truecount="1" falsecount="1"/>
+        <line num="46" count="5" type="cond" truecount="2" falsecount="0"/>
+        <line num="65" count="2" type="stmt"/>
       </file>
       <file name="TicketTypeList.tsx" path="/Users/davidcutura/Projects/ReactTicketing/reactticket/src/components/storefront/TicketTypeList.tsx">
         <metrics statements="11" coveredstatements="10" conditionals="0" coveredconditionals="0" methods="5" coveredmethods="3"/>
@@ -668,10 +668,10 @@
         <line num="62" count="4" type="stmt"/>
         <line num="65" count="4" type="stmt"/>
         <line num="68" count="3" type="stmt"/>
-        <line num="69" count="9" type="stmt"/>
-        <line num="70" count="9" type="cond" truecount="1" falsecount="1"/>
-        <line num="71" count="9" type="stmt"/>
-        <line num="74" count="10" type="cond" truecount="1" falsecount="1"/>
+        <line num="69" count="8" type="stmt"/>
+        <line num="70" count="8" type="cond" truecount="1" falsecount="1"/>
+        <line num="71" count="8" type="stmt"/>
+        <line num="74" count="9" type="cond" truecount="1" falsecount="1"/>
         <line num="77" count="0" type="stmt"/>
       </file>
       <file name="ReactTicketContext.tsx" path="/Users/davidcutura/Projects/ReactTicketing/reactticket/src/context/ReactTicketContext.tsx">

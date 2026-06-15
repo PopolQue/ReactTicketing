@@ -115,7 +115,7 @@ export default function StripeCheckoutForm({
             flex: 1,
             backgroundColor: '#10b981'
           }}>
-              {loading ? 'Processing...' : `Pay €{(amountCents / 100).toFixed(2)}`}
+              {loading ? t('store.checkout.processing') : `Pay €${(amountCents / 100).toFixed(2)}`}
             </button>
           </div>
         </form>

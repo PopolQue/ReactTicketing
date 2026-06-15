@@ -1,20 +1,27 @@
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import { useToast } from '../components/Toast';
 
-export function useCheckout({ eventId, tiers, cart }: { eventId: string, tiers: any[], cart: { [tierId: string]: number } }) {
+export function useCheckout({ eventId, tiers, cart, guestEmail }: { eventId: string, tiers: any[], cart: { [tierId: string]: number }, guestEmail?: string }) {
+  const [user, setUser] = useState<any>(null);
   const [checkoutFields, setCheckoutFields] = useState<any[]>([]);
   const [ticketForms, setTicketForms] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { showToast } = useToast();
 
   useEffect(() => {
-    async function fetchFields() {
-      const { data } = await supabase
+    async function init() {
+      const result = await supabase.auth.getUser();
+      const currentUser = result?.data?.user || null;
+      setUser(currentUser);
+      
+      const { data: checkoutData } = await supabase
         .from('event_checkout_fields')
         .select('*')
         .eq('event_id', eventId)
         .order('created_at', { ascending: true });
       
-      setCheckoutFields(data || []);
+      setCheckoutFields(checkoutData || []);
 
       // Build flattened ticket instances based on cart
       const instances: any[] = [];
@@ -23,7 +30,7 @@ export function useCheckout({ eventId, tiers, cart }: { eventId: string, tiers: 
         const tierObj = tiers.find(t => t.id === tierId);
         for (let i = 0; i < qty; i++) {
           instances.push({
-            id: crypto.randomUUID(),
+            id: crypto.randomUUID(), // Unique ID for form tracking
             tier: tierObj,
             answers: {}
           });
@@ -32,7 +39,7 @@ export function useCheckout({ eventId, tiers, cart }: { eventId: string, tiers: 
       setTicketForms(instances);
       setLoading(false);
     }
-    fetchFields();
+    init();
   }, [eventId, cart, tiers]);
 
   const handleAnswerChange = (ticketId: string, fieldId: string, value: string) => {
@@ -52,13 +59,22 @@ export function useCheckout({ eventId, tiers, cart }: { eventId: string, tiers: 
     onError,
     onBeforeComplete
   }: {
-    finalTotalCents: number;
-    onSuccess: () => void;
-    onError: (err: any) => void;
+    finalTotalCents: number,
+    onSuccess: () => void,
+    onError: (err: any) => void,
     onBeforeComplete?: () => Promise<void>;
   }) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) return;
+    const result = await supabase.auth.getUser();
+    const user = result?.data?.user || null;
+
+    // Determine the buyer's email and owner_id based on login status
+    const buyerEmail = user?.email || guestEmail;
+    const ownerId = user?.id || null; // Null for guest users
+
+    if (!user && !buyerEmail) {
+      onError(new Error("Authentication or guest email is required."));
+      return;
+    }
 
     try {
       const orderId = crypto.randomUUID();
@@ -74,7 +90,7 @@ export function useCheckout({ eventId, tiers, cart }: { eventId: string, tiers: 
         id: orderId,
         event_id: eventId,
         items: orderItems,
-        buyer_email: user.email,
+        buyer_email: buyerEmail,
         subtotal_cents: subtotalCents,
         discount_cents: discountCents,
         total_cents: finalTotalCents,
@@ -89,7 +105,10 @@ export function useCheckout({ eventId, tiers, cart }: { eventId: string, tiers: 
           personalization[f.label] = t.answers[f.id] || '';
         });
         // Always include user email as a fallback if not asked
-        if (!personalization['Email']) personalization['Email'] = user.email;
+        if (!personalization['Email']) personalization['Email'] = buyerEmail;
+        
+        // Generate a unique ticket code
+        const ticketCode = crypto.randomUUID();
 
         // Distribute price paid proportionally
         const priceRatio = subtotalCents > 0 ? (t.tier.pricing?.amount || 0) / subtotalCents : 0;
@@ -101,10 +120,11 @@ export function useCheckout({ eventId, tiers, cart }: { eventId: string, tiers: 
           ticket_type_id: t.tier.id,
           order_id: orderId,
           personalization: personalization,
-          buyer_email: user.email,
+          buyer_email: buyerEmail,
           status: 'valid',
           price_paid_cents: ticketPricePaid,
-          owner_id: user.id
+          owner_id: ownerId, // Null for guest users
+          ticket_code: ticketCode // Include the new ticket code
         };
       });
 
@@ -126,6 +146,12 @@ export function useCheckout({ eventId, tiers, cart }: { eventId: string, tiers: 
   };
 
   const validateForms = (): boolean => {
+    // If NOT logged in (guest checkout), ensure guestEmail is provided
+    if (!user && !guestEmail) {
+      showToast('Please enter your email for guest checkout.', 'error');
+      return false;
+    }
+
     for (const t of ticketForms) {
       for (const f of checkoutFields) {
         if (f.is_required && !t.answers[f.id]) {

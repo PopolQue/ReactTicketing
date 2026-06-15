@@ -37,7 +37,11 @@ export const TicketTypeCard = React.memo(({ type }: { type: TicketTypeConfig }) 
     if (newQty > quantity) {
       addItem(type.id, newQty - quantity);
     } else if (newQty < quantity) {
-      removeItem(type.id); 
+      if (newQty === 0) {
+        removeItem(type.id);
+      } else {
+        addItem(type.id, newQty - quantity);
+      }
     }
   }, [quantity, type.id, addItem, removeItem]);
 

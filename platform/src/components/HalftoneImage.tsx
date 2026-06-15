@@ -6,6 +6,7 @@ interface HalftoneMorphProps {
   dotColor?: string;
   intervalMs?: number;
   transitionMs?: number;
+  baseRadiusMultiplier?: number;
   style?: React.CSSProperties;
 }
 
@@ -13,8 +14,9 @@ export default function HalftoneImage({
   srcs, 
   dotSpacing = 12, 
   dotColor = '#a2aa5c',
-  intervalMs = 6000,
-  transitionMs = 2000,
+  intervalMs = 3000,
+  transitionMs = 500,
+  baseRadiusMultiplier = 0.2,
   style 
 }: HalftoneMorphProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -27,10 +29,10 @@ export default function HalftoneImage({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
+    const dpr = window.devicePixelRatio || 1;
     let width = 0;
     let height = 0;
     
-    // Store all target radii arrays for each image
     const imageRadii: Float32Array[] = [];
     let currentRadii: Float32Array | null = null;
     let targetRadii: Float32Array | null = null;
@@ -40,28 +42,29 @@ export default function HalftoneImage({
     let transitionStartTime = 0;
     let startRadii: Float32Array | null = null;
 
-    // Load all images and calculate their radii
     const loadImages = async () => {
-      // First image dictates canvas size
-      const firstImg = new Image();
-      firstImg.src = srcs[0];
-      await new Promise((resolve) => {
-        firstImg.onload = resolve;
-        firstImg.onerror = resolve;
-      });
-
-      if (!firstImg.width) return; // Failed to load first image
-
-      width = firstImg.width;
-      height = firstImg.height;
-      canvas.width = width;
-      canvas.height = height;
+      // Responsive width, fixed 300px height
+      const targetWidth = canvas.parentElement?.clientWidth || 1280;
+      const targetHeight = 300;
+      width = targetWidth;
+      height = targetHeight;
+      
+      // Canvas internal buffer size scaled for high-DPI
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      
+      // CSS display size matches responsive dimensions
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      
+      // Context scale to handle coordinate mapping for high-DPI
+      ctx.scale(dpr, dpr);
 
       const cols = Math.ceil(width / dotSpacing);
       const rows = Math.ceil(height / dotSpacing);
       const totalDots = cols * rows;
 
-      // Offscreen canvas for reading pixels
+      // Offscreen canvas for processing images
       const offscreen = document.createElement('canvas');
       offscreen.width = width;
       offscreen.height = height;
@@ -78,8 +81,15 @@ export default function HalftoneImage({
 
         if (!img.width) continue;
 
+        // Cover fill: scale image to fill width x 300
         offCtx.clearRect(0, 0, width, height);
-        offCtx.drawImage(img, 0, 0, width, height);
+        const ratio = Math.max(width / img.width, height / img.height);
+        const w = img.width * ratio;
+        const h = img.height * ratio;
+        const x = (width - w) / 2;
+        const y = (height - h) / 2;
+        offCtx.drawImage(img, x, y, w, h);
+        
         const imgData = offCtx.getImageData(0, 0, width, height);
         const pixels = imgData.data;
 
@@ -97,19 +107,15 @@ export default function HalftoneImage({
                 const px = x + cx;
                 if (px < width && py < height) {
                   const pIdx = (py * width + px) * 4;
-                  const rVal = pixels[pIdx];
-                  const gVal = pixels[pIdx + 1];
-                  const bVal = pixels[pIdx + 2];
-                  totalLum += 0.299 * rVal + 0.587 * gVal + 0.114 * bVal;
+                  totalLum += 0.299 * pixels[pIdx] + 0.587 * pixels[pIdx + 1] + 0.114 * pixels[pIdx + 2];
                   count++;
                 }
               }
             }
             
-            const avgLum = count > 0 ? totalLum / count : 0;
-            const brightness = avgLum / 255;
+            const brightness = (count > 0 ? totalLum / count : 0) / 255;
             const maxRadius = dotSpacing / 1.5; 
-            radii[dotIdx] = brightness * maxRadius;
+            radii[dotIdx] = Math.max(brightness * maxRadius, maxRadius * baseRadiusMultiplier);
             dotIdx++;
           }
         }
@@ -122,7 +128,6 @@ export default function HalftoneImage({
       startRadii = new Float32Array(imageRadii[0]);
       targetRadii = imageRadii[0];
 
-      // Start rendering loop
       requestAnimationFrame(render);
       scheduleNext();
     };
@@ -139,18 +144,20 @@ export default function HalftoneImage({
     };
 
     const render = (time: number) => {
+      // Clear canvas based on logical size (ctx is scaled, so clearing logical size clears all)
       ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = dotColor;
+      
+      // Apply bloom effect
+      ctx.shadowColor = dotColor;
+      ctx.shadowBlur = 8 * dpr; // Scale blur by dpr to look consistent on high-res
 
       if (isTransitioning) {
         const elapsed = time - transitionStartTime;
-        let progress = elapsed / transitionMs;
-        if (progress >= 1) {
-          progress = 1;
-          isTransitioning = false;
-        }
+        let progress = Math.min(elapsed / transitionMs, 1);
+        if (progress >= 1) isTransitioning = false;
 
-        // Ease in-out cubic
+        // ease-in-out-cubic
         const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
 
         for (let i = 0; i < currentRadii!.length; i++) {
@@ -163,8 +170,7 @@ export default function HalftoneImage({
       for (let y = 0; y < height; y += dotSpacing) {
         for (let x = 0; x < width; x += dotSpacing) {
           const radius = currentRadii![dotIdx];
-          if (radius > 0.5) {
-            // moveTo prevents connecting lines when drawing multiple arcs in one path
+          if (radius > 0) {
             ctx.moveTo(x + dotSpacing / 2 + radius, y + dotSpacing / 2);
             ctx.arc(x + dotSpacing / 2, y + dotSpacing / 2, radius, 0, Math.PI * 2);
           }
@@ -182,7 +188,7 @@ export default function HalftoneImage({
       clearTimeout(timeoutId);
       cancelAnimationFrame(animationFrameId);
     };
-  }, [srcs, dotSpacing, dotColor, intervalMs, transitionMs]);
+  }, [srcs, dotSpacing, dotColor, intervalMs, transitionMs, baseRadiusMultiplier]);
 
   return (
     <div style={{ ...style, position: 'relative', overflow: 'hidden' }}>
@@ -191,8 +197,7 @@ export default function HalftoneImage({
         style={{ 
           width: '100%', 
           height: '100%', 
-          objectFit: 'cover',
-          filter: 'drop-shadow(var(--bloom-glow))' 
+          display: 'block'
         }} 
       />
     </div>

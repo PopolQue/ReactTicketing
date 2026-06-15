@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
@@ -121,7 +121,15 @@ export default function EventDetails() {
             <div style={{ padding: '40px', textAlign: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '12px', marginTop: '32px' }}>
               <h3 style={{ marginBottom: '16px' }}>{t('marketplace.eventDetails.ticketsAvailableExternally')}</h3>
               {event.external_url ? (
-                <a href={event.external_url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '12px 24px', backgroundColor: customAccentColor, color: '#fff', textDecoration: 'none', borderRadius: '8px', fontWeight: 'bold' }}>{t('marketplace.eventDetails.getTickets')}</a>
+                <a 
+                  href={event.external_url} 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="btn-primary" 
+                  style={{ display: 'inline-block', backgroundColor: customAccentColor, textDecoration: 'none' }}
+                >
+                  {t('marketplace.eventDetails.getTickets')}
+                </a>
               ) : (
                 <p>{t('marketplace.eventDetails.referToOrganizer')}</p>
               )}

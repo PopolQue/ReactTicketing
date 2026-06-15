@@ -8,6 +8,8 @@ import type { Entity } from '../../components/EntitySwitcher';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 // Extracted Domain Components
+import EventDetailsManager from '../../features/event-management/EventDetailsManager';
+import InteractiveMapManager from '../../features/event-management/InteractiveMapManager';
 import ManageEventHeader from '../../features/event-management/ManageEventHeader';
 import LineupManager from '../../features/event-management/LineupManager';
 import ImageUploader from '../../features/event-management/ImageUploader';
@@ -17,6 +19,7 @@ import CheckoutFieldsManager from '../../features/event-management/CheckoutField
 import TicketTiersManager from '../../features/event-management/TicketTiersManager';
 import PromoManager from '../../features/event-management/PromoManager';
 import ScanAccountsManager from '../../features/event-management/ScanAccountsManager';
+import LocationManager from '../../features/event-management/LocationManager';
 
 export default function ManageEvent() {
   const { t } = useLanguage();
@@ -100,6 +103,9 @@ export default function ManageEvent() {
 
         {/* Right Column */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+          <EventDetailsManager event={event} updateEvent={updateEvent} />
+          <LocationManager event={event} updateEvent={updateEvent} />
+          <InteractiveMapManager event={event} updateEvent={updateEvent} />
           <CheckoutFieldsManager eventId={id!} />
           <ScanAccountsManager eventId={id!} />
           <ImageUploader 

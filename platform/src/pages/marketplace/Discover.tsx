@@ -12,12 +12,13 @@ import { useDiscoverFilters } from '../../hooks/useDiscoverFilters';
 import DiscoverTabs from '../../components/marketplace/DiscoverTabs';
 import CityFilterList from '../../components/marketplace/CityFilterList';
 import { useLanguage } from '../../contexts/LanguageContext';
-
+import EventMap from '../../components/marketplace/EventMap';
 
 export default function Discover() {
   const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabType>('events');
   const [user, setUser] = useState<unknown>(null);
+  const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
 
   const { results, loading } = useDiscoverData(activeTab);
   const {
@@ -26,7 +27,17 @@ export default function Discover() {
     selectedCity,
     setSelectedCity,
     uniqueCities,
-    filteredResults
+    filteredResults,
+    searchCenter,
+    setSearchCenter,
+    radiusKm,
+    setRadiusKm,
+    startDate,
+    setStartDate,
+    endDate,
+    setEndDate,
+    locationQuery,
+    setLocationQuery
   } = useDiscoverFilters(results, activeTab);
 
   useEffect(() => {
@@ -46,6 +57,7 @@ export default function Discover() {
     setActiveTab(tab);
     setSelectedCity(null);
     setSearchQuery('');
+    setViewMode('grid');
   };
 
   const getPlaceholder = () => {
@@ -60,7 +72,6 @@ export default function Discover() {
   return (
     <div className="marketplace-page" style={{ minHeight: '100vh' }}>
       
-
       <main style={{ padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
           <h1 style={{ fontSize: '3.5rem', marginBottom: '16px', fontWeight: 800, letterSpacing: '-1px' }}>{t('marketplace.discover.title')}</h1>
@@ -81,6 +92,28 @@ export default function Discover() {
 
         {/* Tab Navigation */}
         <DiscoverTabs activeTab={activeTab} onChangeTab={handleTabChange} />
+
+        {/* View Switcher for Events */}
+        {activeTab === 'events' && !loading && (
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '24px' }}>
+            <div className="glass-panel" style={{ display: 'flex', padding: '4px', borderRadius: '30px', background: 'var(--panel-bg)' }}>
+              <button 
+                onClick={() => setViewMode('grid')}
+                className={viewMode === 'grid' ? 'btn-primary' : 'btn-secondary'}
+                style={{ borderRadius: '24px', padding: '8px 20px', border: 'none', cursor: 'pointer', transition: 'all 0.2s', fontSize: '0.9rem' }}
+              >
+                List View
+              </button>
+              <button 
+                onClick={() => setViewMode('map')}
+                className={viewMode === 'map' ? 'btn-primary' : 'btn-secondary'}
+                style={{ borderRadius: '24px', padding: '8px 20px', border: 'none', cursor: 'pointer', transition: 'all 0.2s', marginLeft: '4px', fontSize: '0.9rem' }}
+              >
+                Map View
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Filters */}
         {!loading && (activeTab === 'events' || activeTab === 'venues') && (
@@ -103,7 +136,22 @@ export default function Discover() {
           </div>
         ) : (
           <div style={{ width: '100%' }}>
-            {filteredResults.length === 0 ? (
+            {viewMode === 'map' && activeTab === 'events' ? (
+              <EventMap
+                events={filteredResults}
+                searchCenter={searchCenter}
+                setSearchCenter={setSearchCenter}
+                radiusKm={radiusKm}
+                setRadiusKm={setRadiusKm}
+                startDate={startDate}
+                setStartDate={setStartDate}
+                endDate={endDate}
+                setEndDate={setEndDate}
+                locationQuery={locationQuery}
+                setLocationQuery={setLocationQuery}
+                onSelectCity={setSelectedCity}
+              />
+            ) : filteredResults.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px', border: '1px dashed var(--border)', borderRadius: '12px' }}>
                 <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>{t('marketplace.discover.noResults')}</p>
                 <button onClick={() => { setSearchQuery(''); setSelectedCity(null); }} className="btn-secondary" style={{ marginTop: '16px' }}>{t('marketplace.discover.clearFilters')}</button>

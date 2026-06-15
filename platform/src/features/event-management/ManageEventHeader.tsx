@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
+import Modal from '../../components/Modal';
+
 export default function ManageEventHeader({
   event,
   eventId,
@@ -23,6 +25,8 @@ export default function ManageEventHeader({
     showToast
   } = useToast();
   const [isPublishing, setIsPublishing] = useState(false);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+
   const togglePublish = async () => {
     setIsPublishing(true);
     if (!event.published && !event.is_external && tiersCount === 0) {
@@ -87,14 +91,30 @@ export default function ManageEventHeader({
       display: 'flex',
       gap: '12px'
     }}>
-        <a href={`/events/${eventId}`} target="_blank" rel="noopener noreferrer" className="btn-secondary" style={{
-        textDecoration: 'none'
-      }}>{t("previewEventPage")}</a>
+        <button 
+          onClick={() => setIsPreviewOpen(true)} 
+          className="btn-secondary"
+        >
+          {t("previewEventPage")}
+        </button>
         <button onClick={togglePublish} disabled={isPublishing} className="btn-primary" style={{
         backgroundColor: getButtonColor()
       }}>
           {getButtonText()}
         </button>
       </div>
+
+      <Modal 
+        isOpen={isPreviewOpen} 
+        onClose={() => setIsPreviewOpen(false)} 
+        maxWidth="1100px" 
+        title="Event Preview"
+      >
+        <iframe 
+          src={`/events/${eventId}`} 
+          title="Event Preview" 
+          style={{ width: '100%', height: '75vh', border: 'none', borderRadius: '12px', background: '#010f14' }}
+        />
+      </Modal>
     </div>;
 }

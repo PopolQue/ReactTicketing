@@ -2,6 +2,8 @@ import { renderHook, act, waitFor } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useCheckout } from './useCheckout';
 import { supabase } from '../lib/supabase';
+import { ToastProvider } from '../components/Toast';
+import React from 'react';
 
 vi.mock('../lib/supabase', () => ({
   supabase: {
@@ -12,6 +14,10 @@ vi.mock('../lib/supabase', () => ({
     rpc: vi.fn()
   }
 }));
+
+const wrapper = ({ children }: { children: React.ReactNode }) => (
+  React.createElement(ToastProvider, null, children)
+);
 
 const mockSelect = vi.fn();
 const mockEq = vi.fn().mockReturnValue({ order: mockSelect });
@@ -37,7 +43,7 @@ describe('useCheckout', () => {
       'tier-2': 1
     };
 
-    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }));
+    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }), { wrapper });
     
     // Initially loading is true
     expect(result.current.loading).toBe(true);
@@ -68,7 +74,7 @@ describe('useCheckout', () => {
     });
 
     const mockCart = { 'tier-1': 1 };
-    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }));
+    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart, guestEmail: 'test@example.com' }), { wrapper });
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -97,7 +103,7 @@ describe('useCheckout', () => {
     vi.mocked(supabase.rpc).mockImplementation(mockRpc);
 
     const mockCart = { 'tier-1': 1 };
-    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }));
+    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart, guestEmail: 'test@example.com' }), { wrapper });
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -126,7 +132,8 @@ describe('useCheckout', () => {
     } as any);
 
     const mockCart = { 'tier-1': 1 };
-    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }));
+    // Explicitly NO guestEmail
+    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }), { wrapper });
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);

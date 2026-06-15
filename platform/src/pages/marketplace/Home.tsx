@@ -49,8 +49,9 @@ export default function Home() {
               srcs={heroImages}
               dotSpacing={12}
               dotColor="#a2aa5c"
-              intervalMs={5000} // Triggers a transition every 5 seconds
-              transitionMs={4000} // The transition takes 4 seconds, meaning it only stands still for 1 second
+              intervalMs={4000} // Increased interval for more "stillness"
+              transitionMs={800} // Slightly longer transition for elegance
+              baseRadiusMultiplier={0.2}
               style={{ width: '100%', height: '100%', opacity: 0.8 }}
             />
           </div>
@@ -62,7 +63,7 @@ export default function Home() {
             <h1 style={{ fontSize: 'clamp(3rem, 6vw, 5.5rem)', margin: '0 0 24px 0', lineHeight: 1.1, fontWeight: 800, letterSpacing: '-2px', textShadow: 'var(--bloom-text)' }}>
               {t('marketplace.home.hero.title1')} <br /> <span style={{ color: 'var(--accent)' }}>{t('marketplace.home.hero.title2')}</span>
             </h1>
-            <p style={{ color: 'var(--text-primary)', fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', marginBottom: '48px', maxWidth: '600px', margin: '0 auto 48px auto', lineHeight: 1.6, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
+            <p style={{ color: 'var(--text-primary)', fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', marginBottom: '48px', maxWidth: '700px', margin: '0 auto 48px auto', lineHeight: 1.6, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
               {t('marketplace.home.hero.subtitle')}
             </p>
 

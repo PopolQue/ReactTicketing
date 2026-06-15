@@ -1,5 +1,6 @@
 import { useLanguage } from "../../contexts/LanguageContext";
-import React, { useState } from 'react';
+import { supabase } from '../../lib/supabase';
+import React, { useState, useEffect } from 'react';
 import { useToast } from '../../components/Toast';
 import CheckoutModal from '../../components/CheckoutModal';
 import { usePromoCode } from '../../hooks/usePromoCode';
@@ -28,6 +29,14 @@ export default function CheckoutFlow({
     showToast
   } = useToast();
   const [currentStep, setCurrentStep] = useState(0); // 0 = Forms, 1 = Review & Pay
+  const [user, setUser] = useState<any>(null);
+  const [guestEmail, setGuestEmail] = useState('');
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setUser(user);
+    });
+  }, []);
 
   const {
     loading,
@@ -40,7 +49,8 @@ export default function CheckoutFlow({
   } = useCheckout({
     eventId: event.id,
     tiers,
-    cart
+    cart,
+    guestEmail: user ? undefined : guestEmail // Only pass guest email if not logged in
   });
   const {
     promoCode,
@@ -126,6 +136,24 @@ export default function CheckoutFlow({
 
         <div>
           <CheckoutSummary ticketForms={ticketForms} subtotalCents={subtotalCents} finalTotalCents={finalTotalCents} promoCode={promoCode} setPromoCode={setPromoCode} appliedPromo={appliedPromo} promoError={promoError} onApplyPromo={applyPromo} onRemovePromo={removePromo} onCancel={onCancel} onProceed={handleProceedToPay} />
+          {!user && (
+            <div className="glass-panel" style={{ padding: '24px', marginTop: '24px' }}>
+              <h3 style={{ margin: '0 0 16px 0', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+                Guest Checkout
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '16px' }}>
+                Enter your email to receive your tickets. You can claim them to an account later.
+              </p>
+              <input
+                required
+                type="email"
+                className="input-field"
+                value={guestEmail}
+                onChange={e => setGuestEmail(e.target.value)}
+                placeholder="Your email address"
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>;

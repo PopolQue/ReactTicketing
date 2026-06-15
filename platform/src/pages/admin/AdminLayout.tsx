@@ -93,6 +93,16 @@ export default function AdminLayout() {
               backgroundColor: isActive('/admin/writer-applications') ? 'rgba(255,255,255,0.1)' : 'transparent'
             }}
           >{t('admin_layout_writer_apps')}</Link>
+          <Link 
+            to="/admin/invites" 
+            style={{ 
+              padding: '12px 16px', 
+              borderRadius: '8px', 
+              textDecoration: 'none', 
+              color: 'white',
+              backgroundColor: isActive('/admin/invites') ? 'rgba(255,255,255,0.1)' : 'transparent'
+            }}
+          >Invite Manager</Link>
         </nav>
 
         <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
