@@ -4,8 +4,10 @@ import { supabase } from '../../lib/supabase';
 import type { Entity } from '../../components/EntitySwitcher';
 import { useToast } from '../../components/Toast';
 import BlogFormModal from '../../components/modals/BlogFormModal';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function BlogsList() {
+  const { t } = useLanguage();
   const { showToast } = useToast();
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [blogs, setBlogs] = useState<any[]>([]);
@@ -95,15 +97,15 @@ export default function BlogsList() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
-        <h2>Manage Blogs</h2>
-        <button className="btn-primary" onClick={openCreateModal}>+ Add Blog Post</button>
+        <h2>{t("organizer.blogs.title")}</h2>
+        <button className="btn-primary" onClick={openCreateModal}>{t("organizer.blogs.addPost")}</button>
       </div>
 
-      {loading ? <p>Loading blogs...</p> : (
+      {loading ? <p>{t("organizer.blogs.loading")}</p> : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {blogs.length === 0 ? (
             <div className="glass-panel" style={{ padding: '40px', textAlign: 'center' }}>
-              <p style={{ color: 'var(--text-secondary)' }}>You haven't written any blog posts yet.</p>
+              <p style={{ color: 'var(--text-secondary)' }}>{t("organizer.blogs.noBlogs")}</p>
             </div>
           ) : (
             blogs.map(blog => (
@@ -114,7 +116,7 @@ export default function BlogsList() {
                     Status: <span style={{ color: blog.published ? '#4ade80' : '#facc15' }}>{blog.published ? 'Published' : 'Draft'}</span>
                   </p>
                 </div>
-                <button onClick={() => openEditModal(blog)} className="btn-secondary">Edit Post</button>
+                <button onClick={() => openEditModal(blog)} className="btn-secondary">{t("organizer.blogs.editPost")}</button>
               </div>
             ))
           )}

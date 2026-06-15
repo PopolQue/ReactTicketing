@@ -3,8 +3,10 @@ import { useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import type { Entity } from '../../components/EntitySwitcher';
 import { useToast } from '../../components/Toast';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function Settings() {
+  const { t } = useLanguage();
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const { showToast } = useToast();
   const [profile, setProfile] = useState<any>(null);
@@ -47,11 +49,11 @@ export default function Settings() {
     setSaving(false);
   };
 
-  if (loading) return <div style={{ padding: '24px' }}>Loading Settings...</div>;
+  if (loading) return <div style={{ padding: '24px' }}>{t("organizer.settings.loading")}</div>;
 
   return (
     <div className="settings-page" style={{ maxWidth: '800px' }}>
-      <h2 style={{ marginBottom: '24px', margin: 0 }}>Settings & Payouts</h2>
+      <h2 style={{ marginBottom: '24px', margin: 0 }}>{t("organizer.settings.title")}</h2>
       
       <div className="glass-panel" style={{ padding: '32px' }}>
         <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
@@ -66,26 +68,23 @@ export default function Settings() {
           </div>
         </div>
 
-        <h4 style={{ borderTop: '1px solid var(--border)', paddingTop: '24px', marginBottom: '16px' }}>Stripe Connect (Payouts)</h4>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.5' }}>
-          Connect your Stripe account to automatically receive payouts for ticket sales minus the platform application fee. 
-          Enter your Stripe Connected Account ID (starts with `acct_`).
-        </p>
+        <h4 style={{ borderTop: '1px solid var(--border)', paddingTop: '24px', marginBottom: '16px' }}>{t("organizer.settings.stripeConnect")}</h4>
+        <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.5' }}>{t("organizer.settings.stripeDesc")}</p>
         
         <form onSubmit={handleSaveStripe} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Stripe Account ID</label>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{t("organizer.settings.stripeLabel")}</label>
             <input 
               type="text" 
               value={stripeAccountId} 
               onChange={e => setStripeAccountId(e.target.value)} 
               className="input-field" 
-              placeholder="acct_123456789"
+              placeholder={t("organizer.settings.stripePlaceholder")}
               required 
             />
           </div>
           <button type="submit" disabled={saving} className="btn-primary" style={{ width: 'fit-content' }}>
-            {saving ? 'Saving...' : 'Save Stripe Account'}
+            {saving ? t("organizer.settings.saving") : t("organizer.settings.saveStripe")}
           </button>
         </form>
       </div>

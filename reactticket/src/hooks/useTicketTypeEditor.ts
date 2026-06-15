@@ -5,6 +5,7 @@ import { TicketTypeConfig } from 'reactticket-core/types/ticket.types';
 export interface NewTicketTypeState {
   name: string;
   price: number;
+  currency: string;
   capacity: number;
   visible: boolean;
   startDate: string;
@@ -17,7 +18,7 @@ export const useTicketTypeEditor = () => {
   const { ticketTypes, adapter, event, dispatch } = useReactTicket();
   
   const [newType, setNewType] = useState<NewTicketTypeState>({ 
-      name: '', price: 0, capacity: 100, visible: true, 
+      name: '', price: 0, currency: 'USD', capacity: 100, visible: true, 
       startDate: '', startTime: '00:00', 
       endDate: '', endTime: '23:59' 
   });
@@ -66,7 +67,7 @@ export const useTicketTypeEditor = () => {
     const type: TicketTypeConfig = {
       id: `tt_${Date.now()}`,
       name: newType.name,
-      pricing: { kind: 'paid', priceInCents: newType.price, currency: 'EUR' },
+      pricing: { kind: 'paid', priceInCents: newType.price, currency: newType.currency },
       capacity: newType.capacity,
       visible: newType.visible,
       transferable: true,
@@ -76,7 +77,7 @@ export const useTicketTypeEditor = () => {
     await adapter.saveTicketType(event.id, type);
     const updatedTypes = await adapter.getTicketTypes(event.id);
     dispatch({ type: 'SET_TICKET_TYPES', payload: updatedTypes });
-    setNewType({ name: '', price: 0, capacity: 100, visible: true, startDate: '', startTime: '00:00', endDate: '', endTime: '23:59' });
+    setNewType({ name: '', price: 0, currency: 'USD', capacity: 100, visible: true, startDate: '', startTime: '00:00', endDate: '', endTime: '23:59' });
   };
 
   const formatDateTimeForTimezone = (date?: Date | string) => {

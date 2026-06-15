@@ -1,5 +1,6 @@
 import React from 'react';
 import { NewTicketTypeState } from '../../hooks/useTicketTypeEditor';
+import { PricingInput } from './PricingInput';
 
 export interface TicketTypeFormProps {
   newType: NewTicketTypeState;
@@ -15,7 +16,14 @@ export const TicketTypeForm: React.FC<TicketTypeFormProps> = ({
   return (
     <tr style={{ background: '#f8fafc' }}>
       <td style={{ padding: '10px' }}><input style={{ width: '100%' }} placeholder="Name" value={newType.name || ''} onChange={e => setNewType({ ...newType, name: e.target.value })} /></td>
-      <td style={{ padding: '10px' }}><input style={{ width: '100%' }} type="number" placeholder="Price" value={newType.price || ''} onChange={e => setNewType({ ...newType, price: parseInt(e.target.value) || 0 })} /></td>
+      <td style={{ padding: '10px' }}>
+        <PricingInput 
+          valueCents={newType.price || 0}
+          onChangeCents={(cents) => setNewType({ ...newType, price: cents })}
+          currency={newType.currency || 'USD'}
+          onCurrencyChange={(curr) => setNewType({ ...newType, currency: curr })}
+        />
+      </td>
       <td style={{ padding: '10px' }}>
           <div style={{ display: 'flex', gap: '5px', flexDirection: 'column' }}>
             <input type="date" value={newType.startDate || ''} onChange={e => setNewType({...newType, startDate: e.target.value})} />

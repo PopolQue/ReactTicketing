@@ -1,44 +1,45 @@
 import { Link } from 'react-router-dom';
 import { UserCheck, BarChart3, Music, Heart } from 'lucide-react';
-
-const benefits = [
-  {
-    icon: <UserCheck size={32} />,
-    color: '#6366f1',
-    title: 'Claimable Profiles',
-    description: 'Your profile is auto-generated when organizers add you to lineups. Claim it to unlock full editing, analytics, and a verified badge that fans trust.',
-  },
-  {
-    icon: <BarChart3 size={32} />,
-    color: '#c084fc',
-    title: 'Audience Analytics',
-    description: 'Understand who your fans are with deep demographic insights, geographic breakdowns, and engagement trends across every show you play.',
-  },
-  {
-    icon: <Music size={32} />,
-    color: '#34d399',
-    title: 'Event Lineup Features',
-    description: "Get featured prominently on every event page you're part of. Your profile, bio, and links are showcased to thousands of potential fans.",
-  },
-  {
-    icon: <Heart size={32} />,
-    color: '#f472b6',
-    title: 'Direct Fan Connection',
-    description: 'Build a loyal following as fans discover you through events. Your profile becomes a hub where audiences find all your upcoming shows.',
-  },
-];
-
-const stats = [
-  { value: '10K+', label: 'Artists' },
-  { value: '500K+', label: 'Fans Reached' },
-  { value: '2K+', label: 'Events Featured' },
-];
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function ForArtists() {
+  const { t } = useLanguage();
+
+  const benefits = [
+    {
+      icon: <UserCheck size={32} />,
+      color: '#6366f1',
+      title: t('claimableProfiles'),
+      description: t('claimableProfilesDesc'),
+    },
+    {
+      icon: <BarChart3 size={32} />,
+      color: '#c084fc',
+      title: t('audienceAnalytics'),
+      description: t('audienceAnalyticsDesc'),
+    },
+    {
+      icon: <Music size={32} />,
+      color: '#34d399',
+      title: t('eventLineupFeatures'),
+      description: t('eventLineupFeaturesDesc'),
+    },
+    {
+      icon: <Heart size={32} />,
+      color: '#f472b6',
+      title: t('directFanConnection'),
+      description: t('directFanConnectionDesc'),
+    },
+  ];
+
+  const stats = [
+    { value: '10K+', label: t('artists') },
+    { value: '500K+', label: t('fansReached') },
+    { value: '2K+', label: t('eventsFeatured') },
+  ];
+
   return (
     <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
-
-      {/* HERO */}
       <section style={{ position: 'relative', display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', minHeight: '80vh', padding: '80px 20px 60px', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '5%', left: '0%', width: '55vw', height: '55vw', background: 'radial-gradient(circle, rgba(69,38,38,0.35) 0%, rgba(0,0,0,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none' }} />
         <div style={{ position: 'absolute', bottom: '-10%', right: '-5%', width: '45vw', height: '45vw', background: 'radial-gradient(circle, rgba(90,50,50,0.25) 0%, rgba(0,0,0,0) 70%)', filter: 'blur(60px)', zIndex: 0, pointerEvents: 'none' }} />
@@ -46,32 +47,31 @@ export default function ForArtists() {
 
         <div style={{ textAlign: 'center', zIndex: 1, maxWidth: '800px', animation: 'fadeIn 1s ease-out' }}>
           <span style={{ display: 'inline-block', padding: '6px 16px', borderRadius: '30px', backgroundColor: 'rgba(255,255,255,0.05)', color: 'var(--text-primary)', fontSize: '0.85rem', fontWeight: 600, letterSpacing: '2px', marginBottom: '24px', border: '1px solid var(--accent)', boxShadow: 'var(--bloom-glow)' }}>
-            FOR ARTISTS
+            {t('forArtists')}
           </span>
           <h1 style={{ fontSize: 'clamp(2.8rem, 6vw, 5rem)', margin: '0 0 24px 0', lineHeight: 1.1, fontWeight: 800, letterSpacing: '-2px', textShadow: 'var(--bloom-text)' }}>
-            Amplify Your <br /><span style={{ color: 'var(--accent)' }}>Reach</span>
+            {t('amplifyYour')} <br /><span style={{ color: 'var(--accent)' }}>{t('reach')}</span>
           </h1>
           <p style={{ color: 'var(--text-secondary)', fontSize: 'clamp(1.05rem, 2vw, 1.3rem)', marginBottom: '48px', maxWidth: '600px', margin: '0 auto 48px auto', lineHeight: 1.7 }}>
-            Build your fanbase, showcase your talent, and connect with audiences who matter. Your career deserves a platform as dynamic as your sound.
+            {t('artistsHeroDesc')}
           </p>
 
           <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
             <Link to="/claim" className="btn-primary" style={{ padding: '16px 40px', fontSize: '1.1rem', borderRadius: '30px', textDecoration: 'none' }}>
-              Claim Your Profile
+              {t('claimYourProfile')}
             </Link>
             <a href="#benefits" className="btn-secondary" style={{ padding: '16px 40px', fontSize: '1.1rem', borderRadius: '30px', textDecoration: 'none' }}>
-              Learn More
+              {t('learnMore')}
             </a>
           </div>
         </div>
       </section>
 
-      {/* BENEFITS */}
       <section id="benefits" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '100px 20px', zIndex: 1 }}>
         <div style={{ textAlign: 'center', marginBottom: '60px', maxWidth: '600px' }}>
-          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', margin: '0 0 16px 0', fontWeight: 700 }}>Everything You Need to Grow</h2>
+          <h2 style={{ fontSize: 'clamp(2rem, 4vw, 2.8rem)', margin: '0 0 16px 0', fontWeight: 700 }}>{t('everythingToGrow')}</h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.15rem', margin: 0, lineHeight: 1.6 }}>
-            From verified profiles to deep analytics, we give artists the tools to turn every gig into a growth opportunity.
+            {t('everythingToGrowDesc')}
           </p>
         </div>
 
@@ -94,7 +94,6 @@ export default function ForArtists() {
         </div>
       </section>
 
-      {/* STATS */}
       <section style={{ display: 'flex', justifyContent: 'center', padding: '20px 20px 80px', zIndex: 1 }}>
         <div className="glass-panel" style={{ display: 'flex', gap: '60px', padding: '48px 64px', flexWrap: 'wrap', justifyContent: 'center', borderTop: '1px solid var(--accent)' }}>
           {stats.map((s) => (
@@ -106,18 +105,17 @@ export default function ForArtists() {
         </div>
       </section>
 
-      {/* CTA */}
       <section style={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '100px 20px 120px', overflow: 'hidden' }}>
         <div style={{ position: 'absolute', top: '0%', left: '20%', width: '60vw', height: '40vw', background: 'radial-gradient(circle, rgba(69,38,38,0.25) 0%, rgba(0,0,0,0) 70%)', filter: 'blur(80px)', zIndex: 0, pointerEvents: 'none' }} />
         <div style={{ textAlign: 'center', zIndex: 1, maxWidth: '600px' }}>
           <h2 style={{ fontSize: 'clamp(2rem, 4vw, 3rem)', margin: '0 0 16px 0', fontWeight: 700, textShadow: 'var(--bloom-text)' }}>
-            Ready to Take the Stage?
+            {t('readyToTakeStage')}
           </h2>
           <p style={{ color: 'var(--text-secondary)', fontSize: '1.15rem', lineHeight: 1.6, margin: '0 0 40px 0' }}>
-            Join thousands of artists already growing their audience on Admit. Claim your profile and start connecting with fans today.
+            {t('readyToTakeStageDesc')}
           </p>
           <Link to="/claim" className="btn-primary" style={{ padding: '16px 48px', fontSize: '1.15rem', borderRadius: '30px', textDecoration: 'none' }}>
-            Claim Your Profile
+            {t('claimYourProfile')}
           </Link>
         </div>
       </section>

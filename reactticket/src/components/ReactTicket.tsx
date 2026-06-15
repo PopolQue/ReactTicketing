@@ -1,5 +1,6 @@
 import React from 'react';
 import { ReactTicketProvider } from '../context/ReactTicketContext';
+import { I18nProvider, Dictionary } from '../context/I18nContext';
 import { StorageAdapter } from 'reactticket-core/types/adapter.types';
 import { EventConfig } from 'reactticket-core/types/event.types';
 import { Order, IssuedTicket } from 'reactticket-core/types/ticket.types';
@@ -25,6 +26,8 @@ interface ReactTicketProps {
   authSession?: any;
   className?: string;
   style?: React.CSSProperties;
+  locale?: string;
+  dictionary?: Dictionary;
 }
 
 const renderMode = (mode: string | undefined, qrParser?: (data: Uint8ClampedArray, width: number, height: number) => { data: string } | null) => {
@@ -53,10 +56,12 @@ export const ReactTicket = (props: ReactTicketProps) => {
   }
 
   return (
-    <ReactTicketProvider event={props.event} adapter={props.adapter} onCheckout={props.onCheckout} onTicketIssued={props.onTicketIssued} authSession={props.authSession}>
-      <div className={`ReactTicket-root ${props.className || ''}`} style={props.style}>
-        {renderMode(props.mode, props.qrParser)}
-      </div>
-    </ReactTicketProvider>
+    <I18nProvider locale={props.locale || props.event?.settings?.locale} dictionary={props.dictionary}>
+      <ReactTicketProvider event={props.event} adapter={props.adapter} onCheckout={props.onCheckout} onTicketIssued={props.onTicketIssued} authSession={props.authSession}>
+        <div className={`ReactTicket-root ${props.className || ''}`} style={props.style}>
+          {renderMode(props.mode, props.qrParser)}
+        </div>
+      </ReactTicketProvider>
+    </I18nProvider>
   );
 };

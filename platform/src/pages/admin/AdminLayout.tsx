@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function AdminLayout() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ export default function AdminLayout() {
     checkAdmin();
   }, [navigate]);
 
-  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading Admin Portal...</div>;
+  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('admin_layout_loading')}</div>;
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -38,7 +40,7 @@ export default function AdminLayout() {
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-color)' }}>
       {/* Sidebar */}
       <aside style={{ width: '250px', backgroundColor: 'rgba(255,255,255,0.03)', borderRight: '1px solid var(--border)', padding: '24px', display: 'flex', flexDirection: 'column' }}>
-        <h2 style={{ fontSize: '1.2rem', marginBottom: '32px', color: 'var(--accent)' }}>Admit Admin</h2>
+        <h2 style={{ fontSize: '1.2rem', marginBottom: '32px', color: 'var(--accent)' }}>{t('admin_layout_title')}</h2>
         
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <Link 
@@ -50,9 +52,7 @@ export default function AdminLayout() {
               color: 'white',
               backgroundColor: isActive('/admin') ? 'rgba(255,255,255,0.1)' : 'transparent'
             }}
-          >
-            Dashboard
-          </Link>
+          >{t('admin_layout_dashboard')}</Link>
           <Link 
             to="/admin/events" 
             style={{ 
@@ -62,9 +62,7 @@ export default function AdminLayout() {
               color: 'white',
               backgroundColor: isActive('/admin/events') ? 'rgba(255,255,255,0.1)' : 'transparent'
             }}
-          >
-            Event Review
-          </Link>
+          >{t('admin_layout_event_review')}</Link>
           <Link 
             to="/admin/support" 
             style={{ 
@@ -74,9 +72,7 @@ export default function AdminLayout() {
               color: 'white',
               backgroundColor: isActive('/admin/support') ? 'rgba(255,255,255,0.1)' : 'transparent'
             }}
-          >
-            Support Desk
-          </Link>
+          >{t('admin_layout_support_desk')}</Link>
           <Link 
             to="/admin/claims" 
             style={{ 
@@ -86,9 +82,7 @@ export default function AdminLayout() {
               color: 'white',
               backgroundColor: isActive('/admin/claims') ? 'rgba(255,255,255,0.1)' : 'transparent'
             }}
-          >
-            Entity Claims
-          </Link>
+          >{t('admin_layout_entity_claims')}</Link>
           <Link 
             to="/admin/writer-applications" 
             style={{ 
@@ -98,14 +92,12 @@ export default function AdminLayout() {
               color: 'white',
               backgroundColor: isActive('/admin/writer-applications') ? 'rgba(255,255,255,0.1)' : 'transparent'
             }}
-          >
-            Writer Apps
-          </Link>
+          >{t('admin_layout_writer_apps')}</Link>
         </nav>
 
         <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
           <Link to="/" className="btn-nav" style={{ padding: '8px 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-            ← Back to Marketplace
+            {t('admin_layout_back')}
           </Link>
         </div>
       </aside>

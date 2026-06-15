@@ -11,8 +11,11 @@ import type { TabType } from '../../hooks/useDiscoverData';
 import { useDiscoverFilters } from '../../hooks/useDiscoverFilters';
 import DiscoverTabs from '../../components/marketplace/DiscoverTabs';
 import CityFilterList from '../../components/marketplace/CityFilterList';
+import { useLanguage } from '../../contexts/LanguageContext';
+
 
 export default function Discover() {
+  const { t } = useLanguage();
   const [activeTab, setActiveTab] = useState<TabType>('events');
   const [user, setUser] = useState<unknown>(null);
 
@@ -47,10 +50,10 @@ export default function Discover() {
 
   const getPlaceholder = () => {
     switch(activeTab) {
-      case 'events': return 'Search by event name, city, or venue...';
-      case 'artists': return 'Search for artists by name or genre...';
-      case 'venues': return 'Search for venues or cities...';
-      case 'organizers': return 'Search for organizers...';
+      case 'events': return t('marketplace.discover.placeholderEvents');
+      case 'artists': return t('marketplace.discover.placeholderArtists');
+      case 'venues': return t('marketplace.discover.placeholderVenues');
+      case 'organizers': return t('marketplace.discover.placeholderOrganizers');
     }
   };
 
@@ -60,8 +63,8 @@ export default function Discover() {
 
       <main style={{ padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
         <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h1 style={{ fontSize: '3.5rem', marginBottom: '16px', fontWeight: 800, letterSpacing: '-1px' }}>Discover Your Next Experience</h1>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '32px' }}>Explore the vibrant ecosystem of events, artists, venues, and organizers.</p>
+          <h1 style={{ fontSize: '3.5rem', marginBottom: '16px', fontWeight: 800, letterSpacing: '-1px' }}>{t('marketplace.discover.title')}</h1>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '32px' }}>{t('marketplace.discover.subtitle')}</p>
 
           {/* Search Bar */}
           <div style={{ maxWidth: '600px', margin: '0 auto', display: 'flex' }}>
@@ -102,12 +105,12 @@ export default function Discover() {
           <div style={{ width: '100%' }}>
             {filteredResults.length === 0 ? (
               <div style={{ textAlign: 'center', padding: '60px', border: '1px dashed var(--border)', borderRadius: '12px' }}>
-                <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>No results found matching your criteria.</p>
-                <button onClick={() => { setSearchQuery(''); setSelectedCity(null); }} className="btn-secondary" style={{ marginTop: '16px' }}>Clear Filters</button>
+                <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem' }}>{t('marketplace.discover.noResults')}</p>
+                <button onClick={() => { setSearchQuery(''); setSelectedCity(null); }} className="btn-secondary" style={{ marginTop: '16px' }}>{t('marketplace.discover.clearFilters')}</button>
               </div>
             ) : activeTab === 'events' ? (
               <>
-                {[{ id: 'clubnight', title: 'Clubnights' }, { id: 'concert', title: 'Concerts' }, { id: 'festival', title: 'Festivals' }, { id: 'workshop', title: 'Workshops' }, { id: 'other', title: 'More Events' }].map(cat => {
+                {[{ id: 'clubnight', title: t('marketplace.discover.clubnights') }, { id: 'concert', title: t('marketplace.discover.concerts') }, { id: 'festival', title: t('marketplace.discover.festivals') }, { id: 'workshop', title: t('marketplace.discover.workshops') }, { id: 'other', title: t('marketplace.discover.moreEvents') }].map(cat => {
                   const categoryEvents = filteredResults.filter((e: any) => (e.category || 'other') === cat.id);
                   if (categoryEvents.length === 0) return null;
                   return (

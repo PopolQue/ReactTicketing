@@ -4,8 +4,11 @@ import { supabase } from '../../lib/supabase';
 import { useFollowEntity } from '../../hooks/useFollowEntity';
 import EventCard from '../../components/EventCard';
 import { MapPin, BadgeCheck } from 'lucide-react';
+import { useLanguage } from '../../contexts/LanguageContext';
+
 
 export default function VenueProfile() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const [venue, setVenue] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
@@ -37,8 +40,8 @@ export default function VenueProfile() {
     fetchProfile();
   }, [id]);
 
-  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading...</div>;
-  if (!venue) return <div style={{ padding: '60px', textAlign: 'center' }}>Venue not found.</div>;
+  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.venueProfile.loading')}</div>;
+  if (!venue) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.venueProfile.notFound')}</div>;
 
   return (
     <div className="marketplace-page" style={{ minHeight: '100vh' }}>
@@ -60,7 +63,7 @@ export default function VenueProfile() {
             )}
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <span style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>{followerCount} Followers</span>
+              <span style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>{followerCount} {t('marketplace.venueProfile.followers')}</span>
               <button 
                 onClick={toggleFollow}
                 disabled={followLoading}
@@ -76,15 +79,15 @@ export default function VenueProfile() {
                   transition: 'all 0.2s'
                 }}
               >
-                {isFollowing ? 'Following' : 'Follow Venue'}
+                {isFollowing ? t('marketplace.venueProfile.following') : t('marketplace.venueProfile.followVenue')}
               </button>
             </div>
           </div>
         </div>
 
-        <h2 style={{ marginBottom: '24px' }}>Upcoming Events at {venue.name}</h2>
+        <h2 style={{ marginBottom: '24px' }}>{t('marketplace.venueProfile.upcomingEventsAt')}{venue.name}</h2>
         {events.length === 0 ? (
-          <p style={{ color: 'var(--text-secondary)' }}>No upcoming events currently scheduled at this venue.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>{t('marketplace.venueProfile.noUpcomingEvents')}</p>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
             {events.map((event) => (

@@ -41,9 +41,9 @@ export const useCartTotals = (
         const total = subtotal - discount;
 
         return {
-            subtotal: (subtotal / 100).toFixed(2),
-            discount: (discount / 100).toFixed(2),
-            total: (total > 0 ? total / 100 : 0).toFixed(2)
+            subtotalCents: subtotal,
+            discountCents: discount,
+            totalCents: total > 0 ? total : 0
         };
     }, [cartItems, ticketTypes, promoDetails]);
 };

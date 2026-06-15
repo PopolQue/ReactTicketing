@@ -5,7 +5,7 @@ import { AuthService } from 'reactticket-core/services/AuthService';
 import { TicketService } from 'reactticket-core/services/TicketService';
 import { PDFRenderer } from 'reactticket-core/services/PDFRenderer';
 
-export const useCheckout = (cartTotals: { subtotal: string, discount: string, total: string }) => {
+export const useCheckout = (cartTotals: { subtotalCents: number, discountCents: number, totalCents: number }) => {
   const { cart, dispatch, ticketTypes, adapter, event, onCheckout, onTicketIssued } = useReactTicket();
 
   const checkout = useCallback(async () => {
@@ -42,9 +42,9 @@ export const useCheckout = (cartTotals: { subtotal: string, discount: string, to
         }),
         buyerEmail: cart.personalizations[cart.items[0]?.ticketTypeId]?.[0]?.email || '',
         promoCode: cart.promoCode,
-        subtotalCents: parseInt(cartTotals.subtotal) * 100,
-        discountCents: parseInt(cartTotals.discount) * 100,
-        totalCents: parseInt(cartTotals.total) * 100,
+        subtotalCents: cartTotals.subtotalCents,
+        discountCents: cartTotals.discountCents,
+        totalCents: cartTotals.totalCents,
         status: 'pending',
         createdAt: new Date(),
     };

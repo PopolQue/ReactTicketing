@@ -4,6 +4,8 @@ import { supabase } from '../../lib/supabase';
 import type { User } from '@supabase/supabase-js';
 import { ShieldCheck, RefreshCw, Palette } from 'lucide-react';
 import HalftoneImage from '../../components/HalftoneImage';
+import { useLanguage } from '../../contexts/LanguageContext';
+
 
 const heroImages = [
   '/images/gornostai_nastya-concert-1941578_1920.jpg',
@@ -13,6 +15,7 @@ const heroImages = [
 ];
 
 export default function Home() {
+  const { t } = useLanguage();
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
@@ -54,21 +57,21 @@ export default function Home() {
 
           <div style={{ textAlign: 'center', zIndex: 1, maxWidth: '800px', animation: 'fadeIn 1s ease-out', position: 'relative' }}>
             <span style={{ display: 'inline-block', padding: '6px 16px', borderRadius: '30px', backgroundColor: 'rgba(255,255,255,0.05)', color: 'var(--text-primary)', fontSize: '0.9rem', fontWeight: 600, letterSpacing: '1px', marginBottom: '24px', border: '1px solid var(--accent)', boxShadow: 'var(--bloom-glow)' }}>
-              THE FUTURE OF TICKETING
+              {t('marketplace.home.hero.badge')}
             </span>
             <h1 style={{ fontSize: 'clamp(3rem, 6vw, 5.5rem)', margin: '0 0 24px 0', lineHeight: 1.1, fontWeight: 800, letterSpacing: '-2px', textShadow: 'var(--bloom-text)' }}>
-              Unforgettable <br /> <span style={{ color: 'var(--accent)' }}>Experiences Await</span>
+              {t('marketplace.home.hero.title1')} <br /> <span style={{ color: 'var(--accent)' }}>{t('marketplace.home.hero.title2')}</span>
             </h1>
             <p style={{ color: 'var(--text-primary)', fontSize: 'clamp(1.1rem, 2vw, 1.4rem)', marginBottom: '48px', maxWidth: '600px', margin: '0 auto 48px auto', lineHeight: 1.6, textShadow: '0 2px 4px rgba(0,0,0,0.8)' }}>
-              Discover underground club nights, massive festivals, and intimate live shows. Securely buy and seamlessly resell tickets on the world's most elegant marketplace.
+              {t('marketplace.home.hero.subtitle')}
             </p>
 
             <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
               <Link to="/discover" className="btn-primary" style={{ padding: '16px 40px', fontSize: '1.2rem', borderRadius: '30px', transition: 'transform 0.2s', boxShadow: '0 10px 30px -10px rgba(99,102,241,0.5)' }}>
-                Start Discovering
+                {t('marketplace.home.hero.cta.discover')}
               </Link>
               <Link to="/organizer" className="btn-secondary" style={{ padding: '16px 40px', fontSize: '1.2rem', borderRadius: '30px' }}>
-                Host an Event
+                {t('marketplace.home.hero.cta.host')}
               </Link>
             </div>
           </div>
@@ -83,55 +86,55 @@ export default function Home() {
               <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'rgba(99,102,241,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto', color: '#6366f1' }}>
                 <ShieldCheck size={32} />
               </div>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>Secure Ecosystem</h3>
-              <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>Every ticket is verified and cryptographically signed. Say goodbye to fake PDF tickets.</p>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>{t('marketplace.home.features.1.title')}</h3>
+              <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{t('marketplace.home.features.1.desc')}</p>
             </div>
             <div className="glass-panel" style={{ padding: '32px', textAlign: 'center', transition: 'transform 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
               <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'rgba(192,132,252,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto', color: '#c084fc' }}>
                 <RefreshCw size={32} />
               </div>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>Fair Resale Market</h3>
-              <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>Can't make it? Resell your ticket safely through our built-in secondary marketplace.</p>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>{t('marketplace.home.features.2.title')}</h3>
+              <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{t('marketplace.home.features.2.desc')}</p>
             </div>
             <div className="glass-panel" style={{ padding: '32px', textAlign: 'center', transition: 'transform 0.3s' }} onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-10px)'} onMouseLeave={(e) => e.currentTarget.style.transform = 'none'}>
               <div style={{ width: '60px', height: '60px', borderRadius: '50%', backgroundColor: 'rgba(52,211,153,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto', color: '#34d399' }}>
                 <Palette size={32} />
               </div>
-              <h3 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>Stunning UI</h3>
-              <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>Experience a meticulously crafted platform that prioritizes both aesthetics and usability.</p>
+              <h3 style={{ margin: '0 0 12px 0', fontSize: '1.3rem' }}>{t('marketplace.home.features.3.title')}</h3>
+              <p style={{ color: 'var(--text-secondary)', margin: 0, lineHeight: 1.5 }}>{t('marketplace.home.features.3.desc')}</p>
             </div>
           </div>
 
           {/* Creator Features Section */}
           <div style={{ marginTop: '120px', width: '100%', maxWidth: '1200px', zIndex: 1 }}>
             <div style={{ textAlign: 'center', marginBottom: '60px' }}>
-              <h2 style={{ fontSize: '2.5rem', margin: '0 0 16px 0' }}>Built for Organizers & Artists</h2>
+              <h2 style={{ fontSize: '2.5rem', margin: '0 0 16px 0' }}>{t('marketplace.home.creators.title')}</h2>
               <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', maxWidth: '600px', margin: '0 auto' }}>
-                Admit isn't just a ticket store—it's a comprehensive ecosystem designed to empower creators.
+                {t('marketplace.home.creators.subtitle')}
               </p>
             </div>
 
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '32px' }}>
               <div className="glass-panel" style={{ padding: '40px', borderTop: '4px solid #6366f1' }}>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '16px', color: 'white' }}>Custom Checkouts</h3>
+                <h3 style={{ fontSize: '1.5rem', marginBottom: '16px', color: 'white' }}>{t('marketplace.home.creators.1.title')}</h3>
                 <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
-                  Go beyond Name and Email. Our dynamic Form Builder lets organizers demand precise ticket holder information like Age, Country, Dietary Restrictions, and Custom Responses directly in the shopping cart.
+                  {t('marketplace.home.creators.1.desc')}
                 </p>
               </div>
 
               <div className="glass-panel" style={{ padding: '40px', borderTop: '4px solid #c084fc' }}>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '16px', color: 'white' }}>Lineup Management</h3>
+                <h3 style={{ fontSize: '1.5rem', marginBottom: '16px', color: 'white' }}>{t('marketplace.home.creators.2.title')}</h3>
                 <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
-                  Organizers can instantly generate placeholder profiles for every act on their lineup to launch events immediately without waiting for artists to register.
+                  {t('marketplace.home.creators.2.desc')}
                 </p>
               </div>
 
               <div className="glass-panel" style={{ padding: '40px', borderTop: '4px solid #10b981' }}>
-                <h3 style={{ fontSize: '1.5rem', marginBottom: '16px', color: 'white' }}>Entity Claiming</h3>
+                <h3 style={{ fontSize: '1.5rem', marginBottom: '16px', color: 'white' }}>{t('marketplace.home.creators.3.title')}</h3>
                 <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, marginBottom: '24px' }}>
-                  Artists, Venues, and Organizers can search the platform to "Claim" their automatically generated profiles. Once verified by our team, they unlock full control over their pages and exclusive dashboards with deep Audience Analytics.
+                  {t('marketplace.home.creators.3.desc')}
                 </p>
-                <Link to="/claim" className="btn-secondary" style={{ display: 'inline-block', textDecoration: 'none', fontSize: '0.9rem' }}>Go to Claim Portal →</Link>
+                <Link to="/claim" className="btn-secondary" style={{ display: 'inline-block', textDecoration: 'none', fontSize: '0.9rem' }}>{t('marketplace.home.creators.3.cta')}</Link>
               </div>
             </div>
           </div>

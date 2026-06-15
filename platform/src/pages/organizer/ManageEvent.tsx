@@ -5,6 +5,7 @@ import { useEvent } from '../../hooks/useEvent';
 import { useTicketTiers } from '../../hooks/useTicketTiers';
 import { useOutletContext } from 'react-router-dom';
 import type { Entity } from '../../components/EntitySwitcher';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 // Extracted Domain Components
 import ManageEventHeader from '../../features/event-management/ManageEventHeader';
@@ -18,6 +19,7 @@ import PromoManager from '../../features/event-management/PromoManager';
 import ScanAccountsManager from '../../features/event-management/ScanAccountsManager';
 
 export default function ManageEvent() {
+  const { t } = useLanguage();
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const { id } = useParams();
   
@@ -67,7 +69,7 @@ export default function ManageEvent() {
     await updateEvent({ theme_customization: theme });
   };
 
-  if (eventLoading || tiersLoading) return <div style={{ padding: '24px' }}>Loading...</div>;
+  if (eventLoading || tiersLoading) return <div style={{ padding: '24px' }}>{t("organizer.manageEvent.loading")}</div>;
 
   const isOrganizer = activeEntity?.id === event?.organizer_id;
 

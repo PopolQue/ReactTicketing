@@ -4,10 +4,12 @@ import { useCart } from '../../hooks/useCart';
 import { useReactTicket } from '../../hooks/useReactTicket';
 import { QuantitySelector } from './QuantitySelector';
 import { formatCurrency } from 'reactticket-core/utils/formatCurrency';
+import { useI18n } from '../../context/I18nContext';
 
 export const TicketTypeCard = React.memo(({ type }: { type: TicketTypeConfig }) => {
   const { items, addItem, removeItem } = useCart();
   const { adapter, event } = useReactTicket();
+  const { t, locale } = useI18n();
   const [soldOut, setSoldOut] = useState(false);
   const [remainingCapacity, setRemainingCapacity] = useState(type.maxPerOrder || 10);
   const [loading, setLoading] = useState(true);
@@ -39,7 +41,7 @@ export const TicketTypeCard = React.memo(({ type }: { type: TicketTypeConfig }) 
     }
   }, [quantity, type.id, addItem, removeItem]);
 
-  const price = type.pricing.kind === 'paid' ? formatCurrency(type.pricing.priceInCents, type.pricing.currency) : 'Free';
+  const price = type.pricing.kind === 'paid' ? formatCurrency(type.pricing.priceInCents, type.pricing.currency, locale) : t('store.ticket.free');
 
   if (loading) return (
     <div 
@@ -72,7 +74,7 @@ export const TicketTypeCard = React.memo(({ type }: { type: TicketTypeConfig }) 
       aria-label={`Ticket type: ${type.name}`}
     >
       <div>
-        <h3 style={{ margin: '0 0 5px 0' }}>{type.name} {soldOut && '(Sold Out)'}</h3>
+        <h3 style={{ margin: '0 0 5px 0' }}>{type.name} {soldOut && `(${t('store.ticket.soldOut')})`}</h3>
         <p style={{ margin: 0, color: '#64748b' }} aria-label={`Price: ${price}`}>{price}</p>
       </div>
       {!soldOut && <QuantitySelector value={quantity} onChange={handleQuantityChange} max={remainingCapacity} itemName={type.name} />}

@@ -3,8 +3,10 @@ import { supabase } from '../../lib/supabase';
 import { CheckCircle2, AlertTriangle, XCircle } from 'lucide-react';
 import { useOutletContext } from 'react-router-dom';
 import type { Entity } from '../../components/EntitySwitcher';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function ScanTickets() {
+  const { t } = useLanguage();
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [ticketId, setTicketId] = useState('');
   const [scanResult, setScanResult] = useState<{ status: string, message: string, ticket?: any } | null>(null);
@@ -79,16 +81,16 @@ export default function ScanTickets() {
 
   return (
     <div className="scan-tickets-page" style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <h2 style={{ marginBottom: '24px', margin: 0 }}>Ticket Scanner</h2>
+      <h2 style={{ marginBottom: '24px', margin: 0 }}>{t("organizer.scan.title")}</h2>
       <p style={{ color: 'var(--text-secondary)', marginBottom: '32px' }}>
-        Enter a Ticket ID to validate entry. In a mobile app, this would use the device camera to read the QR payload.
+        {t("organizer.scan.description")}
       </p>
 
       <div className="glass-panel" style={{ padding: '32px', marginBottom: '32px' }}>
         <form onSubmit={handleScan} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <input 
             type="text" 
-            placeholder="Paste Ticket ID here..." 
+            placeholder={t("organizer.scan.placeholder")} 
             className="input-field" 
             value={ticketId} 
             onChange={e => setTicketId(e.target.value)}
@@ -96,7 +98,7 @@ export default function ScanTickets() {
             required
           />
           <button type="submit" disabled={scanning} className="btn-primary" style={{ padding: '16px', fontSize: '1.1rem' }}>
-            {scanning ? 'Scanning...' : 'Verify Ticket'}
+            {scanning ? t("organizer.scan.scanning") : t("organizer.scan.verify")}
           </button>
         </form>
       </div>
@@ -124,10 +126,10 @@ export default function ScanTickets() {
           
           {scanResult.ticket && (
             <div style={{ marginTop: '24px', paddingTop: '24px', borderTop: '1px solid var(--border)', textAlign: 'left' }}>
-              <p style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>Event: <strong style={{ color: 'white' }}>{scanResult.ticket.events?.name}</strong></p>
-              <p style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>Tier: <strong style={{ color: 'white' }}>{scanResult.ticket.ticket_types?.name}</strong></p>
-              <p style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>Buyer: <strong style={{ color: 'white' }}>{scanResult.ticket.buyer_email}</strong></p>
-              <p style={{ margin: 0, color: 'var(--text-secondary)' }}>Status: <strong style={{ color: 'white' }}>{scanResult.ticket.status.toUpperCase()}</strong></p>
+              <p style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>{t("organizer.scan.event")} <strong style={{ color: 'white' }}>{scanResult.ticket.events?.name}</strong></p>
+              <p style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>{t("organizer.scan.tier")} <strong style={{ color: 'white' }}>{scanResult.ticket.ticket_types?.name}</strong></p>
+              <p style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>{t("organizer.scan.buyer")} <strong style={{ color: 'white' }}>{scanResult.ticket.buyer_email}</strong></p>
+              <p style={{ margin: 0, color: 'var(--text-secondary)' }}>{t("organizer.scan.status")} <strong style={{ color: 'white' }}>{scanResult.ticket.status.toUpperCase()}</strong></p>
             </div>
           )}
         </div>

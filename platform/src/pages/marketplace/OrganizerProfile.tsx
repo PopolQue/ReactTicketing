@@ -3,8 +3,11 @@ import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import { useFollowEntity } from '../../hooks/useFollowEntity';
 import EventCard from '../../components/EventCard';
+import { useLanguage } from '../../contexts/LanguageContext';
+
 
 export default function OrganizerProfile() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const [organizer, setOrganizer] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
@@ -36,8 +39,8 @@ export default function OrganizerProfile() {
     fetchProfile();
   }, [id]);
 
-  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading...</div>;
-  if (!organizer) return <div style={{ padding: '60px', textAlign: 'center' }}>Organizer not found.</div>;
+  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.organizerProfile.loading')}</div>;
+  if (!organizer) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.organizerProfile.notFound')}</div>;
 
   const imageUrl = organizer.logo_url || 'https://images.unsplash.com/photo-1542204165-65bf26472b9b?auto=format&fit=crop&w=800&q=80';
 
@@ -59,7 +62,7 @@ export default function OrganizerProfile() {
             )}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <span style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>{followerCount} Followers</span>
+              <span style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>{followerCount} {t('marketplace.organizerProfile.followers')}</span>
               <button 
                 onClick={toggleFollow}
                 disabled={followLoading}
@@ -75,15 +78,15 @@ export default function OrganizerProfile() {
                   transition: 'all 0.2s'
                 }}
               >
-                {isFollowing ? 'Following' : 'Follow Organizer'}
+                {isFollowing ? t('marketplace.organizerProfile.following') : t('marketplace.organizerProfile.followOrganizer')}
               </button>
             </div>
           </div>
         </div>
 
-        <h2 style={{ marginBottom: '24px' }}>Events by {organizer.company_name}</h2>
+        <h2 style={{ marginBottom: '24px' }}>{t('marketplace.organizerProfile.eventsBy')}{organizer.company_name}</h2>
         {events.length === 0 ? (
-          <p style={{ color: 'var(--text-secondary)' }}>No upcoming events currently scheduled by this organizer.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>{t('marketplace.organizerProfile.noUpcomingEvents')}</p>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
             {events.map((event) => (

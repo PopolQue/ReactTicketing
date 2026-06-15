@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function ArtistEditProfile() {
+  const { t } = useLanguage();
   const { claim } = useOutletContext<{ claim: any }>();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -37,16 +39,16 @@ export default function ArtistEditProfile() {
   };
 
   if (!claim || claim.status !== 'approved') {
-    return <p>You must have an approved artist claim to edit your profile.</p>;
+    return <p>{t('artist_edit_must_have_claim')}</p>;
   }
 
   return (
     <div className="glass-panel" style={{ padding: '32px' }}>
-      <h2 style={{ margin: '0 0 24px 0' }}>Edit Public Profile</h2>
+      <h2 style={{ margin: '0 0 24px 0' }}>{t('artist_edit_public_profile')}</h2>
       
       <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Artist Bio</label>
+          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('artist_edit_artist_bio')}</label>
           <textarea 
             className="input-field" 
             rows={5} 
@@ -57,7 +59,7 @@ export default function ArtistEditProfile() {
         </div>
         
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Profile Image URL</label>
+          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('artist_edit_profile_image')}</label>
           <input 
             type="url" 
             className="input-field" 
@@ -68,7 +70,7 @@ export default function ArtistEditProfile() {
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Spotify Artist URL</label>
+          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('artist_edit_spotify_artist')}</label>
           <input 
             type="url" 
             className="input-field" 
@@ -79,7 +81,7 @@ export default function ArtistEditProfile() {
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Instagram URL</label>
+          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('artist_edit_instagram')}</label>
           <input 
             type="url" 
             className="input-field" 
@@ -90,7 +92,7 @@ export default function ArtistEditProfile() {
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Soundcloud URL</label>
+          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('artist_edit_soundcloud')}</label>
           <input 
             type="url" 
             className="input-field" 

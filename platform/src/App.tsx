@@ -66,6 +66,7 @@ const WriterDashboard = React.lazy(() => import('./pages/writer/WriterDashboard'
 import { ToastProvider } from './components/Toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import ProtectedRoute from './components/ProtectedRoute'
+import { LanguageProvider } from './contexts/LanguageContext'
 
 import MarketplaceLayout from './components/MarketplaceLayout'
 
@@ -74,11 +75,13 @@ const ForArtists = React.lazy(() => import('./pages/marketing/ForArtists'))
 const ForFans = React.lazy(() => import('./pages/marketing/ForFans'))
 const ForOrganizers = React.lazy(() => import('./pages/marketing/ForOrganizers'))
 const ForVenues = React.lazy(() => import('./pages/marketing/ForVenues'))
+const ForWriters = React.lazy(() => import('./pages/marketing/ForWriters'))
 
 function App() {
   return (
-    <ErrorBoundary>
-      <ToastProvider>
+    <LanguageProvider>
+      <ErrorBoundary>
+        <ToastProvider>
         <Suspense fallback={<div style={{padding: '24px'}}>Loading module...</div>}>
           <Routes>
         {/* Public Fan Marketplace */}
@@ -104,6 +107,7 @@ function App() {
           <Route path="/for-fans" element={<ForFans />} />
           <Route path="/for-organizers" element={<ForOrganizers />} />
           <Route path="/for-venues" element={<ForVenues />} />
+          <Route path="/for-writers" element={<ForWriters />} />
           <Route path="/imprint" element={<Imprint />} />
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/terms" element={<Terms />} />
@@ -171,9 +175,10 @@ function App() {
           </Route>
         </Route>
       </Routes>
-        </Suspense>
-    </ToastProvider>
-    </ErrorBoundary>
+          </Suspense>
+        </ToastProvider>
+      </ErrorBoundary>
+    </LanguageProvider>
   )
 }
 

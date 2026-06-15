@@ -4,8 +4,11 @@ import { supabase } from '../../lib/supabase';
 import { useFollowEntity } from '../../hooks/useFollowEntity';
 import EventCard from '../../components/EventCard';
 import Skeleton from '../../components/Skeleton';
+import { useLanguage } from '../../contexts/LanguageContext';
+
 
 export default function ArtistProfile() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const [artist, setArtist] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
@@ -39,8 +42,8 @@ export default function ArtistProfile() {
     fetchProfile();
   }, [id]);
 
-  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading...</div>;
-  if (!artist) return <div style={{ padding: '60px', textAlign: 'center' }}>Artist not found.</div>;
+  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.artistProfile.loading')}</div>;
+  if (!artist) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.artistProfile.notFound')}</div>;
 
   const imageUrl = artist.image_url || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80';
 
@@ -62,7 +65,7 @@ export default function ArtistProfile() {
           <div style={{ paddingBottom: '20px' }}>
             <h1 style={{ fontSize: '4rem', margin: '0 0 8px 0', fontWeight: 800, letterSpacing: '-2px', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>{artist.name}</h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <span style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.8)' }}>{followerCount} Followers</span>
+              <span style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.8)' }}>{followerCount} {t('marketplace.artistProfile.followers')}</span>
               <button 
                 onClick={toggleFollow}
                 disabled={followLoading}
@@ -78,7 +81,7 @@ export default function ArtistProfile() {
                   transition: 'all 0.2s'
                 }}
               >
-                {isFollowing ? 'Following' : 'Follow'}
+                {isFollowing ? t('marketplace.artistProfile.following') : t('marketplace.artistProfile.follow')}
               </button>
             </div>
           </div>
@@ -87,9 +90,9 @@ export default function ArtistProfile() {
 
       <main style={{ padding: '60px 40px', maxWidth: '1000px', margin: '0 auto' }}>
         <div className="glass-panel" style={{ padding: '40px', marginBottom: '40px' }}>
-          <h3 style={{ margin: '0 0 16px 0' }}>About</h3>
+          <h3 style={{ margin: '0 0 16px 0' }}>{t('marketplace.artistProfile.about')}</h3>
           <p style={{ color: 'var(--text-secondary)', lineHeight: 1.6, whiteSpace: 'pre-wrap' }}>
-            {artist.bio || 'No biography available.'}
+            {artist.bio || t('marketplace.artistProfile.noBio')}
           </p>
           {artist.genres && artist.genres.length > 0 && (
              <div style={{ marginTop: '24px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
@@ -100,9 +103,9 @@ export default function ArtistProfile() {
           )}
         </div>
 
-        <h2 style={{ marginBottom: '24px' }}>Upcoming Events</h2>
+        <h2 style={{ marginBottom: '24px' }}>{t('marketplace.artistProfile.upcomingEvents')}</h2>
         {events.length === 0 ? (
-          <p style={{ color: 'var(--text-secondary)' }}>No upcoming events currently scheduled.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>{t('marketplace.artistProfile.noUpcomingEvents')}</p>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
             {events.map((event) => (

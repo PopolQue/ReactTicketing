@@ -6,9 +6,11 @@ import { PromoCodeInput } from './PromoCodeInput';
 import { CheckoutButton } from './CheckoutButton';
 import { Cart } from './Cart';
 import { BuyerInfoForm } from './BuyerInfoForm';
+import { useI18n } from '../../context/I18nContext';
 
 export const TicketTypeList = () => {
   const { ticketTypes, adapter, event, dispatch } = useReactTicket();
+  const { t } = useI18n();
 
   const visibleTypes = ticketTypes.filter(t => t.visible);
 
@@ -22,7 +24,7 @@ export const TicketTypeList = () => {
 
   return (
     <div style={{ maxWidth: '600px', margin: '0 auto' }}>
-      <h2>Available Tickets</h2>
+      <h2>{t('store.tickets.title')}</h2>
       <div style={{ marginBottom: '20px' }}>
         {visibleTypes.map(type => (
           <TicketTypeCard key={type.id} type={type} />

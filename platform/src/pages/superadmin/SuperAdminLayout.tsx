@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { Link, Outlet, useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function SuperAdminLayout() {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ export default function SuperAdminLayout() {
     checkSuperAdmin();
   }, [navigate]);
 
-  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading SuperAdmin Portal...</div>;
+  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('super_admin_layout_loading')}</div>;
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -38,7 +40,7 @@ export default function SuperAdminLayout() {
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-color)' }}>
       {/* Sidebar */}
       <aside style={{ width: '250px', backgroundColor: '#1e1b4b', borderRight: '1px solid var(--border)', padding: '24px', display: 'flex', flexDirection: 'column' }}>
-        <h2 style={{ fontSize: '1.2rem', marginBottom: '32px', color: '#c084fc' }}>SuperAdmin</h2>
+        <h2 style={{ fontSize: '1.2rem', marginBottom: '32px', color: '#c084fc' }}>{t('super_admin_layout_title')}</h2>
         
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <Link 
@@ -50,9 +52,7 @@ export default function SuperAdminLayout() {
               color: 'white',
               backgroundColor: isActive('/superadmin') ? 'rgba(255,255,255,0.1)' : 'transparent'
             }}
-          >
-            Dashboard
-          </Link>
+          >{t('super_admin_layout_dashboard')}</Link>
           <Link 
             to="/superadmin/admins" 
             style={{ 
@@ -63,7 +63,7 @@ export default function SuperAdminLayout() {
               backgroundColor: isActive('/superadmin/admins') ? 'rgba(255,255,255,0.1)' : 'transparent'
             }}
           >
-            Admin Management
+            {t('super_admin_layout_admins')}
           </Link>
           <Link 
             to="/admin" 
@@ -74,13 +74,13 @@ export default function SuperAdminLayout() {
               color: 'var(--text-secondary)',
             }}
           >
-            Go to Admin Desk ↗
+            {t('super_admin_layout_go_admin')}
           </Link>
         </nav>
 
         <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
           <Link to="/" className="btn-nav" style={{ padding: '8px 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-            ← Back to Marketplace
+            {t('super_admin_layout_back')}
           </Link>
         </div>
       </aside>

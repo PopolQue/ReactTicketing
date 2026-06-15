@@ -4,10 +4,13 @@ import { supabase } from '../../lib/supabase';
 import { SupabaseAdapter } from '../../lib/Admit/SupabaseAdapter';
 import { mapEventToAdmitConfig } from '../../lib/Admit/mappers';
 import { useEventData } from '../../hooks/useEventData';
+import { useLanguage } from '../../contexts/LanguageContext';
+
 
 const ReactTicket = React.lazy(() => import('reactticket').then(m => ({ default: m.ReactTicket })));
 
 export default function ScanPage() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const { event, loading } = useEventData(id);
 
@@ -18,12 +21,12 @@ export default function ScanPage() {
   // SSR Guard
   const [isClient] = useState(typeof window !== 'undefined');
 
-  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading Event...</div>;
-  if (!event) return <div style={{ padding: '60px', textAlign: 'center' }}>Event not found.</div>;
+  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.scanPage.loadingEvent')}</div>;
+  if (!event) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.scanPage.eventNotFound')}</div>;
 
   return (
     <div style={{ height: '100vh', backgroundColor: '#000', overflow: 'hidden' }}>
-      <React.Suspense fallback={<div style={{ padding: '24px', textAlign: 'center', color: 'white' }}>Loading Scanner...</div>}>
+      <React.Suspense fallback={<div style={{ padding: '24px', textAlign: 'center', color: 'white' }}>{t('marketplace.scanPage.loadingScanner')}</div>}>
         {isClient && admitConfig ? (
           <ReactTicket
             mode="scanner"

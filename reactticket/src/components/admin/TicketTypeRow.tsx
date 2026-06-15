@@ -1,5 +1,7 @@
 import React from 'react';
 import { TicketTypeConfig } from 'reactticket-core/types/ticket.types';
+import { formatCurrency } from 'reactticket-core/utils/formatCurrency';
+import { PricingInput } from './PricingInput';
 
 export interface TicketTypeRowProps {
   type: TicketTypeConfig;
@@ -42,7 +44,14 @@ export const TicketTypeRow: React.FC<TicketTypeRowProps> = ({
         {isEditing ? <input style={{ width: '100%' }} value={editValues.name ?? type.name} onChange={e => setEditValues({ ...editValues, name: e.target.value })} /> : type.name}
       </td>
       <td style={{ padding: '10px' }}>
-        {isEditing ? <input style={{ width: '100%' }} type="number" value={getPrice(editValues.pricing)} onChange={e => setEditValues({ ...editValues, pricing: { kind: 'paid', priceInCents: parseInt(e.target.value) || 0, currency: 'EUR' } })} /> : getPrice(type.pricing)}
+        {isEditing ? (
+          <PricingInput 
+            valueCents={getPrice(editValues.pricing)}
+            onChangeCents={(cents) => setEditValues({ ...editValues, pricing: { kind: 'paid', priceInCents: cents, currency: (editValues.pricing as any)?.currency || (type.pricing as any)?.currency || 'USD' } })}
+            currency={(editValues.pricing as any)?.currency || (type.pricing as any)?.currency || 'USD'}
+            onCurrencyChange={(curr) => setEditValues({ ...editValues, pricing: { kind: 'paid', priceInCents: getPrice(editValues.pricing), currency: curr } })}
+          />
+        ) : type.pricing.kind === 'paid' ? formatCurrency(type.pricing.priceInCents, type.pricing.currency) : 'Free'}
       </td>
       <td style={{ padding: '10px' }}>
         {isEditing ? (

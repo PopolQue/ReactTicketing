@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import Modal from '../../components/Modal';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function EntityClaims() {
+  const { t } = useLanguage();
   const [claims, setClaims] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [rejectingClaim, setRejectingClaim] = useState<any>(null);
@@ -77,15 +79,15 @@ export default function EntityClaims() {
     fetchClaims();
   };
 
-  if (loading) return <p>Loading claims...</p>;
+  if (loading) return <p>{t('entity_claims_loading')}</p>;
 
   return (
     <div>
-      <h2 style={{ marginBottom: '24px' }}>Entity Profile Claims</h2>
+      <h2 style={{ marginBottom: '24px' }}>{t('entity_claims_title')}</h2>
       
       {claims.length === 0 ? (
         <div className="glass-panel" style={{ padding: '40px', textAlign: 'center' }}>
-          <p style={{ color: 'var(--text-secondary)' }}>There are no claims needing review right now.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>{t('entity_claims_no_pending_review')}</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -100,9 +102,9 @@ export default function EntityClaims() {
                 <div>
                   <h3 style={{ margin: '0 0 4px 0' }}>{claim.entity?.name} <span style={{ fontSize: '0.8rem', color: 'var(--accent)', textTransform: 'uppercase', border: '1px solid var(--accent)', padding: '2px 6px', borderRadius: '4px', marginLeft: '8px' }}>{claim.entity_type}</span></h3>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                    Requested by User ID: <span style={{ fontFamily: 'monospace' }}>{claim.user_id.substring(0,8)}...</span>
+                    {t('entity_claims_requested_by')} <span style={{ fontFamily: 'monospace' }}>{claim.user_id.substring(0,8)}...</span>
                   </p>
-                  <a href={claim.proof_url} target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem', color: 'var(--accent)' }}>View Proof Link</a>
+                  <a href={claim.proof_url} target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem', color: 'var(--accent)' }}>{t('entity_claims_view_proof')}</a>
                 </div>
               </div>
               
@@ -112,7 +114,7 @@ export default function EntityClaims() {
                     onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'awaiting_proof')} 
                     className="btn-primary"
                   >
-                    Initiate Review
+                    {t('entity_claims_initiate_review')}
                   </button>
                 )}
                 {claim.status === 'proof_submitted' && (
@@ -146,19 +148,19 @@ export default function EntityClaims() {
       >
         <form onSubmit={handleRejectSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Reason for Rejection (Optional)</label>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('entity_claims_reject_reason')}</label>
             <textarea 
               className="input-field" 
               rows={3}
               value={rejectionReason} 
               onChange={e => setRejectionReason(e.target.value)} 
-              placeholder="e.g. The provided proof link does not explicitly mention this user."
+              placeholder={t('entity_claims_reject_placeholder')}
             />
           </div>
           <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
             <button type="button" onClick={() => { setRejectingClaim(null); setRejectionReason(''); }} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>
             <button type="submit" className="btn-primary" style={{ flex: 1, backgroundColor: '#ef4444' }}>
-              Confirm Rejection
+              {t('entity_claims_confirm_reject')}
             </button>
           </div>
         </form>

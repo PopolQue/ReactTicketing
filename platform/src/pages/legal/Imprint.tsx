@@ -1,4 +1,5 @@
 import React from 'react';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
@@ -104,22 +105,23 @@ const styles: Record<string, React.CSSProperties> = {
 };
 
 export default function Imprint() {
+  const { t } = useLanguage();
+
   return (
     <div style={styles.wrapper}>
       <div style={styles.bloomTopRight} />
       <div style={styles.bloomBottomLeft} />
 
       <div style={styles.container}>
-        <div style={styles.pageLabel}>Legal</div>
-        <h1 style={styles.title}>Imprint</h1>
+        <div style={styles.pageLabel}>{t('legal')}</div>
+        <h1 style={styles.title}>{t('imprint')}</h1>
         <p style={styles.subtitle}>
-          Information in accordance with § 5 TMG (German Telemedia Act)
+          {t('imprintSubtitle')}
         </p>
 
         <div className="glass-panel" style={styles.panel}>
-          {/* Company Info */}
           <div style={styles.section}>
-            <h2 style={styles.sectionTitle}>Company Information</h2>
+            <h2 style={styles.sectionTitle}>{t('companyInformation')}</h2>
             <p style={styles.text}>
               <span style={styles.label}>Admit GmbH</span><br />
               Friedrichstraße 123<br />
@@ -128,51 +130,46 @@ export default function Imprint() {
             </p>
           </div>
 
-          {/* Representation */}
           <div style={styles.section}>
-            <h2 style={styles.sectionTitle}>Represented by</h2>
+            <h2 style={styles.sectionTitle}>{t('representedBy')}</h2>
             <p style={styles.text}>
-              <span style={styles.label}>Managing Director:</span> Max Hartmann
+              <span style={styles.label}>{t('managingDirector')}:</span> Max Hartmann
             </p>
           </div>
 
-          {/* Contact */}
           <div style={styles.section}>
-            <h2 style={styles.sectionTitle}>Contact</h2>
+            <h2 style={styles.sectionTitle}>{t('contact')}</h2>
             <p style={styles.text}>
-              <span style={styles.label}>Email:</span>{' '}
+              <span style={styles.label}>{t('email')}:</span>{' '}
               <a href="mailto:contact@admit.events" style={styles.link}>
                 contact@admit.events
               </a>
               <br />
-              <span style={styles.label}>Phone:</span> +49 (0) 30 123 456 78
+              <span style={styles.label}>{t('phone')}:</span> +49 (0) 30 123 456 78
             </p>
           </div>
 
-          {/* Commercial Register */}
           <div style={styles.section}>
-            <h2 style={styles.sectionTitle}>Commercial Register</h2>
+            <h2 style={styles.sectionTitle}>{t('commercialRegister')}</h2>
             <p style={styles.text}>
-              <span style={styles.label}>Court of Registration:</span> Amtsgericht Charlottenburg, Berlin<br />
-              <span style={styles.label}>Registration Number:</span> HRB 234567 B
+              <span style={styles.label}>{t('courtOfRegistration')}:</span> Amtsgericht Charlottenburg, Berlin<br />
+              <span style={styles.label}>{t('registrationNumber')}:</span> HRB 234567 B
             </p>
           </div>
 
-          {/* VAT */}
           <div style={styles.section}>
-            <h2 style={styles.sectionTitle}>VAT Identification Number</h2>
+            <h2 style={styles.sectionTitle}>{t('vatIdentificationNumber')}</h2>
             <p style={styles.text}>
-              VAT ID according to § 27a of the Value Added Tax Act:<br />
+              {t('vatIdAccordingTo')}:<br />
               <span style={styles.label}>DE 320 456 789</span>
             </p>
           </div>
 
           <hr style={styles.divider} />
 
-          {/* Responsible for Content */}
           <div style={styles.section}>
             <h2 style={styles.sectionTitle}>
-              Responsible for Content (§ 55 Abs. 2 RStV)
+              {t('responsibleForContent')}
             </h2>
             <p style={styles.text}>
               Max Hartmann<br />
@@ -181,12 +178,10 @@ export default function Imprint() {
             </p>
           </div>
 
-          {/* Dispute Resolution */}
           <div style={{ ...styles.section, marginBottom: 0 }}>
-            <h2 style={styles.sectionTitle}>Dispute Resolution</h2>
+            <h2 style={styles.sectionTitle}>{t('disputeResolution')}</h2>
             <p style={styles.text}>
-              The European Commission provides a platform for online dispute
-              resolution (OS):{' '}
+              {t('disputeResolutionDesc1')}{' '}
               <a
                 href="https://ec.europa.eu/consumers/odr"
                 target="_blank"
@@ -196,14 +191,13 @@ export default function Imprint() {
                 https://ec.europa.eu/consumers/odr
               </a>
               <br /><br />
-              We are not willing or obliged to participate in dispute resolution
-              proceedings before a consumer arbitration board.
+              {t('disputeResolutionDesc2')}
             </p>
           </div>
         </div>
 
         <p style={styles.footer}>
-          © {new Date().getFullYear()} Admit GmbH. All rights reserved.
+          © {new Date().getFullYear()} Admit GmbH. {t('allRightsReserved')}.
         </p>
       </div>
     </div>

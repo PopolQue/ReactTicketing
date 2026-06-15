@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 const styles: Record<string, React.CSSProperties> = {
   wrapper: {
@@ -132,85 +133,6 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-interface SitemapCategory {
-  title: string;
-  icon: string;
-  iconBg: string;
-  links: { label: string; to: string }[];
-}
-
-const categories: SitemapCategory[] = [
-  {
-    title: 'Marketplace',
-    icon: '🎫',
-    iconBg: 'rgba(99, 102, 241, 0.15)',
-    links: [
-      { label: 'Home', to: '/' },
-      { label: 'Discover Events', to: '/discover' },
-      { label: 'Resale Market', to: '/resale' },
-      { label: 'Blog', to: '/blogs' },
-      { label: 'My Wallet', to: '/wallet' },
-      { label: 'Claim Portal', to: '/claim' },
-    ],
-  },
-  {
-    title: 'Organizer Portal',
-    icon: '📋',
-    iconBg: 'rgba(52, 96, 64, 0.15)',
-    links: [
-      { label: 'Dashboard', to: '/organizer' },
-      { label: 'My Events', to: '/organizer/events' },
-      { label: 'Create Event', to: '/organizer/events/new' },
-      { label: 'Scan Tickets', to: '/organizer/scan' },
-      { label: 'Artists', to: '/organizer/artists' },
-      { label: 'Blog Posts', to: '/organizer/blogs' },
-      { label: 'Marketing & Analytics', to: '/organizer/marketing' },
-      { label: 'Settings', to: '/organizer/settings' },
-    ],
-  },
-  {
-    title: 'Artist Portal',
-    icon: '🎤',
-    iconBg: 'rgba(236, 72, 153, 0.15)',
-    links: [
-      { label: 'Dashboard', to: '/artist' },
-      { label: 'Edit Profile', to: '/artist/edit' },
-    ],
-  },
-  {
-    title: 'Venue Portal',
-    icon: '🏟️',
-    iconBg: 'rgba(245, 158, 11, 0.15)',
-    links: [
-      { label: 'Dashboard', to: '/venue' },
-    ],
-  },
-  {
-    title: 'Support & Admin',
-    icon: '🛡️',
-    iconBg: 'rgba(14, 165, 233, 0.15)',
-    links: [
-      { label: 'Contact Support', to: '/support' },
-      { label: 'Login / Register', to: '/auth' },
-      { label: 'Admin Portal', to: '/admin' },
-      { label: 'Event Review (Admin)', to: '/admin/events' },
-      { label: 'Support Desk (Admin)', to: '/admin/support' },
-      { label: 'Entity Claims (Admin)', to: '/admin/claims' },
-    ],
-  },
-  {
-    title: 'Legal',
-    icon: '⚖️',
-    iconBg: 'rgba(139, 92, 246, 0.15)',
-    links: [
-      { label: 'Imprint', to: '/imprint' },
-      { label: 'Privacy Policy', to: '/privacy' },
-      { label: 'Terms of Service', to: '/terms' },
-      { label: 'Sitemap', to: '/sitemap' },
-    ],
-  },
-];
-
 function SitemapLink({ label, to }: { label: string; to: string }) {
   const [hovered, setHovered] = useState(false);
 
@@ -233,16 +155,90 @@ function SitemapLink({ label, to }: { label: string; to: string }) {
 }
 
 export default function Sitemap() {
+  const { t } = useLanguage();
+
+  const categories = [
+    {
+      title: t('marketplace'),
+      icon: '🎫',
+      iconBg: 'rgba(99, 102, 241, 0.15)',
+      links: [
+        { label: t('home'), to: '/' },
+        { label: t('discoverEvents'), to: '/discover' },
+        { label: t('resaleMarket_nav'), to: '/resale' },
+        { label: t('blog'), to: '/blogs' },
+        { label: t('myWallet'), to: '/wallet' },
+        { label: t('claimPortal'), to: '/claim' },
+      ],
+    },
+    {
+      title: t('organizerPortal'),
+      icon: '📋',
+      iconBg: 'rgba(52, 96, 64, 0.15)',
+      links: [
+        { label: t('dashboard'), to: '/organizer' },
+        { label: t('myEvents'), to: '/organizer/events' },
+        { label: t('createEvent'), to: '/organizer/events/new' },
+        { label: t('scanTickets'), to: '/organizer/scan' },
+        { label: t('artists_nav'), to: '/organizer/artists' },
+        { label: t('blogPosts'), to: '/organizer/blogs' },
+        { label: t('marketingAnalytics'), to: '/organizer/marketing' },
+        { label: t('settings'), to: '/organizer/settings' },
+      ],
+    },
+    {
+      title: t('artistPortal'),
+      icon: '🎤',
+      iconBg: 'rgba(236, 72, 153, 0.15)',
+      links: [
+        { label: t('dashboard'), to: '/artist' },
+        { label: t('editProfile'), to: '/artist/edit' },
+      ],
+    },
+    {
+      title: t('venuePortal'),
+      icon: '🏟️',
+      iconBg: 'rgba(245, 158, 11, 0.15)',
+      links: [
+        { label: t('dashboard'), to: '/venue' },
+      ],
+    },
+    {
+      title: t('supportAdmin'),
+      icon: '🛡️',
+      iconBg: 'rgba(14, 165, 233, 0.15)',
+      links: [
+        { label: t('contactSupport'), to: '/support' },
+        { label: t('loginRegister'), to: '/auth' },
+        { label: t('adminPortal'), to: '/admin' },
+        { label: t('eventReview'), to: '/admin/events' },
+        { label: t('supportDesk'), to: '/admin/support' },
+        { label: t('entityClaims'), to: '/admin/claims' },
+      ],
+    },
+    {
+      title: t('legal_nav'),
+      icon: '⚖️',
+      iconBg: 'rgba(139, 92, 246, 0.15)',
+      links: [
+        { label: t('imprint_nav'), to: '/imprint' },
+        { label: t('privacyPolicy_nav'), to: '/privacy' },
+        { label: t('termsOfService_nav'), to: '/terms' },
+        { label: t('sitemap_nav'), to: '/sitemap' },
+      ],
+    },
+  ];
+
   return (
     <div style={styles.wrapper}>
       <div style={styles.bloomTopRight} />
       <div style={styles.bloomBottomLeft} />
 
       <div style={styles.container}>
-        <div style={styles.pageLabel}>Navigation</div>
-        <h1 style={styles.title}>Sitemap</h1>
+        <div style={styles.pageLabel}>{t('navigation')}</div>
+        <h1 style={styles.title}>{t('sitemapTitle')}</h1>
         <p style={styles.subtitle}>
-          A complete overview of all pages and sections available on the Admit platform.
+          {t('sitemapSubtitle')}
         </p>
 
         <div style={styles.grid}>
@@ -253,7 +249,7 @@ export default function Sitemap() {
               </div>
               <h2 style={styles.cardTitle}>{cat.title}</h2>
               <p style={styles.cardCount}>
-                {cat.links.length} page{cat.links.length !== 1 ? 's' : ''}
+                {cat.links.length} {t('page')}{cat.links.length !== 1 ? 's' : ''}
               </p>
               <ul style={styles.linkList}>
                 {cat.links.map((link) => (
@@ -265,7 +261,7 @@ export default function Sitemap() {
         </div>
 
         <p style={styles.footer}>
-          © {new Date().getFullYear()} Admit GmbH. All rights reserved.
+          © {new Date().getFullYear()} Admit GmbH. {t('allRightsReserved')}.
         </p>
       </div>
     </div>

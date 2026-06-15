@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { useCart } from '../../hooks/useCart';
+import { useI18n } from '../../context/I18nContext';
 
 export const CheckoutButton = () => {
   const { checkout } = useCart();
+  const { t } = useI18n();
   const [isProcessing, setIsProcessing] = useState(false);
 
   const handleCheckout = async () => {
@@ -23,7 +25,7 @@ export const CheckoutButton = () => {
         cursor: isProcessing ? 'not-allowed' : 'pointer', marginTop: '20px'
       }}
     >
-      {isProcessing ? 'Processing...' : 'Complete Purchase'}
+      {isProcessing ? t('store.checkout.processing') : t('store.checkout.button')}
     </button>
   );
 };

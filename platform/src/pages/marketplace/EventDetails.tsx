@@ -8,10 +8,13 @@ import { useEventData } from '../../hooks/useEventData';
 import { SupabaseAdapter } from '../../lib/Admit/SupabaseAdapter';
 import { mapEventToAdmitConfig } from '../../lib/Admit/mappers';
 import CheckoutModal from '../../components/CheckoutModal';
+import { useLanguage } from '../../contexts/LanguageContext';
+
 
 const ReactTicket = React.lazy(() => import('reactticket').then(m => ({ default: m.ReactTicket })));
 
 export default function EventDetails() {
+  const { t } = useLanguage();
   const { id } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
@@ -30,7 +33,7 @@ export default function EventDetails() {
   const handleCheckout = async (order: any): Promise<"confirmed" | "cancelled"> => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      showToast('Please log in or sign up to purchase tickets.', 'error');
+      showToast(t('marketplace.eventDetails.loginToPurchase'), 'error');
       navigate('/auth');
       return "cancelled";
     }
@@ -65,8 +68,8 @@ export default function EventDetails() {
     }
   }, [event]);
 
-  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>Loading...</div>;
-  if (!event) return <div style={{ padding: '60px', textAlign: 'center' }}>Event not found.</div>;
+  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.eventDetails.loading')}</div>;
+  if (!event) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.eventDetails.notFound')}</div>;
 
   const theme = event.theme_customization || {};
   const customBgColor = theme.bgColor || 'var(--bg-color)';
@@ -85,7 +88,7 @@ export default function EventDetails() {
             checkoutResolve("confirmed");
             setCheckoutOrder(null);
             setCheckoutResolve(null);
-            showToast('Order confirmed! Tickets issued.', 'success');
+            showToast(t('marketplace.eventDetails.orderConfirmed'), 'success');
             navigate('/wallet');
           }}
           onCancel={() => {
@@ -109,25 +112,23 @@ export default function EventDetails() {
         <div className="glass-panel" style={{ padding: '40px', backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(20px)' }}>
           <h1 style={{ fontSize: '3rem', margin: '0 0 16px 0' }}>{event.name}</h1>
           <p style={{ color: customAccentColor, fontSize: '1.2rem', margin: '0 0 24px 0', fontWeight: 600 }}>
-            Presented by {event.organizers?.name || 'Independent Organizer'}
+            {t('marketplace.eventDetails.presentedBy')}{event.organizers?.name || t('marketplace.eventDetails.independentOrganizer')}
           </p>
 
           <EventAboutSection event={event} eventArtists={eventArtists} customAccentColor={customAccentColor} />
 
           {event.is_external ? (
             <div style={{ padding: '40px', textAlign: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '12px', marginTop: '32px' }}>
-              <h3 style={{ marginBottom: '16px' }}>Tickets are available externally</h3>
+              <h3 style={{ marginBottom: '16px' }}>{t('marketplace.eventDetails.ticketsAvailableExternally')}</h3>
               {event.external_url ? (
-                <a href={event.external_url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '12px 24px', backgroundColor: customAccentColor, color: '#fff', textDecoration: 'none', borderRadius: '8px', fontWeight: 'bold' }}>
-                  Get Tickets
-                </a>
+                <a href={event.external_url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-block', padding: '12px 24px', backgroundColor: customAccentColor, color: '#fff', textDecoration: 'none', borderRadius: '8px', fontWeight: 'bold' }}>{t('marketplace.eventDetails.getTickets')}</a>
               ) : (
-                <p>Please refer to the organizer for ticketing information.</p>
+                <p>{t('marketplace.eventDetails.referToOrganizer')}</p>
               )}
             </div>
           ) : (
             <div className="react-ticket-container" style={{ '--rt-bg': customBgColor, '--rt-accent': customAccentColor } as any}>
-              <React.Suspense fallback={<div style={{ padding: '24px', textAlign: 'center' }}>Loading tickets...</div>}>
+              <React.Suspense fallback={<div style={{ padding: '24px', textAlign: 'center' }}>{t('marketplace.eventDetails.loadingTickets')}</div>}>
                 {typeof window !== 'undefined' && admitConfig ? (
                   <ReactTicket
                     mode="storefront"
@@ -138,7 +139,7 @@ export default function EventDetails() {
                     theme={theme}
                   />
                 ) : (
-                  <div style={{ padding: '24px', textAlign: 'center' }}>Loading tickets...</div>
+                  <div style={{ padding: '24px', textAlign: 'center' }}>{t('marketplace.eventDetails.loadingTickets')}</div>
                 )}
               </React.Suspense>
             </div>

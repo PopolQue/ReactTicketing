@@ -4,8 +4,10 @@ import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
 import TicketCard from '../../components/TicketCard';
 import Modal from '../../components/Modal';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function Wallet() {
+  const { t } = useLanguage();
   const { showToast } = useToast();
   const [tickets, setTickets] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -54,9 +56,9 @@ export default function Wallet() {
     }]);
 
     if (error) {
-      showToast("Error listing ticket: " + error.message, 'error');
+      showToast(`${t('errorListingTicket')} ${error.message}`, 'error');
     } else {
-      showToast("Ticket successfully listed on the Resale Market!", 'success');
+      showToast(t('ticketListedSuccess'), 'success');
       setResellTicket(null);
       setAskingPrice('');
       fetchTickets(); // Refresh list
@@ -103,24 +105,24 @@ export default function Wallet() {
     <div className="wallet-page" style={{ minHeight: '100vh', padding: '60px 40px', maxWidth: '1200px', margin: '0 auto' }}>
       
 
-      {loading ? <p style={{ color: 'var(--text-secondary)' }}>Loading your tickets...</p> : (
+      {loading ? <p style={{ color: 'var(--text-secondary)' }}>{t('loadingTickets')}</p> : (
         <>
           {tickets.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '80px', border: '1px dashed var(--border)', borderRadius: '12px' }}>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '16px' }}>Your wallet is completely empty.</p>
-              <Link to="/" className="btn-primary" style={{ textDecoration: 'none' }}>Find an Event</Link>
+              <p style={{ color: 'var(--text-secondary)', fontSize: '1.2rem', marginBottom: '16px' }}>{t('walletEmpty')}</p>
+              <Link to="/" className="btn-primary" style={{ textDecoration: 'none' }}>{t('findAnEvent')}</Link>
             </div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '60px' }}>
               {upcomingTickets.length > 0 && (
                 <div>
-                  <h2 style={{ fontSize: '1.8rem', marginBottom: '24px', paddingBottom: '12px', borderBottom: '1px solid var(--border)' }}>Upcoming Events</h2>
+                  <h2 style={{ fontSize: '1.8rem', marginBottom: '24px', paddingBottom: '12px', borderBottom: '1px solid var(--border)' }}>{t('upcomingEvents')}</h2>
                   {renderTicketList(upcomingTickets)}
                 </div>
               )}
               {pastTickets.length > 0 && (
                 <div>
-                  <h2 style={{ fontSize: '1.8rem', marginBottom: '24px', paddingBottom: '12px', borderBottom: '1px solid var(--border)', color: 'var(--text-secondary)' }}>Past Events</h2>
+                  <h2 style={{ fontSize: '1.8rem', marginBottom: '24px', paddingBottom: '12px', borderBottom: '1px solid var(--border)', color: 'var(--text-secondary)' }}>{t('pastEvents')}</h2>
                   <div style={{ opacity: 0.7 }}>
                     {renderTicketList(pastTickets)}
                   </div>
@@ -132,13 +134,13 @@ export default function Wallet() {
       )}
 
       {/* Resale Modal Overlay */}
-      <Modal isOpen={!!resellTicket} onClose={() => setResellTicket(null)} title="List for Resale" maxWidth="400px">
+      <Modal isOpen={!!resellTicket} onClose={() => setResellTicket(null)} title={t('listForResale')} maxWidth="400px">
         <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
-          Selling ticket for <strong>{resellTicket?.events?.name}</strong>.
+          {t('sellingTicketFor')} <strong>{resellTicket?.events?.name}</strong>.
         </p>
         <form onSubmit={handleListForResale} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Asking Price (€)</label>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('askingPrice')}</label>
             <input 
               required 
               type="number" 
@@ -148,16 +150,16 @@ export default function Wallet() {
               className="input-field" 
               value={askingPrice} 
               onChange={e => setAskingPrice(e.target.value)} 
-              placeholder={`Max €${resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : ''}`} 
+              placeholder={`${t('maxPrice')} €${resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : ''}`} 
             />
             <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '8px' }}>
-              Maximum allowed resale price (10% cap): €{resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : '0.00'}
+              {t('maxAllowedResalePrice')} €{resellTicket ? (resellTicket.price_paid_cents * 1.10 / 100).toFixed(2) : '0.00'}
             </p>
           </div>
           <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-            <button type="button" onClick={() => setResellTicket(null)} className="btn-secondary" style={{ flex: 1 }}>Cancel</button>
+            <button type="button" onClick={() => setResellTicket(null)} className="btn-secondary" style={{ flex: 1 }}>{t('cancel')}</button>
             <button type="submit" disabled={listingLoading} className="btn-primary" style={{ flex: 1 }}>
-              {listingLoading ? 'Listing...' : 'Confirm Listing'}
+              {listingLoading ? t('listing') : t('confirmListing')}
             </button>
           </div>
         </form>

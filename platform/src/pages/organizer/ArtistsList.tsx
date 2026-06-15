@@ -4,8 +4,10 @@ import { supabase } from '../../lib/supabase';
 import type { Entity } from '../../components/EntitySwitcher';
 import { useToast } from '../../components/Toast';
 import ArtistFormModal from '../../components/modals/ArtistFormModal';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function ArtistsList() {
+  const { t } = useLanguage();
   const { showToast } = useToast();
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [artists, setArtists] = useState<any[]>([]);
@@ -91,19 +93,19 @@ export default function ArtistsList() {
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
         <div>
-          <h2 style={{ margin: '0 0 8px 0' }}>Manage Artists</h2>
+          <h2 style={{ margin: '0 0 8px 0' }}>{t("organizer.artists.title")}</h2>
           <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
-            Create stub pages for artists on your lineup. Once an artist claims their page, they will take over management.
+            {t("organizer.artists.description")}
           </p>
         </div>
-        <button className="btn-primary" onClick={openCreateModal}>+ Add Artist</button>
+        <button className="btn-primary" onClick={openCreateModal}>{t("organizer.artists.addArtist")}</button>
       </div>
 
-      {loading ? <p>Loading artists...</p> : (
+      {loading ? <p>{t("organizer.artists.loading")}</p> : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
           {artists.length === 0 ? (
             <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '40px', textAlign: 'center' }}>
-              <p style={{ color: 'var(--text-secondary)' }}>You haven't added any artists yet.</p>
+              <p style={{ color: 'var(--text-secondary)' }}>{t("organizer.artists.noArtists")}</p>
             </div>
           ) : (
             artists.map(artist => (
@@ -113,10 +115,10 @@ export default function ArtistsList() {
                 <div style={{ display: 'flex', gap: '8px' }}>
                   {artist.claimed_by_user_id ? (
                     <span style={{ fontSize: '0.85rem', color: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: '4px 8px', borderRadius: '4px' }}>
-                      ✓ Verified & Managed by Artist
+                      {t("organizer.artists.verified")}
                     </span>
                   ) : (
-                    <button onClick={() => openEditModal(artist)} className="btn-secondary" style={{ padding: '8px 12px', fontSize: '0.85rem' }}>Edit Stub</button>
+                    <button onClick={() => openEditModal(artist)} className="btn-secondary" style={{ padding: '8px 12px', fontSize: '0.85rem' }}>{t("organizer.artists.editStub")}</button>
                   )}
                 </div>
               </div>

@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Link, useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import type { Entity } from '../../components/EntitySwitcher';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function EventsList() {
+  const { t } = useLanguage();
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -27,16 +29,16 @@ export default function EventsList() {
   return (
     <div className="events-list-page">
       <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <h2 style={{ margin: 0 }}>My Events</h2>
+        <h2 style={{ margin: 0 }}>{t("organizer.events.title")}</h2>
         <Link to="/organizer/events/new">
-          <button className="btn-primary">+ Create Event</button>
+          <button className="btn-primary">{t("organizer.events.createEvent")}</button>
         </Link>
       </div>
       
-      {loading ? <p style={{ color: 'var(--text-secondary)' }}>Loading your events...</p> : (
+      {loading ? <p style={{ color: 'var(--text-secondary)' }}>{t("organizer.events.loading")}</p> : (
         <div className="events-grid" style={{ display: 'grid', gap: '16px', gridTemplateColumns: '1fr 1fr' }}>
           {events.length === 0 ? (
-            <p style={{ color: 'var(--text-secondary)' }}>You haven't created any events yet.</p>
+            <p style={{ color: 'var(--text-secondary)' }}>{t("organizer.events.noEvents")}</p>
           ) : (
             events.map(event => {
               const getEventStatusText = () => {
@@ -72,7 +74,7 @@ export default function EventsList() {
                   </p>
                   <div style={{ display: 'flex', gap: '12px' }}>
                     <Link to={`/organizer/events/${event.id}`} style={{ width: '100%' }}>
-                      <button className="btn-secondary" style={{ width: '100%' }}>Manage & Publish</button>
+                      <button className="btn-secondary" style={{ width: '100%' }}>{t("organizer.events.manage")}</button>
                     </Link>
                   </div>
                 </div>

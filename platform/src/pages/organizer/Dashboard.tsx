@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import type { Entity } from '../../components/EntitySwitcher';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function Dashboard() {
+  const { t } = useLanguage();
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [stats, setStats] = useState({
     totalEvents: 0,
@@ -79,31 +81,31 @@ export default function Dashboard() {
     };
   }, [activeEntity]);
 
-  if (loading) return <div style={{ padding: '24px' }}>Loading Analytics...</div>;
+  if (loading) return <div style={{ padding: '24px' }}>{t("organizer.dashboard.loading")}</div>;
 
   return (
     <div className="dashboard-page">
-      <h2 style={{ marginBottom: '24px', margin: 0 }}>Overview</h2>
+      <h2 style={{ marginBottom: '24px', margin: 0 }}>{t("organizer.dashboard.title")}</h2>
       
       <div className="stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '24px', marginBottom: '40px' }}>
         <div className="glass-panel" style={{ padding: '24px' }}>
-          <p style={{ color: 'var(--text-secondary)', margin: '0 0 8px 0', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Total Revenue</p>
+          <p style={{ color: 'var(--text-secondary)', margin: '0 0 8px 0', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>{t("organizer.dashboard.totalRevenue")}</p>
           <h3 style={{ margin: 0, fontSize: '2.5rem', color: 'var(--accent)' }}>€{(stats.totalRevenueCents / 100).toFixed(2)}</h3>
         </div>
         <div className="glass-panel" style={{ padding: '24px' }}>
-          <p style={{ color: 'var(--text-secondary)', margin: '0 0 8px 0', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Tickets Sold</p>
+          <p style={{ color: 'var(--text-secondary)', margin: '0 0 8px 0', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>{t("organizer.dashboard.ticketsSold")}</p>
           <h3 style={{ margin: 0, fontSize: '2.5rem' }}>{stats.ticketsSold}</h3>
         </div>
         <div className="glass-panel" style={{ padding: '24px' }}>
-          <p style={{ color: 'var(--text-secondary)', margin: '0 0 8px 0', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>Active Events</p>
+          <p style={{ color: 'var(--text-secondary)', margin: '0 0 8px 0', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '1px' }}>{t("organizer.dashboard.activeEvents")}</p>
           <h3 style={{ margin: 0, fontSize: '2.5rem' }}>{stats.totalEvents}</h3>
         </div>
       </div>
 
       <div className="glass-panel" style={{ padding: '24px' }}>
-        <h3 style={{ marginBottom: '16px' }}>Recent Activity</h3>
+        <h3 style={{ marginBottom: '16px' }}>{t("organizer.dashboard.recentActivity")}</h3>
         {recentSales.length === 0 ? (
-          <p style={{ color: 'var(--text-secondary)' }}>You haven't sold any tickets yet.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>{t("organizer.dashboard.noSales")}</p>
         ) : (
           <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {recentSales.map((sale: any) => (

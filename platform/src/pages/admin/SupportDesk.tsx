@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { useSupportTickets, useSupportMessages } from '../../hooks/useSupportTickets';
 import TicketSidebar from '../../features/support/TicketSidebar';
 import TicketThreadView from '../../features/support/TicketThreadView';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function SupportDesk() {
+  const { t } = useLanguage();
   const { tickets, loading: ticketsLoading, updateTicketStatus, refetch: fetchTickets } = useSupportTickets();
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
   
@@ -16,7 +18,7 @@ export default function SupportDesk() {
     }
   };
 
-  if (ticketsLoading) return <div>Loading support desk...</div>;
+  if (ticketsLoading) return <div>{t('support_desk_loading')}</div>;
 
   return (
     <div style={{ display: 'flex', gap: '24px', height: 'calc(100vh - 80px)' }}>

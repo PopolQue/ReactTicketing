@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../../lib/supabase';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function ArtistClaims() {
+  const { t } = useLanguage();
   const [claims, setClaims] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,15 +39,15 @@ export default function ArtistClaims() {
     fetchClaims();
   };
 
-  if (loading) return <p>Loading claims...</p>;
+  if (loading) return <p>{t('artist_claims_loading')}</p>;
 
   return (
     <div>
-      <h2 style={{ marginBottom: '24px' }}>Artist Profile Claims</h2>
+      <h2 style={{ marginBottom: '24px' }}>{t('artist_claims_title')}</h2>
       
       {claims.length === 0 ? (
         <div className="glass-panel" style={{ padding: '40px', textAlign: 'center' }}>
-          <p style={{ color: 'var(--text-secondary)' }}>There are no pending claims to review.</p>
+          <p style={{ color: 'var(--text-secondary)' }}>{t('artist_claims_no_pending')}</p>
         </div>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
@@ -60,9 +62,9 @@ export default function ArtistClaims() {
                 <div>
                   <h3 style={{ margin: '0 0 4px 0' }}>{claim.artists?.name}</h3>
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                    Requested by User ID: <span style={{ fontFamily: 'monospace' }}>{claim.user_id.substring(0,8)}...</span>
+                    {t('artist_claims_requested_by')}<span style={{ fontFamily: 'monospace' }}>{claim.user_id.substring(0,8)}...</span>
                   </p>
-                  <a href={claim.proof_url} target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem', color: 'var(--accent)' }}>View Proof Link</a>
+                  <a href={claim.proof_url} target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem', color: 'var(--accent)' }}>{t('artist_claims_view_proof')}</a>
                 </div>
               </div>
               
@@ -72,14 +74,14 @@ export default function ArtistClaims() {
                   className="btn-secondary" 
                   style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
                 >
-                  Reject
+                  {t('artist_claims_reject')}
                 </button>
                 <button 
                   onClick={() => handleAction(claim.id, claim.artist_id, claim.user_id, 'approved')} 
                   className="btn-primary"
                   style={{ backgroundColor: '#10b981' }}
                 >
-                  Approve
+                  {t('artist_claims_approve')}
                 </button>
               </div>
             </div>

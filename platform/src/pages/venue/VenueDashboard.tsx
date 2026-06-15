@@ -2,8 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import type { Entity } from '../../components/EntitySwitcher';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function VenueDashboard() {
+  const { t } = useLanguage();
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -30,17 +32,17 @@ export default function VenueDashboard() {
   return (
     <div>
       <div className="glass-panel" style={{ padding: '32px', marginBottom: '24px' }}>
-        <h2 style={{ margin: '0 0 16px 0' }}>Welcome, {activeEntity.name}!</h2>
+        <h2 style={{ margin: '0 0 16px 0' }}>{t('venue_dash_welcome').replace('{name}', activeEntity.name)}</h2>
         <p style={{ color: 'var(--text-secondary)' }}>
-          Below are the upcoming and past events booked at your venue.
+          {t('venue_dash_desc')}
         </p>
       </div>
 
-      <h3 style={{ marginBottom: '16px' }}>Event Schedule</h3>
+      <h3 style={{ marginBottom: '16px' }}>{t('venue_dash_schedule')}</h3>
       {loading ? (
-        <p>Loading events...</p>
+        <p>{t('venue_dash_loading')}</p>
       ) : events.length === 0 ? (
-        <p style={{ color: 'var(--text-secondary)' }}>No events have been booked at this venue yet.</p>
+        <p style={{ color: 'var(--text-secondary)' }}>{t('venue_dash_no_events')}</p>
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {events.map((event) => (
@@ -48,7 +50,7 @@ export default function VenueDashboard() {
               <div>
                 <h4 style={{ margin: '0 0 8px 0', fontSize: '1.2rem' }}>{event.name}</h4>
                 <p style={{ margin: '0', color: 'var(--text-secondary)' }}>
-                  Organizer: <strong style={{ color: 'white' }}>{event.organizers?.name}</strong>
+                  {t('venue_dash_organizer')} <strong style={{ color: 'white' }}>{event.organizers?.name}</strong>
                 </p>
               </div>
               <div style={{ textAlign: 'right' }}>

@@ -2,8 +2,11 @@ import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
 import { useNavigate, Link } from 'react-router-dom';
+import { useLanguage } from '../../contexts/LanguageContext';
+
 
 export default function WriterApplication() {
+  const { t } = useLanguage();
   const { showToast } = useToast();
   const navigate = useNavigate();
 
@@ -21,7 +24,7 @@ export default function WriterApplication() {
 
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
-      showToast("You must be logged in to apply.", "error");
+      showToast(t('marketplace.writerApplication.loginToApply'), "error");
       navigate('/auth');
       return;
     }
@@ -35,7 +38,7 @@ export default function WriterApplication() {
     }]);
 
     if (error) {
-      showToast("Error submitting application: " + error.message, "error");
+      showToast(t('marketplace.writerApplication.errorSubmitting') + error.message, "error");
     } else {
       setSubmitted(true);
     }
@@ -49,11 +52,11 @@ export default function WriterApplication() {
           <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'rgba(16, 185, 129, 0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 24px auto', color: '#10b981' }}>
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
           </div>
-          <h2 style={{ marginBottom: '16px' }}>Application Received</h2>
+          <h2 style={{ marginBottom: '16px' }}>{t('marketplace.writerApplication.applicationReceived')}</h2>
           <p style={{ color: 'var(--text-secondary)', marginBottom: '32px', lineHeight: 1.6 }}>
-            Thank you for applying to become a verified Writer on Admit. Our editorial team will review your samples shortly.
+            {t('marketplace.writerApplication.thankYou')}
           </p>
-          <Link to="/" className="btn-primary" style={{ textDecoration: 'none' }}>Return Home</Link>
+          <Link to="/" className="btn-primary" style={{ textDecoration: 'none' }}>{t('marketplace.writerApplication.returnHome')}</Link>
         </div>
       </div>
     );
@@ -62,9 +65,9 @@ export default function WriterApplication() {
   return (
     <div className="claim-portal" style={{ minHeight: '80vh', padding: '60px 40px', maxWidth: '800px', margin: '0 auto' }}>
       <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '16px' }}>Become a Writer</h1>
+        <h1 style={{ fontSize: '2.5rem', marginBottom: '16px' }}>{t('marketplace.writerApplication.title')}</h1>
         <p style={{ color: 'var(--text-secondary)', fontSize: '1.1rem', maxWidth: '600px', margin: '0 auto' }}>
-          Join the Admit editorial team. Share your voice, review events, and shape the culture.
+          {t('marketplace.writerApplication.subtitle')}
         </p>
       </div>
 
@@ -72,36 +75,36 @@ export default function WriterApplication() {
         <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
           
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Pen Name / Display Name</label>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('marketplace.writerApplication.penNameLabel')}</label>
             <input 
               required
               type="text" 
               className="input-field" 
-              placeholder="e.g. Alex The Critic"
+              placeholder={t('marketplace.writerApplication.penNamePlaceholder')}
               value={form.pen_name}
               onChange={e => setForm({...form, pen_name: e.target.value})}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Short Bio</label>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('marketplace.writerApplication.bioLabel')}</label>
             <textarea 
               required
               rows={3}
               className="input-field" 
-              placeholder="Tell us about yourself and what you love to write about."
+              placeholder={t('marketplace.writerApplication.bioPlaceholder')}
               value={form.bio}
               onChange={e => setForm({...form, bio: e.target.value})}
             />
           </div>
 
           <div>
-            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>Writing Samples</label>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('marketplace.writerApplication.samplesLabel')}</label>
             <textarea 
               required
               rows={6}
               className="input-field" 
-              placeholder="Paste links to your previous work, or paste a short writing sample directly here."
+              placeholder={t('marketplace.writerApplication.samplesPlaceholder')}
               value={form.samples}
               onChange={e => setForm({...form, samples: e.target.value})}
             />
@@ -113,7 +116,7 @@ export default function WriterApplication() {
             disabled={loading}
             style={{ padding: '16px', fontSize: '1.1rem', marginTop: '16px' }}
           >
-            {loading ? 'Submitting Application...' : 'Submit Application'}
+            {loading ? t('marketplace.writerApplication.submitting') : t('marketplace.writerApplication.submit')}
           </button>
           
         </form>

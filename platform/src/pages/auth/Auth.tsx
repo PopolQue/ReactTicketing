@@ -3,8 +3,10 @@ import LoginForm from '../../features/auth/LoginForm';
 import SignUpForm from '../../features/auth/SignUpForm';
 import ForgotPasswordForm from '../../features/auth/ForgotPasswordForm';
 import UpdatePasswordForm from '../../features/auth/UpdatePasswordForm';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function Auth() {
+  const { t } = useLanguage();
   const [authMode, setAuthMode] = useState<'login' | 'signup' | 'forgot-password' | 'update-password'>('login');
   
   useEffect(() => {
@@ -25,9 +27,9 @@ export default function Auth() {
 
         {authMode !== 'update-password' && (
           <p style={{ textAlign: 'center', marginTop: '24px', color: 'var(--text-secondary)', marginBottom: 0 }}>
-            {authMode === 'login' ? "Don't have an account? " : 
-             authMode === 'signup' ? "Already have an account? " : 
-             "Remember your password? "}
+            {authMode === 'login' ? t('dontHaveAccount') : 
+             authMode === 'signup' ? t('alreadyHaveAccount') : 
+             t('rememberPassword')}
              
             <button 
               type="button"
@@ -36,7 +38,7 @@ export default function Auth() {
               }}
               style={{ background: 'none', border: 'none', color: 'var(--accent)', cursor: 'pointer', padding: 0, fontSize: '1rem', fontWeight: 600 }}
             >
-              {authMode === 'login' ? 'Sign up' : 'Log in'}
+              {authMode === 'login' ? t('signUp') : t('logIn')}
             </button>
           </p>
         )}
