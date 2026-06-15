@@ -12,7 +12,10 @@ export default defineConfig({
         inline: ['reactticket-core']
       }
     },
+    exclude: ['**/node_modules/**', '**/dist/**'],
     coverage: {
+      include: [resolve(__dirname, 'src/**/*')],
+      exclude: ['src/**/*.test.*', 'src/**/__tests__/**/*'],
       thresholds: { lines: 70, functions: 70 }
     }
   }

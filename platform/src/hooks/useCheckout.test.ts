@@ -8,7 +8,8 @@ vi.mock('../lib/supabase', () => ({
     from: vi.fn(),
     auth: {
       getUser: vi.fn()
-    }
+    },
+    rpc: vi.fn()
   }
 }));
 
@@ -85,5 +86,61 @@ describe('useCheckout', () => {
 
     // Should now pass validation
     expect(result.current.validateForms()).toBe(true);
+  });
+
+  it('executes purchase transaction successfully', async () => {
+    mockSelect.mockResolvedValueOnce({ data: [], error: null });
+    vi.mocked(supabase.auth.getUser).mockResolvedValueOnce({
+      data: { user: { id: 'user-123', email: 'user@email.com' } }
+    } as any);
+    const mockRpc = vi.fn().mockResolvedValue({ error: null });
+    vi.mocked(supabase.rpc).mockImplementation(mockRpc);
+
+    const mockCart = { 'tier-1': 1 };
+    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    const successMock = vi.fn();
+    const errorMock = vi.fn();
+
+    await act(async () => {
+      await result.current.executePurchase({
+        finalTotalCents: 2000,
+        onSuccess: successMock,
+        onError: errorMock
+      });
+    });
+
+    expect(mockRpc).toHaveBeenCalled();
+    expect(successMock).toHaveBeenCalled();
+    expect(errorMock).not.toHaveBeenCalled();
+  });
+
+  it('does nothing if user is not logged in during purchase', async () => {
+    mockSelect.mockResolvedValueOnce({ data: [], error: null });
+    vi.mocked(supabase.auth.getUser).mockResolvedValueOnce({
+      data: { user: null }
+    } as any);
+
+    const mockCart = { 'tier-1': 1 };
+    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }));
+
+    await waitFor(() => {
+      expect(result.current.loading).toBe(false);
+    });
+
+    const successMock = vi.fn();
+    await act(async () => {
+      await result.current.executePurchase({
+        finalTotalCents: 2000,
+        onSuccess: successMock,
+        onError: vi.fn()
+      });
+    });
+
+    expect(successMock).not.toHaveBeenCalled();
   });
 });

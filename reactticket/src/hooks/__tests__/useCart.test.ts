@@ -1,34 +1,43 @@
+import { renderHook, act } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { useCart } from '../useCart';
-import * as useReactTicketHook from '../useReactTicket';
+import * as useReactTicketModule from '../useReactTicket';
 
-vi.mock('../useReactTicket', () => ({
-  useReactTicket: vi.fn()
+// Mock other hooks
+vi.mock('../useCheckout', () => ({
+    useCheckout: () => ({ checkout: vi.fn() })
 }));
 
-const mockDispatch = vi.fn();
-const mockEvent = { id: 'event1', settings: { scanSessionSecret: 'secret', qrSigningSecret: 'qrsecret' }, name: 'Event' };
-const mockTicketTypes = [
-  { id: 'gen', name: 'General', pricing: { kind: 'paid', priceInCents: 1000, currency: 'EUR' } }
-];
-
 describe('useCart', () => {
+  const mockDispatch = vi.fn();
+
   beforeEach(() => {
     vi.clearAllMocks();
-    (useReactTicketHook.useReactTicket as any).mockReturnValue({
-      cart: { items: [], personalizations: {} },
+    vi.spyOn(useReactTicketModule, 'useReactTicket').mockReturnValue({
+      cart: { items: [] },
       dispatch: mockDispatch,
-      ticketTypes: mockTicketTypes,
-      adapter: { createOrder: vi.fn(), updateOrderStatus: vi.fn() },
-      event: mockEvent,
-      onCheckout: vi.fn(),
+      ticketTypes: [],
       promoDetails: null
-    });
+    } as any);
   });
 
-  it('addItem should dispatch ADD_ITEM', () => {
-    // In Vitest, you can't easily call hooks outside components without a helper.
-    // But we can test the behavior by mocking the return and seeing if it calls dispatch.
-    // This is tricky without renderHook.
+  it('adds item to cart', () => {
+    const { result } = renderHook(() => useCart());
+    
+    act(() => {
+      result.current.addItem('t1', 1);
+    });
+    
+    expect(mockDispatch).toHaveBeenCalledWith({ type: 'ADD_ITEM', payload: { ticketTypeId: 't1', quantity: 1 } });
+  });
+
+  it('removes item from cart', () => {
+    const { result } = renderHook(() => useCart());
+    
+    act(() => {
+      result.current.removeItem('t1');
+    });
+    
+    expect(mockDispatch).toHaveBeenCalledWith({ type: 'REMOVE_ITEM', payload: { ticketTypeId: 't1' } });
   });
 });

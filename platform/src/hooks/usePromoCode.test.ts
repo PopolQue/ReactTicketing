@@ -137,4 +137,23 @@ describe('usePromoCode', () => {
     expect(result.current.appliedPromo).toBeNull();
     expect(result.current.promoCode).toBe('');
   });
+
+  it('handles unknown discount_kind', async () => {
+    mockSingle.mockResolvedValueOnce({ 
+      data: { code: 'UNKNOWN', discount_kind: 'invalid_kind', discount_value: 0 }, 
+      error: null 
+    });
+    
+    const { result } = renderHook(() => usePromoCode('event-123'));
+    
+    act(() => {
+      result.current.setPromoCode('UNKNOWN');
+    });
+
+    await act(async () => {
+      await result.current.applyPromo();
+    });
+
+    expect(result.current.getDiscountedAmount(5000)).toBe(5000);
+  });
 });

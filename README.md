@@ -64,6 +64,18 @@ Choose your path based on your role and technical stack.
 | `onCheckout` | - | Callback for payment integration. |
 | `onTicketIssued` | - | Callback for PDF/QR delivery. |
 
+## Testing & Coverage
+
+We maintain test coverage across all packages to ensure stability and quality. The following table summarizes the current statement coverage.
+
+| Package | Statement Coverage | Status |
+| :--- | :--- | :--- |
+| `@platform` | 91.57% | Healthy |
+| `reactticket-core` | 79.55% | Healthy |
+| `reactticket` | 12.53% | Needs Improvement |
+
+Run tests for a specific package via `npm run test` within its directory.
+
 ## License
 
 MIT © 2026. See the [LICENSE](LICENSE) file for details.

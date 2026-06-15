@@ -1,42 +1,45 @@
 import React from 'react';
 import { render, screen, fireEvent, cleanup } from '@testing-library/react';
-import { QuantitySelector } from '../QuantitySelector';
 import { describe, it, expect, vi, afterEach } from 'vitest';
+import { QuantitySelector } from '../QuantitySelector';
 
 afterEach(cleanup);
 
-describe('QuantitySelector', () => {
+describe('QuantitySelector Component', () => {
   it('renders correctly', () => {
-    const onChange = vi.fn();
-    render(<QuantitySelector value={1} onChange={onChange} max={5} />);
+    render(<QuantitySelector value={1} onChange={vi.fn()} max={5} />);
     expect(screen.getByText('1')).toBeDefined();
-  });
-  
-  it('calls onChange when incremented', () => {
-    const onChange = vi.fn();
-    render(<QuantitySelector value={1} onChange={onChange} max={5} />);
-    fireEvent.click(screen.getByText('+'));
-    expect(onChange).toHaveBeenCalledWith(2);
+    expect(screen.getByRole('button', { name: 'Decrease quantity' })).toBeDefined();
+    expect(screen.getByRole('button', { name: 'Increase quantity' })).toBeDefined();
   });
 
-  it('calls onChange when decremented', () => {
+  it('calls onChange with decremented value', () => {
     const onChange = vi.fn();
     render(<QuantitySelector value={1} onChange={onChange} max={5} />);
-    fireEvent.click(screen.getByText('-'));
+    
+    fireEvent.click(screen.getByRole('button', { name: 'Decrease quantity' }));
     expect(onChange).toHaveBeenCalledWith(0);
   });
 
-  it('disables increment when max is reached', () => {
+  it('calls onChange with incremented value', () => {
     const onChange = vi.fn();
-    render(<QuantitySelector value={5} onChange={onChange} max={5} />);
-    const button = screen.getByText('+') as HTMLButtonElement;
-    expect(button.disabled).toBe(true);
+    render(<QuantitySelector value={1} onChange={onChange} max={5} />);
+    
+    fireEvent.click(screen.getByRole('button', { name: 'Increase quantity' }));
+    expect(onChange).toHaveBeenCalledWith(2);
   });
 
-  it('disables decrement when 0 is reached', () => {
-    const onChange = vi.fn();
-    render(<QuantitySelector value={0} onChange={onChange} max={5} />);
-    const button = screen.getByText('-') as HTMLButtonElement;
-    expect(button.disabled).toBe(true);
+  it('disables decrease button when value is 0', () => {
+    render(<QuantitySelector value={0} onChange={vi.fn()} max={5} />);
+    
+    const decreaseButton = screen.getByRole('button', { name: 'Decrease quantity' }) as HTMLButtonElement;
+    expect(decreaseButton.disabled).toBe(true);
+  });
+
+  it('disables increase button when max is reached', () => {
+    render(<QuantitySelector value={5} onChange={vi.fn()} max={5} />);
+    
+    const increaseButton = screen.getByRole('button', { name: 'Increase quantity' }) as HTMLButtonElement;
+    expect(increaseButton.disabled).toBe(true);
   });
 });
