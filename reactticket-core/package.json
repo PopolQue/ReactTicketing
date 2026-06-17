@@ -14,9 +14,7 @@
     "postbuild": "cp src/utils/jsQR.* dist/utils/ || true",
     "test": "vitest run"
   },
-  "dependencies": {
-    "@supabase/supabase-js": "^2.108.1"
-  },
+  "dependencies": {},
   "devDependencies": {
     "@vitest/coverage-v8": "^4.1.8",
     "typescript": "~6.0.2"

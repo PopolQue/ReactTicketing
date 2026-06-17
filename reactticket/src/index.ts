@@ -1,7 +1,7 @@
 export * from './components/ReactTicket';
 export * from './hooks/useReactTicket';
 export * from './hooks/useCart';
-export * from './hooks/usePromo';
+
 export * from './hooks/useScanAuth';
 export * from './hooks/useScanAccounts';
 export * from './hooks/useScanSession';

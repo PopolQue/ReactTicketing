@@ -2,7 +2,7 @@ import { useLanguage } from "../contexts/LanguageContext";
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Ticket } from 'lucide-react';
-import UpscaledImage from './UpscaledImage';
+
 export default function EventCard({
   event
 }: {
@@ -25,7 +25,7 @@ export default function EventCard({
         marginBottom: '20px',
         overflow: 'hidden'
       }}>
-            <UpscaledImage src={event.images[0]} scaleFactor={1.5} sharpen={true} style={{
+            <img src={event.images[0]} style={{
           width: '100%',
           height: '100%',
           objectFit: 'cover',

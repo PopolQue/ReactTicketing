@@ -1,6 +1,6 @@
 import { useLanguage } from "../../contexts/LanguageContext";
 import React from 'react';
-import UpscaledImage from '../../components/UpscaledImage';
+
 export default function EventHero({
   event,
   images,
@@ -25,7 +25,7 @@ export default function EventHero({
       position: 'relative',
       overflow: 'hidden'
     }}>
-          <UpscaledImage src={images[currentImageIndex]} alt={t("event")} scaleFactor={2.5} sharpen={true} style={{
+          <img src={images[currentImageIndex]} alt={t("event")} style={{
         width: '100%',
         height: '100%',
         objectFit: 'cover',
