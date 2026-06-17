@@ -68,6 +68,15 @@ export function useEventForm(activeEntity: Entity | null) {
 
       if (insertError) throw insertError;
 
+      // Trigger notifications for followers
+      await supabase.functions.invoke('notify-followers', {
+        body: {
+          eventId: data[0].id,
+          organizerId: activeEntity.id,
+          eventName: formData.title
+        }
+      });
+
       navigate('/organizer/events');
     } catch (err: any) {
       console.error('Error creating event:', err);

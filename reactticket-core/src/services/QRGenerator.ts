@@ -1,9 +1,11 @@
 import * as qrcodegen from 'reactticket-core/utils/qrcodegen';
 
 export const QRGenerator = {
-  generate: (payload: string): string => {
+  generate: (payload: string, timestamp: number = Date.now()): string => {
+    // Include timestamp in payload to make it dynamic
+    const dynamicPayload = `${payload}|${timestamp}`;
     const ecc = qrcodegen.QrCode.Ecc.MEDIUM;
-    const qr = qrcodegen.QrCode.encodeText(payload, ecc);
+    const qr = qrcodegen.QrCode.encodeText(dynamicPayload, ecc);
 
     const canvas = document.createElement('canvas');
     const scale = 4;

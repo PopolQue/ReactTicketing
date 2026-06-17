@@ -37,6 +37,9 @@ export interface StorageAdapter {
   // Scan Events
   saveScanEvent(scan: ScanEvent): Promise<void>;
   getScanEvents(eventId: string): Promise<ScanEvent[]>;
+  getQueuedScanEvents(): Promise<ScanEvent[]>;
+  queueScanEvent(scan: ScanEvent): Promise<void>;
+  clearQueuedScanEvents(): Promise<void>;
 
   // Scan Accounts
   getScanAccount(accountId: string): Promise<ScanAccount | null>;

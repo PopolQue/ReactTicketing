@@ -20,9 +20,36 @@ export const useScanSession = (
   const [isScanning, setIsScanning] = useState(false);
   const [lastResult, setLastResult] = useState<ScanEvent | null>(null);
   const [isExpired, setIsExpired] = useState(false);
+  const [isOnline, setIsOnline] = useState(navigator.onLine);
+
+  useEffect(() => {
+    const handleOnline = async () => {
+        setIsOnline(true);
+        // Sync queued scans
+        const queued = await adapter.getQueuedScanEvents();
+        if (queued.length > 0) {
+            for (const scan of queued) {
+                try {
+                    await scanService.validateTicket(scan.ticketId, authSession as any, eventId);
+                    await adapter.saveScanEvent(scan);
+                } catch (e) {
+                    console.error('Failed to sync scan', e);
+                }
+            }
+            await adapter.clearQueuedScanEvents();
+        }
+    };
+    const handleOffline = () => setIsOnline(false);
+    window.addEventListener('online', handleOnline);
+    window.addEventListener('offline', handleOffline);
+    return () => {
+        window.removeEventListener('online', handleOnline);
+        window.removeEventListener('offline', handleOffline);
+    };
+  }, [adapter, scanService, authSession, eventId]);
 
   const stopCamera = useCallback(() => {
-    if (animationFrameId.current) {
+      if (animationFrameId.current !== null) {
       cancelAnimationFrame(animationFrameId.current);
       animationFrameId.current = null;
     }
@@ -49,18 +76,34 @@ export const useScanSession = (
 
         if (code) {
           if (authSession && 'token' in authSession) {
-            scanService.validateTicket(code.data, authSession, eventId)
-              .then(scanEvent => {
-                setLastResult(scanEvent);
-                // Pause scanning for a bit to show result
-                setTimeout(() => {
-                  setLastResult(null);
-                  if (animationFrameId.current !== null) { // Check if still scanning
-                    animationFrameId.current = requestAnimationFrame(scanLoop);
-                  }
-                }, 4000);
-              })
-              .catch(console.error);
+            if (isOnline) {
+                scanService.validateTicket(code.data, authSession, eventId)
+                .then(scanEvent => {
+                    setLastResult(scanEvent);
+                    // Pause scanning for a bit to show result
+                    setTimeout(() => {
+                    setLastResult(null);
+                    if (animationFrameId.current !== null) { // Check if still scanning
+                        animationFrameId.current = requestAnimationFrame(scanLoop);
+                    }
+                    }, 4000);
+                })
+                .catch(console.error);
+            } else {
+                // Offline mode: queue the scan result locally
+                setLastResult({
+                    result: 'offline_queued',
+                    ticketId: code.data,
+                    scannedByAccountName: 'Offline Mode'
+                } as any);
+                // Queue the validation request here (LocalStorageAdapter)
+                adapter.queueScanEvent({
+                    result: 'offline_queued',
+                    ticketId: code.data,
+                    scannedByAccountName: 'Offline Mode',
+                    scannedAt: new Date()
+                } as any);
+            }
           }
           return; // Stop the loop until validation is done and timeout passed
         }

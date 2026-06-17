@@ -23,7 +23,7 @@ export const TicketTypeList = () => {
   }, [adapter, event.id, dispatch]);
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto' }}>
+    <div style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: '80px' }}>
       <h2>{t('store.tickets.title')}</h2>
       <div style={{ marginBottom: '20px' }}>
         {visibleTypes.map(type => (

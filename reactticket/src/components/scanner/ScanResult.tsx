@@ -67,6 +67,7 @@ export const ScanResult: React.FC<ScanResultProps> = ({ result, onDismiss }) => 
   const getBackgroundColor = () => {
     switch (result.result) {
       case 'admitted': return '#22c55e'; // green-500
+      case 'offline_queued': return '#3b82f6'; // blue-500
       case 'already_used': return '#f59e0b'; // amber-500
       case 'invalid':
       case 'cancelled':
@@ -87,22 +88,41 @@ export const ScanResult: React.FC<ScanResultProps> = ({ result, onDismiss }) => 
       justifyContent: 'center',
       alignItems: 'center',
       padding: '20px',
-      textAlign: 'center'
+      textAlign: 'center',
+      fontFamily: 'monospace' // Aesthetic for high-tech feel
     }}
     role="alert"
     aria-live="assertive"
     aria-label={`Scan Result: ${result.result.replace('_', ' ')}`}
     >
-      <h2>{result.result.replace('_', ' ').toUpperCase()}</h2>
+      <h2 style={{ fontSize: '3rem', margin: '0 0 10px 0', textShadow: '0 0 10px rgba(0,0,0,0.5)' }}>
+        {result.result.replace('_', ' ').toUpperCase()}
+      </h2>
       {ticket && (
-        <div>
-          <p>Ticket ID: {ticket.id}</p>
-          <p>Type: {ticketTypeName}</p>
-          <p>Buyer: {typeof ticket.personalization?.name === 'string' ? ticket.personalization.name : 'Unknown'} {typeof ticket.personalization?.surname === 'string' ? ticket.personalization.surname : ''}</p>
+        <div style={{ backgroundColor: 'rgba(0,0,0,0.3)', padding: '15px', borderRadius: '10px', width: '100%' }}>
+          <p style={{ margin: '5px 0' }}>Ticket ID: {ticket.id}</p>
+          <p style={{ margin: '5px 0' }}>Type: {ticketTypeName}</p>
+          <p style={{ margin: '5px 0' }}>Buyer: {typeof ticket.personalization?.name === 'string' ? ticket.personalization.name : 'Unknown'} {typeof ticket.personalization?.surname === 'string' ? ticket.personalization.surname : ''}</p>
         </div>
       )}
-      <p>Scanned by: {result.scannedByAccountName}</p>
-      <button onClick={onDismiss} style={{ marginTop: '20px' }} aria-label="Scan Next Ticket">Scan Next</button>
+      <p style={{ marginTop: '15px' }}>Scanned by: {result.scannedByAccountName}</p>
+      <button 
+        onClick={onDismiss} 
+        style={{ 
+          marginTop: '30px', 
+          padding: '15px 40px', 
+          fontSize: '1.2rem',
+          backgroundColor: '#000',
+          color: '#39ff14', // Acid green
+          border: '2px solid #39ff14',
+          borderRadius: '50px',
+          cursor: 'pointer',
+          boxShadow: '0 0 15px rgba(57, 255, 20, 0.5)'
+        }} 
+        aria-label="Scan Next Ticket"
+      >
+        SCAN NEXT
+      </button>
     </div>
   );
 };

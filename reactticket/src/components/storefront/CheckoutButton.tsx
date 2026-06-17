@@ -20,9 +20,18 @@ export const CheckoutButton = () => {
       disabled={isProcessing}
       aria-busy={isProcessing}
       style={{
-        width: '100%', padding: '16px', borderRadius: '8px', border: 'none',
-        background: isProcessing ? '#64748b' : '#0f172a', color: 'white', fontSize: '16px', fontWeight: 'bold',
-        cursor: isProcessing ? 'not-allowed' : 'pointer', marginTop: '20px'
+        position: 'fixed',
+        bottom: 0,
+        left: 0,
+        width: '100%',
+        padding: '16px',
+        border: 'none',
+        background: isProcessing ? '#64748b' : '#0f172a',
+        color: 'white',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        cursor: isProcessing ? 'not-allowed' : 'pointer',
+        zIndex: 1000
       }}
     >
       {isProcessing ? t('store.checkout.processing') : t('store.checkout.button')}

@@ -25,7 +25,13 @@ export default defineConfig({
       thresholds: { lines: 70, functions: 70 }
     }
   },
+  optimizeDeps: {
+    exclude: ['reactticket'],
+  },
   server: {
-    allowedHosts: ["crescentlike-florencio-nonrustic.ngrok-free.dev"]
+    allowedHosts: ["crescentlike-florencio-nonrustic.ngrok-free.dev"],
+    fs: {
+      allow: ['..']
+    }
   }
 })

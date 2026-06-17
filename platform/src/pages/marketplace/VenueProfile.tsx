@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { useFollowEntity } from '../../hooks/useFollowEntity';
-import EventCard from '../../components/EventCard';
 import { MapPin, BadgeCheck } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { FollowButton } from '../../components/FollowButton';
+import EventCard from '../../components/EventCard';
 
 
 export default function VenueProfile() {
@@ -13,8 +13,6 @@ export default function VenueProfile() {
   const [venue, setVenue] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const { isFollowing, followerCount, toggleFollow, loading: followLoading } = useFollowEntity(id!, 'venue');
 
   useEffect(() => {
     async function fetchProfile() {
@@ -63,24 +61,11 @@ export default function VenueProfile() {
             )}
             
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <span style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>{followerCount} {t('marketplace.venueProfile.followers')}</span>
-              <button 
-                onClick={toggleFollow}
-                disabled={followLoading}
-                style={{ 
-                  padding: '8px 24px', 
-                  fontSize: '1rem', 
-                  fontWeight: 600, 
-                  borderRadius: '20px',
-                  border: isFollowing ? '1px solid var(--border)' : 'none',
-                  backgroundColor: isFollowing ? 'rgba(255,255,255,0.05)' : 'var(--accent)',
-                  color: 'white',
-                  cursor: followLoading ? 'wait' : 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {isFollowing ? t('marketplace.venueProfile.following') : t('marketplace.venueProfile.followVenue')}
-              </button>
+              <FollowButton 
+                entityId={id!} 
+                entityType="venue"
+                className="btn-primary"
+              />
             </div>
           </div>
         </div>

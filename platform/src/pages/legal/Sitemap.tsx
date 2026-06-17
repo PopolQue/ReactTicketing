@@ -133,6 +133,17 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
+// Helper to render SVG icons
+function SitemapIcon({ id, background }: { id: string; background: string }) {
+  return (
+    <div style={{ ...styles.cardIcon, background }}>
+      <svg width="24" height="24" style={{ color: 'var(--text-primary)' }}>
+        <use href={`/sitemap-icons.svg#${id}`} />
+      </svg>
+    </div>
+  );
+}
+
 function SitemapLink({ label, to }: { label: string; to: string }) {
   const [hovered, setHovered] = useState(false);
 
@@ -160,7 +171,7 @@ export default function Sitemap() {
   const categories = [
     {
       title: t('marketplace'),
-      icon: '🎫',
+      iconId: 'marketplace-icon',
       iconBg: 'rgba(99, 102, 241, 0.15)',
       links: [
         { label: t('home'), to: '/' },
@@ -173,7 +184,7 @@ export default function Sitemap() {
     },
     {
       title: t('organizerPortal'),
-      icon: '📋',
+      iconId: 'organizer-icon',
       iconBg: 'rgba(52, 96, 64, 0.15)',
       links: [
         { label: t('dashboard'), to: '/organizer' },
@@ -188,7 +199,7 @@ export default function Sitemap() {
     },
     {
       title: t('artistPortal'),
-      icon: '🎤',
+      iconId: 'artist-icon',
       iconBg: 'rgba(236, 72, 153, 0.15)',
       links: [
         { label: t('dashboard'), to: '/artist' },
@@ -197,7 +208,7 @@ export default function Sitemap() {
     },
     {
       title: t('venuePortal'),
-      icon: '🏟️',
+      iconId: 'venue-icon',
       iconBg: 'rgba(245, 158, 11, 0.15)',
       links: [
         { label: t('dashboard'), to: '/venue' },
@@ -205,7 +216,7 @@ export default function Sitemap() {
     },
     {
       title: t('supportAdmin'),
-      icon: '🛡️',
+      iconId: 'support-icon',
       iconBg: 'rgba(14, 165, 233, 0.15)',
       links: [
         { label: t('contactSupport'), to: '/support' },
@@ -218,7 +229,7 @@ export default function Sitemap() {
     },
     {
       title: t('legal_nav'),
-      icon: '⚖️',
+      iconId: 'legal-icon',
       iconBg: 'rgba(139, 92, 246, 0.15)',
       links: [
         { label: t('imprint_nav'), to: '/imprint' },
@@ -244,9 +255,7 @@ export default function Sitemap() {
         <div style={styles.grid}>
           {categories.map((cat) => (
             <div key={cat.title} className="glass-panel" style={styles.card}>
-              <div style={{ ...styles.cardIcon, background: cat.iconBg }}>
-                {cat.icon}
-              </div>
+              <SitemapIcon id={cat.iconId} background={cat.iconBg} />
               <h2 style={styles.cardTitle}>{cat.title}</h2>
               <p style={styles.cardCount}>
                 {cat.links.length} {t('page')}{cat.links.length !== 1 ? 's' : ''}

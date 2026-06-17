@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { useFollowEntity } from '../../hooks/useFollowEntity';
-import EventCard from '../../components/EventCard';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { FollowButton } from '../../components/FollowButton';
+import EventCard from '../../components/EventCard';
 
 
 export default function OrganizerProfile() {
@@ -12,8 +12,6 @@ export default function OrganizerProfile() {
   const [organizer, setOrganizer] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const { isFollowing, followerCount, toggleFollow, loading: followLoading } = useFollowEntity(id!, 'organizer');
 
   useEffect(() => {
     async function fetchProfile() {
@@ -62,24 +60,11 @@ export default function OrganizerProfile() {
             )}
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <span style={{ fontSize: '1.1rem', color: 'var(--text-secondary)' }}>{followerCount} {t('marketplace.organizerProfile.followers')}</span>
-              <button 
-                onClick={toggleFollow}
-                disabled={followLoading}
-                style={{ 
-                  padding: '8px 24px', 
-                  fontSize: '1rem', 
-                  fontWeight: 600, 
-                  borderRadius: '20px',
-                  border: isFollowing ? '1px solid var(--border)' : 'none',
-                  backgroundColor: isFollowing ? 'rgba(255,255,255,0.05)' : 'var(--accent)',
-                  color: 'white',
-                  cursor: followLoading ? 'wait' : 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {isFollowing ? t('marketplace.organizerProfile.following') : t('marketplace.organizerProfile.followOrganizer')}
-              </button>
+              <FollowButton 
+                entityId={id!} 
+                entityType="organizer"
+                className="btn-primary"
+              />
             </div>
           </div>
         </div>

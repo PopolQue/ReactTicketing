@@ -251,6 +251,18 @@ export class LocalStorageAdapter implements StorageAdapter {
     events.push(scan);
     localStorage.setItem('tf_scan_events', JSON.stringify(events));
   }
+  async getQueuedScanEvents(): Promise<ScanEvent[]> {
+    const data = localStorage.getItem('tf_offline_scan_queue');
+    return data ? JSON.parse(data) : [];
+  }
+  async queueScanEvent(scan: ScanEvent): Promise<void> {
+    const queue = await this.getQueuedScanEvents();
+    queue.push(scan);
+    localStorage.setItem('tf_offline_scan_queue', JSON.stringify(queue));
+  }
+  async clearQueuedScanEvents(): Promise<void> {
+    localStorage.removeItem('tf_offline_scan_queue');
+  }
   async getScanEvents(eventId: string): Promise<ScanEvent[]> {
     const data = localStorage.getItem('tf_scan_events');
     const events: ScanEvent[] = data ? JSON.parse(data) : [];

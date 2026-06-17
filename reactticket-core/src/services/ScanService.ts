@@ -23,7 +23,17 @@ export class ScanService {
             throw new Error("Invalid payload format");
         }
         
-        const [prefix, payloadEventId, ticketId, signature] = parts;
+        const [prefix, payloadEventId, rawTicketId, signature] = parts;
+        
+        // Extract ticketId and timestamp
+        const [ticketId, timestampStr] = rawTicketId.split('|');
+        const timestamp = parseInt(timestampStr);
+        
+        // Anti-screenshot check: QR code must be less than 60 seconds old
+        if (!timestamp || Date.now() - timestamp > 60000) {
+            throw new Error("QR code expired (anti-fraud)");
+        }
+
         ticketIdFromPayload = ticketId;
         
         const enc = new TextEncoder();

@@ -148,6 +148,15 @@ export class RestAdapter implements StorageAdapter {
   async getScanEvents(eventId: string): Promise<ScanEvent[]> {
     return this.request<ScanEvent[]>(`/events/${eventId}/scan-events`);
   }
+  async getQueuedScanEvents(): Promise<ScanEvent[]> {
+    throw new Error('Offline queueing not supported by RestAdapter');
+  }
+  async queueScanEvent(_scan: ScanEvent): Promise<void> {
+    throw new Error('Offline queueing not supported by RestAdapter');
+  }
+  async clearQueuedScanEvents(): Promise<void> {
+    throw new Error('Offline queueing not supported by RestAdapter');
+  }
 
   // Scan Accounts
   async getScanAccount(accountId: string): Promise<ScanAccount | null> {

@@ -25,9 +25,9 @@ INSERT INTO public.organizers (id, name, stripe_account_id, is_verified, claimed
 ('33333333-3333-3333-3333-333333333333', 'Starlight Productions', 'acct_12345', TRUE, '33333333-3333-3333-3333-333333333333');
 
 -- Insert Events
-INSERT INTO public.events (id, organizer_id, organizer_name, name, description, venue, start_date, timezone_id, published, approval_status, images) VALUES
-('10000000-0000-0000-0000-000000000000', '33333333-3333-3333-3333-333333333333', 'Starlight Productions', 'Neon Nights Festival', 'The biggest electronic music festival of the year.', 'Downtown Arena', NOW() + INTERVAL '30 days', 'gmt0_london', TRUE, 'approved', '{"https://images.unsplash.com/photo-1540039155732-6761b54cb6b0?w=1200"}'),
-('20000000-0000-0000-0000-000000000000', '33333333-3333-3333-3333-333333333333', 'Starlight Productions', 'Underground Jazz Evening', 'Intimate jazz sessions featuring local talent.', 'The Blue Note', NOW() + INTERVAL '15 days', 'gmt0_london', TRUE, 'pending', '{"https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=1200"}');
+INSERT INTO public.events (id, organizer_id, organizer_name, name, description, venue, start_date, timezone_id, published, approval_status, images, latitude, longitude) VALUES
+('10000000-0000-0000-0000-000000000000', '33333333-3333-3333-3333-333333333333', 'Starlight Productions', 'Neon Nights Festival', 'The biggest electronic music festival of the year.', 'Downtown Arena', NOW() + INTERVAL '30 days', 'gmt0_london', TRUE, 'approved', '{"https://images.unsplash.com/photo-1540039155732-6761b54cb6b0?w=1200"}', 52.5300, 13.4100),
+('20000000-0000-0000-0000-000000000000', '33333333-3333-3333-3333-333333333333', 'Starlight Productions', 'Underground Jazz Evening', 'Intimate jazz sessions featuring local talent.', 'The Blue Note', NOW() + INTERVAL '15 days', 'gmt0_london', TRUE, 'pending', '{"https://images.unsplash.com/photo-1511192336575-5a79af67a629?w=1200"}', 52.5000, 13.3800);
 
 -- Insert Support Tickets
 INSERT INTO public.support_tickets (user_id, email, subject, message, status) VALUES

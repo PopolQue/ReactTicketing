@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { useFollowEntity } from '../../hooks/useFollowEntity';
+import { FollowButton } from '../../components/FollowButton';
 import EventCard from '../../components/EventCard';
 import Skeleton from '../../components/Skeleton';
 import { useLanguage } from '../../contexts/LanguageContext';
@@ -13,8 +13,6 @@ export default function ArtistProfile() {
   const [artist, setArtist] = useState<any>(null);
   const [events, setEvents] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-
-  const { isFollowing, followerCount, toggleFollow, loading: followLoading } = useFollowEntity(id!, 'artist');
 
   useEffect(() => {
     async function fetchProfile() {
@@ -65,24 +63,11 @@ export default function ArtistProfile() {
           <div style={{ paddingBottom: '20px' }}>
             <h1 style={{ fontSize: '4rem', margin: '0 0 8px 0', fontWeight: 800, letterSpacing: '-2px', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>{artist.name}</h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <span style={{ fontSize: '1.2rem', color: 'rgba(255,255,255,0.8)' }}>{followerCount} {t('marketplace.artistProfile.followers')}</span>
-              <button 
-                onClick={toggleFollow}
-                disabled={followLoading}
-                style={{ 
-                  padding: '8px 24px', 
-                  fontSize: '1rem', 
-                  fontWeight: 600, 
-                  borderRadius: '20px',
-                  border: isFollowing ? '1px solid rgba(255,255,255,0.2)' : 'none',
-                  backgroundColor: isFollowing ? 'transparent' : 'var(--accent)',
-                  color: 'white',
-                  cursor: followLoading ? 'wait' : 'pointer',
-                  transition: 'all 0.2s'
-                }}
-              >
-                {isFollowing ? t('marketplace.artistProfile.following') : t('marketplace.artistProfile.follow')}
-              </button>
+              <FollowButton 
+                entityId={id!} 
+                entityType="artist"
+                className="btn-primary"
+              />
             </div>
           </div>
         </div>

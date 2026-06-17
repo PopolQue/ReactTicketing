@@ -9,7 +9,7 @@ import { SupabaseAdapter } from '../../lib/Admit/SupabaseAdapter';
 import { mapEventToAdmitConfig } from '../../lib/Admit/mappers';
 import CheckoutModal from '../../components/CheckoutModal';
 import { useLanguage } from '../../contexts/LanguageContext';
-
+import { FollowButton } from '../../components/FollowButton';
 
 const ReactTicket = React.lazy(() => import('reactticket').then(m => ({ default: m.ReactTicket })));
 
@@ -111,9 +111,13 @@ export default function EventDetails() {
       <main style={{ padding: '60px 40px', maxWidth: '800px', margin: '0 auto', position: 'relative', top: images.length > 0 ? '-60px' : '0' }}>
         <div className="glass-panel" style={{ padding: '40px', backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(20px)' }}>
           <h1 style={{ fontSize: '3rem', margin: '0 0 16px 0' }}>{event.name}</h1>
-          <p style={{ color: customAccentColor, fontSize: '1.2rem', margin: '0 0 24px 0', fontWeight: 600 }}>
-            {t('marketplace.eventDetails.presentedBy')}{event.organizers?.name || t('marketplace.eventDetails.independentOrganizer')}
-          </p>
+          <div style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
+            <p style={{ color: customAccentColor, fontSize: '1.2rem', margin: '0 0 24px 0', fontWeight: 600 }}>
+                {t('marketplace.eventDetails.presentedBy')}{event.organizers?.name || t('marketplace.eventDetails.independentOrganizer')}
+            </p>
+            <FollowButton entityId={event.id} entityType="event" />
+            {event.organizer_id && <FollowButton entityId={event.organizer_id} entityType="organizer" />}
+          </div>
 
           <EventAboutSection event={event} eventArtists={eventArtists} customAccentColor={customAccentColor} />
 

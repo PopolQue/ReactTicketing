@@ -4,7 +4,8 @@ export type ScanResult =
   | "invalid"
   | "expired"
   | "cancelled"
-  | "clock_skew_anomaly";
+  | "clock_skew_anomaly"
+  | "offline_queued";
 
 export interface ScanEvent {
   readonly id: string;

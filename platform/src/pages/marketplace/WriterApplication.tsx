@@ -1,14 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useLanguage } from '../../contexts/LanguageContext';
 
 
 export default function WriterApplication() {
+  console.log('DEBUG: WriterApplication component rendered');
   const { t } = useLanguage();
   const { showToast } = useToast();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [form, setForm] = useState({
     pen_name: '',
@@ -18,24 +20,37 @@ export default function WriterApplication() {
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
 
+  useEffect(() => {
+    async function checkAuth() {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!session) {
+        showToast(t('marketplace.writerApplication.loginToApply'), "error");
+        navigate('/auth', { state: { from: location } });
+      }
+    }
+    checkAuth();
+  }, [navigate, t, showToast, location]);
+
   const handleSubmit = async (e: React.FormEvent) => {
+    console.log('DEBUG: handleSubmit triggered');
     e.preventDefault();
     setLoading(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      showToast(t('marketplace.writerApplication.loginToApply'), "error");
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session || !session.user) {
       navigate('/auth');
       return;
     }
 
     const { error } = await supabase.from('writer_applications').insert([{
-      user_id: user.id,
+      user_id: session.user.id,
       pen_name: form.pen_name,
       bio: form.bio,
       samples: form.samples,
       status: 'pending'
     }]);
+
 
     if (error) {
       showToast(t('marketplace.writerApplication.errorSubmitting') + error.message, "error");

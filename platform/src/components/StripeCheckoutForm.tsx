@@ -103,6 +103,11 @@ export default function StripeCheckoutForm({
             <PaymentElement />
           </div>
 
+          <label style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
+            <input type="checkbox" name="saveInfo" />
+            {t("store.checkout.saveInfo")}
+          </label>
+
           <div style={{
           display: 'flex',
           gap: '12px',
