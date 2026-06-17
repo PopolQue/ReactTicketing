@@ -48,7 +48,8 @@ describe('ScanService', () => {
     });
 
     it('should admit a valid ticket (UT-SCAN-02)', async () => {
-      const payload = 'TF1.event1.ticket1.SGFzaA==';
+      const now = Date.now();
+      const payload = `TF1.event1.ticket1|${now}.SGFzaA==`;
       const ticket = { id: 'ticket1', status: 'issued' };
       (mockAdapter.getTicket as any).mockResolvedValue(ticket);
 
@@ -60,7 +61,8 @@ describe('ScanService', () => {
     });
 
     it('should return already_used for used tickets (UT-SCAN-03)', async () => {
-      const payload = 'TF1.event1.ticket1.SGFzaA==';
+      const now = Date.now();
+      const payload = `TF1.event1.ticket1|${now}.SGFzaA==`;
       const ticket = { id: 'ticket1', status: 'used' };
       (mockAdapter.getTicket as any).mockResolvedValue(ticket);
 
