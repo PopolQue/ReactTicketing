@@ -16,10 +16,7 @@
     "postversion": "git push && git push --tags",
     "example:class": "webpack-dev-server --config ./examples/class/webpack.config.js",
     "example:hooks": "cd ./examples/hooks && vite",
-    "lint": "eslint ./src",
-    "changeset": "changeset",
-    "version-packages": "changeset version",
-    "release": "npm run build && changeset publish"
+    "lint": "eslint ./src"
   },
   "repository": {
     "type": "git",
@@ -67,7 +64,6 @@
     "@babel/plugin-proposal-class-properties": "^7.12.1",
     "@babel/preset-env": "^7.12.1",
     "@babel/preset-react": "^7.12.1",
-    "@changesets/cli": "^2.28.0",
     "@react-leaflet/core": "^3.0.0",
     "@types/leaflet": "^1.9.16",
     "@types/leaflet-draw": "^1.0.11",
@@ -85,7 +81,7 @@
     "react-leaflet": "^5.0.0",
     "typescript": "^5.9.2",
     "vite": "^6.4.2",
-    "webpack": "^5.107.2",
+    "webpack": "5.107.2",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0"
   },
@@ -95,7 +91,6 @@
   },
   "overrides": {
     "esbuild": "0.28.1",
-    "js-yaml": "4.1.0",
     "uuid": "11.1.1"
   }
 }
