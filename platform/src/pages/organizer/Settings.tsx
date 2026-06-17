@@ -9,10 +9,12 @@ export default function Settings() {
   const { t } = useLanguage();
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const { showToast } = useToast();
-  const [profile, setProfile] = useState<any>(null);
-  const [stripeAccountId, setStripeAccountId] = useState('');
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
+  const [formData, setFormData] = useState({
+    name: '',
+    bio: '',
+    image_url: '',
+    stripe_account_id: ''
+  });
 
   useEffect(() => {
     async function fetchProfile() {
@@ -26,25 +28,35 @@ export default function Settings() {
 
       if (data) {
         setProfile(data);
-        setStripeAccountId(data.stripe_account_id || '');
+        setFormData({
+          name: data.name || '',
+          bio: data.bio || '',
+          image_url: data.image_url || '',
+          stripe_account_id: data.stripe_account_id || ''
+        });
       }
       setLoading(false);
     }
     fetchProfile();
   }, [activeEntity]);
 
-  const handleSaveStripe = async (e: React.FormEvent) => {
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
     const { error } = await supabase
       .from('organizers')
-      .update({ stripe_account_id: stripeAccountId })
-      .eq('id', profile.id);
+      .update({
+        name: formData.name,
+        bio: formData.bio,
+        image_url: formData.image_url,
+        stripe_account_id: formData.stripe_account_id
+      })
+      .eq('id', activeEntity.id);
 
     if (!error) {
-      showToast("Stripe Account ID saved successfully! Payouts will now be routed automatically.", 'success');
+      showToast("Profile saved successfully!", 'success');
     } else {
-      showToast("Error saving Stripe Account: " + error.message, 'error');
+      showToast("Error saving profile: " + error.message, 'error');
     }
     setSaving(false);
   };
@@ -56,35 +68,49 @@ export default function Settings() {
       <h2 style={{ marginBottom: '24px', margin: 0 }}>{t("organizer.settings.title")}</h2>
       
       <div className="glass-panel" style={{ padding: '32px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '24px' }}>
-          <div style={{ width: '48px', height: '48px', borderRadius: '50%', backgroundColor: 'var(--accent)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '1.5rem', fontWeight: 'bold', color: 'white', marginRight: '16px' }}>
-            {profile.name?.charAt(0).toUpperCase()}
+        <form onSubmit={handleSave} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Name</label>
+            <input 
+              type="text" 
+              value={formData.name} 
+              onChange={e => setFormData({...formData, name: e.target.value})} 
+              className="input-field" 
+              required 
+            />
           </div>
           <div>
-            <h3 style={{ margin: '0 0 4px 0' }}>{profile.name}</h3>
-            <p style={{ margin: 0, color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-              Plan: <strong style={{ color: 'var(--accent)', textTransform: 'uppercase' }}>{profile.subscription_tier}</strong>
-            </p>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Bio</label>
+            <textarea 
+              value={formData.bio} 
+              onChange={e => setFormData({...formData, bio: e.target.value})} 
+              className="input-field" 
+              rows={4}
+            />
           </div>
-        </div>
-
-        <h4 style={{ borderTop: '1px solid var(--border)', paddingTop: '24px', marginBottom: '16px' }}>{t("organizer.settings.stripeConnect")}</h4>
-        <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.5' }}>{t("organizer.settings.stripeDesc")}</p>
-        
-        <form onSubmit={handleSaveStripe} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Image URL</label>
+            <input 
+              type="url" 
+              value={formData.image_url} 
+              onChange={e => setFormData({...formData, image_url: e.target.value})} 
+              className="input-field" 
+            />
+          </div>
+          <h4 style={{ borderTop: '1px solid var(--border)', paddingTop: '24px', marginBottom: '16px' }}>{t("organizer.settings.stripeConnect")}</h4>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px', lineHeight: '1.5' }}>{t("organizer.settings.stripeDesc")}</p>
           <div>
             <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{t("organizer.settings.stripeLabel")}</label>
             <input 
               type="text" 
-              value={stripeAccountId} 
-              onChange={e => setStripeAccountId(e.target.value)} 
+              value={formData.stripe_account_id} 
+              onChange={e => setFormData({...formData, stripe_account_id: e.target.value})} 
               className="input-field" 
               placeholder={t("organizer.settings.stripePlaceholder")}
-              required 
             />
           </div>
           <button type="submit" disabled={saving} className="btn-primary" style={{ width: 'fit-content' }}>
-            {saving ? t("organizer.settings.saving") : t("organizer.settings.saveStripe")}
+            {saving ? t("organizer.settings.saving") : "Save Profile & Settings"}
           </button>
         </form>
       </div>

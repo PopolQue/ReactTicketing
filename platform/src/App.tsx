@@ -48,6 +48,7 @@ const SitemapPage = React.lazy(() => import('./pages/legal/Sitemap'))
 // Venue Portal
 const VenueLayout = React.lazy(() => import('./pages/venue/VenueLayout'))
 const VenueDashboard = React.lazy(() => import('./pages/venue/VenueDashboard'))
+const VenueSettings = React.lazy(() => import('./pages/venue/VenueSettings'))
 
 // Admin & Support
 const ContactSupport = React.lazy(() => import('./pages/support/ContactSupport'))
@@ -149,6 +150,7 @@ function App() {
         <Route element={<ProtectedRoute />}>
           <Route path="/venue" element={<VenueLayout />}>
             <Route index element={<VenueDashboard />} />
+            <Route path="edit" element={<VenueSettings />} />
           </Route>
         </Route>
 
