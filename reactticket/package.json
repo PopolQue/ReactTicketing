@@ -38,7 +38,7 @@
   },
   "size-limit": [
     {
-      "path": "dist/index.js",
+      "path": "dist/index.umd.js",
       "limit": "60 KB"
     }
   ]
