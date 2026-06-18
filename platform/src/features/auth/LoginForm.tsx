@@ -121,7 +121,24 @@ export default function LoginForm({
       gap: '16px'
     }}>
         <input required type="email" placeholder="Email" className="input-field" value={email} onChange={e => setEmail(e.target.value)} />
-        <input required type="password" placeholder="Password" className="input-field" value={password} onChange={e => setPassword(e.target.value)} />
+        <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <input required type="password" placeholder="Password" className="input-field" value={password} onChange={e => setPassword(e.target.value)} />
+          <button
+            type="button"
+            onClick={onForgotPassword}
+            style={{
+              background: 'none',
+              border: 'none',
+              color: 'var(--text-secondary)',
+              cursor: 'pointer',
+              fontSize: '0.85rem',
+              textAlign: 'right',
+              padding: '4px 0'
+            }}
+          >
+            Forgot password?
+          </button>
+        </div>
 
         <button type="submit" disabled={loading} className="btn-primary" style={{
         width: '100%',

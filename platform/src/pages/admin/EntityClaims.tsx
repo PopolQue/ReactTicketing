@@ -6,6 +6,7 @@ import { useLanguage } from '../../contexts/LanguageContext';
 export default function EntityClaims() {
   const { t } = useLanguage();
   const [claims, setClaims] = useState<any[]>([]);
+  const [userStats, setUserStats] = useState<Record<string, { total: number, rejected: number, isBlocked: boolean }>>({});
   const [loading, setLoading] = useState(true);
   const [rejectingClaim, setRejectingClaim] = useState<any>(null);
   const [rejectionReason, setRejectionReason] = useState('');
@@ -19,6 +20,32 @@ export default function EntityClaims() {
       .order('created_at', { ascending: false });
     
     if (claimsData) {
+      const userIds = Array.from(new Set(claimsData.map(c => c.user_id)));
+
+      // Fetch all claims for these users to calculate stats
+      const { data: allUserClaims } = await supabase
+        .from('entity_claims')
+        .select('user_id, status')
+        .in('user_id', userIds);
+
+      const { data: profiles } = await supabase
+        .from('user_profiles')
+        .select('id, is_claim_blocked')
+        .in('id', userIds);
+
+      const stats: Record<string, { total: number, rejected: number, isBlocked: boolean }> = {};
+      
+      userIds.forEach(uid => {
+        const userClaims = allUserClaims?.filter(c => c.user_id === uid) || [];
+        const profile = profiles?.find(p => p.id === uid);
+        stats[uid] = {
+          total: userClaims.length,
+          rejected: userClaims.filter(c => c.status === 'rejected').length,
+          isBlocked: profile?.is_claim_blocked || false
+        };
+      });
+      setUserStats(stats);
+
       // Enrich claims with entity names
       const enrichedClaims = await Promise.all(claimsData.map(async (claim) => {
         const { data: entityData } = await supabase
@@ -79,6 +106,14 @@ export default function EntityClaims() {
     fetchClaims();
   };
 
+  const toggleBlockUser = async (userId: string, currentBlockedStatus: boolean) => {
+    await supabase
+      .from('user_profiles')
+      .update({ is_claim_blocked: !currentBlockedStatus })
+      .eq('id', userId);
+    fetchClaims();
+  };
+
   if (loading) return <p>{t('entity_claims_loading')}</p>;
 
   return (
@@ -104,37 +139,45 @@ export default function EntityClaims() {
                   <p style={{ margin: 0, fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
                     {t('entity_claims_requested_by')} <span style={{ fontFamily: 'monospace' }}>{claim.user_id.substring(0,8)}...</span>
                   </p>
+                  <p style={{ margin: 0, fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    Total Claims: {userStats[claim.user_id]?.total} | Rejected: {userStats[claim.user_id]?.rejected}
+                  </p>
                   <a href={claim.proof_url} target="_blank" rel="noreferrer" style={{ fontSize: '0.9rem', color: 'var(--accent)' }}>{t('entity_claims_view_proof')}</a>
                 </div>
               </div>
               
-              <div style={{ display: 'flex', gap: '8px' }}>
-                {claim.status === 'pending' && (
-                  <button 
-                    onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'awaiting_proof')} 
-                    className="btn-primary"
-                  >
-                    {t('entity_claims_initiate_review')}
-                  </button>
-                )}
-                {claim.status === 'proof_submitted' && (
-                  <>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', alignItems: 'flex-end' }}>
+                <button onClick={() => toggleBlockUser(claim.user_id, !!userStats[claim.user_id]?.isBlocked)} className="btn-secondary" style={{ fontSize: '0.8rem', padding: '4px 8px' }}>
+                  {userStats[claim.user_id]?.isBlocked ? 'Unblock User' : 'Block User'}
+                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {claim.status === 'pending' && (
                     <button 
-                      onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'rejected')} 
-                      className="btn-secondary" 
-                      style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
-                    >
-                      Reject
-                    </button>
-                    <button 
-                      onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'approved')} 
+                      onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'awaiting_proof')} 
                       className="btn-primary"
-                      style={{ backgroundColor: '#10b981' }}
                     >
-                      Approve
+                      {t('entity_claims_initiate_review')}
                     </button>
-                  </>
-                )}
+                  )}
+                  {claim.status === 'proof_submitted' && (
+                    <>
+                      <button 
+                        onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'rejected')} 
+                        className="btn-secondary" 
+                        style={{ color: '#ef4444', borderColor: 'rgba(239, 68, 68, 0.3)' }}
+                      >
+                        Reject
+                      </button>
+                      <button 
+                        onClick={() => handleAction(claim.id, claim.entity_type, claim.entity_id, claim.user_id, 'approved')} 
+                        className="btn-primary"
+                        style={{ backgroundColor: '#10b981' }}
+                      >
+                        Approve
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           ))}

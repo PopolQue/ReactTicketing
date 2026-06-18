@@ -1,34 +1,38 @@
 import { useLanguage } from "../contexts/LanguageContext";
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
+import { DropdownMenu } from './DropdownMenu';
+import { ChevronDown, Building2, User, MapPin, PenTool } from 'lucide-react';
+
 export type Entity = {
   id: string;
   name: string;
   type: 'organizer' | 'artist' | 'venue' | 'writer';
 };
-export default function EntitySwitcher({
+
+export default React.memo(function EntitySwitcher({
   onEntityChange
 }: {
   onEntityChange?: (e: Entity | null) => void;
 }) {
-  const {
-    t
-  } = useLanguage();
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const [entities, setEntities] = useState<Entity[]>([]);
-  const [activeEntityId, setActiveEntityId] = useState<string>('');
+  const [activeEntity, setActiveEntity] = useState<Entity | null>(null);
   const [loading, setLoading] = useState(true);
+  const isLoaded = useRef(false);
+
   useEffect(() => {
-    fetchEntities();
+    if (!isLoaded.current) {
+        fetchEntities();
+        isLoaded.current = true;
+    }
   }, []);
+
   const fetchEntities = async () => {
-    const {
-      data: {
-        user
-      }
-    } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     if (!user) {
       setLoading(false);
       return;
@@ -36,41 +40,21 @@ export default function EntitySwitcher({
     const fetchedEntities: Entity[] = [];
 
     // Fetch Organizers
-    const {
-      data: orgs
-    } = await supabase.from('organizers').select('id, name').eq('claimed_by_user_id', user.id);
-    if (orgs) orgs.forEach(o => fetchedEntities.push({
-      ...o,
-      type: 'organizer'
-    }));
+    const { data: orgs } = await supabase.from('organizers').select('id, name').eq('claimed_by_user_id', user.id);
+    if (orgs) orgs.forEach(o => fetchedEntities.push({ ...o, type: 'organizer' }));
 
     // Fetch Artists
-    const {
-      data: artists
-    } = await supabase.from('artists').select('id, name').eq('claimed_by_user_id', user.id);
-    if (artists) artists.forEach(a => fetchedEntities.push({
-      ...a,
-      type: 'artist'
-    }));
+    const { data: artists } = await supabase.from('artists').select('id, name').eq('claimed_by_user_id', user.id);
+    if (artists) artists.forEach(a => fetchedEntities.push({ ...a, type: 'artist' }));
 
     // Fetch Venues
-    const {
-      data: venues
-    } = await supabase.from('venues').select('id, name').eq('claimed_by_user_id', user.id);
-    if (venues) venues.forEach(v => fetchedEntities.push({
-      ...v,
-      type: 'venue'
-    }));
+    const { data: venues } = await supabase.from('venues').select('id, name').eq('claimed_by_user_id', user.id);
+    if (venues) venues.forEach(v => fetchedEntities.push({ ...v, type: 'venue' }));
 
     // Fetch Writers
-    const {
-      data: writers
-    } = await supabase.from('writer_profiles').select('id, pen_name').eq('id', user.id);
-    if (writers) writers.forEach(w => fetchedEntities.push({
-      id: w.id,
-      name: w.pen_name,
-      type: 'writer'
-    }));
+    const { data: writers } = await supabase.from('writer_profiles').select('id, pen_name').eq('id', user.id);
+    if (writers) writers.forEach(w => fetchedEntities.push({ id: w.id, name: w.pen_name, type: 'writer' }));
+    
     setEntities(fetchedEntities);
     const storedId = localStorage.getItem('active_entity_id');
     let selectedEntity = fetchedEntities.find(e => e.id === storedId);
@@ -80,70 +64,71 @@ export default function EntitySwitcher({
       selectedEntity = fetchedEntities[0];
       localStorage.setItem('active_entity_id', selectedEntity.id);
     }
+    
     if (selectedEntity) {
-      setActiveEntityId(selectedEntity.id);
+      setActiveEntity(selectedEntity);
       if (onEntityChange) onEntityChange(selectedEntity);
-
-      // Auto-route if the user is in a portal but the entity type doesn't match the portal
-      if (location.pathname.startsWith('/organizer') && selectedEntity.type !== 'organizer') {
-        navigate(`/${selectedEntity.type}`);
-      } else if (location.pathname.startsWith('/artist') && selectedEntity.type !== 'artist') {
-        navigate(`/${selectedEntity.type}`);
-      } else if (location.pathname.startsWith('/venue') && selectedEntity.type !== 'venue') {
-        navigate(`/${selectedEntity.type}`);
-      } else if (location.pathname.startsWith('/writer') && selectedEntity.type !== 'writer') {
-        navigate(`/${selectedEntity.type}`);
-      }
     } else {
       if (onEntityChange) onEntityChange(null);
     }
     setLoading(false);
   };
-  const handleSelect = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const id = e.target.value;
-    const entity = entities.find(ent => ent.id === id);
-    if (entity) {
-      setActiveEntityId(entity.id);
-      localStorage.setItem('active_entity_id', entity.id);
-      if (onEntityChange) onEntityChange(entity);
+
+  const handleSelect = (entity: Entity) => {
+    setActiveEntity(entity);
+    localStorage.setItem('active_entity_id', entity.id);
+    
+    // Update parent only after local state is updated to ensure stability
+    if (onEntityChange) onEntityChange(entity);
+    
+    // Only navigate if the route type doesn't match the new entity type
+    if (!location.pathname.startsWith(`/${entity.type}`)) {
       navigate(`/${entity.type}`);
     }
   };
-  if (loading) return <span style={{
-    color: 'var(--text-secondary)'
-  }}>{t("loadingProfiles")}</span>;
-  if (entities.length === 0) {
-    return <span style={{
-      color: 'var(--text-secondary)'
-    }}>{t("noClaimedProfiles")}</span>;
-  }
-  return <div style={{
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px'
-  }}>
-      <span style={{
-      fontSize: '0.9rem',
-      color: 'var(--text-secondary)'
-    }}>{t("managing")}</span>
-      <select value={activeEntityId} onChange={handleSelect} className="input-field" style={{
-      padding: '6px 12px',
-      minWidth: '200px',
-      backgroundColor: 'rgba(255,255,255,0.05)',
-      border: '1px solid rgba(255,255,255,0.1)'
-    }}>
-        <optgroup label={t("organizers")}>
-          {entities.filter(e => e.type === 'organizer').map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
-        </optgroup>
-        <optgroup label={t("artists")}>
-          {entities.filter(e => e.type === 'artist').map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
-        </optgroup>
-        <optgroup label={t("venues")}>
-          {entities.filter(e => e.type === 'venue').map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
-        </optgroup>
-        <optgroup label={t("writers")}>
-          {entities.filter(e => e.type === 'writer').map(e => <option key={e.id} value={e.id}>{e.name}</option>)}
-        </optgroup>
-      </select>
-    </div>;
-}
+
+  const getIcon = (type: Entity['type']) => {
+    switch(type) {
+      case 'organizer': return <Building2 size={16} />;
+      case 'artist': return <User size={16} />;
+      case 'venue': return <MapPin size={16} />;
+      case 'writer': return <PenTool size={16} />;
+    }
+  };
+
+  if (loading) return <span style={{ color: 'var(--text-secondary)' }}>{t("loadingProfiles")}</span>;
+  if (entities.length === 0) return <span style={{ color: 'var(--text-secondary)' }}>{t("noClaimedProfiles")}</span>;
+
+  return (
+    <DropdownMenu 
+      trigger={
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 12px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+          {activeEntity && getIcon(activeEntity.type)}
+          <span>{activeEntity?.name || t("selectProfile")}</span>
+          <ChevronDown size={16} />
+        </div>
+      }
+    >
+      {['organizer', 'artist', 'venue', 'writer'].map(type => {
+        const typeEntities = entities.filter(e => e.type === type);
+        if (typeEntities.length === 0) return null;
+        
+        return (
+          <div key={type} style={{ marginBottom: '16px' }}>
+            <h4 style={{ textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t(type + "s")}</h4>
+            {typeEntities.map(e => (
+              <button 
+                key={e.id} 
+                onClick={() => handleSelect(e)}
+                style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', background: 'none', border: 'none', padding: '8px', cursor: 'pointer', textAlign: 'left', borderRadius: '4px', color: activeEntity?.id === e.id ? 'var(--accent)' : 'var(--text-primary)' }}
+              >
+                {getIcon(e.type)}
+                {e.name}
+              </button>
+            ))}
+          </div>
+        );
+      })}
+    </DropdownMenu>
+  );
+});

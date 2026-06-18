@@ -3,43 +3,59 @@ import { useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import type { Entity } from '../../components/EntitySwitcher';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { Instagram, Music } from 'lucide-react';
 
 export default function ArtistDashboard() {
   const { t } = useLanguage();
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   
+  // Artist State
+  const [artist, setArtist] = useState<any>(null);
+  
   // Analytics State
   const [analytics, setAnalytics] = useState<any>(null);
-  const [analyticsLoading, setAnalyticsLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  async function fetchAnalytics() {
-    setAnalyticsLoading(true);
-    const { data, error } = await supabase.rpc('get_artist_analytics', { artist_id_param: activeEntity.id });
-    if (!error && data) {
-      setAnalytics(data);
-    }
-    setAnalyticsLoading(false);
+  async function fetchData() {
+    setLoading(true);
+    // Fetch Artist Profile
+    const { data: artistData } = await supabase
+        .from('artists')
+        .select('*')
+        .eq('id', activeEntity.id)
+        .single();
+    setArtist(artistData);
+
+    // Fetch Analytics
+    const { data: analyticsData } = await supabase.rpc('get_artist_analytics', { artist_id_param: activeEntity.id });
+    setAnalytics(analyticsData);
+    setLoading(false);
   }
 
   useEffect(() => {
     if (activeEntity) {
-      fetchAnalytics();
+      fetchData();
     }
   }, [activeEntity]);
 
+  if (loading) return <div>{t('artist_dash_loading')}</div>;
+
   return (
     <div>
-      <div className="glass-panel" style={{ padding: '32px', marginBottom: '24px' }}>
-        <h2 style={{ margin: '0 0 16px 0' }}>{t('artist_dash_welcome').replace('{name}', activeEntity.name)}</h2>
-        <p style={{ color: 'var(--text-secondary)' }}>
-          {t('artist_dash_insights_desc')}
-        </p>
+      <div className="glass-panel" style={{ padding: '32px', marginBottom: '24px', display: 'flex', alignItems: 'center', gap: '24px', flexWrap: 'wrap' }}>
+        {artist?.image_url && <img src={artist.image_url} alt={artist.name} style={{ width: '100px', height: '100px', borderRadius: '50%', objectFit: 'cover' }} />}
+        <div style={{ flex: '1 1 200px' }}>
+            <h2 style={{ margin: '0 0 8px 0' }}>{artist?.name}</h2>
+            <div style={{ display: 'flex', gap: '16px' }}>
+                {artist?.spotify_url && <a href={artist.spotify_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}><Music size={24} /></a>}
+                {artist?.instagram_url && <a href={artist.instagram_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}><Instagram size={24} /></a>}
+                {artist?.soundcloud_url && <a href={artist.soundcloud_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}><Music size={24} /></a>}
+            </div>
+        </div>
       </div>
 
       <h3 style={{ marginBottom: '16px' }}>{t('artist_dash_analytics')}</h3>
-      {analyticsLoading ? (
-        <p>{t('artist_dash_loading_insights')}</p>
-      ) : analytics ? (
+      {analytics ? (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '24px' }}>
           <div className="glass-panel" style={{ padding: '24px' }}>
             <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-secondary)' }}>{t('artist_dash_total_reach')}</h4>

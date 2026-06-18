@@ -9,11 +9,43 @@ export default function ArtistLayout() {
   const location = useLocation();
   const navigate = useNavigate();
   const [activeEntity, setActiveEntity] = useState<Entity | null>(null);
+  const [claim, setClaim] = useState<any>(null);
+
+  useEffect(() => {
+    async function fetchClaim() {
+      if (activeEntity?.type === 'artist') {
+        const { data: artist } = await supabase
+          .from('artists')
+          .select('*')
+          .eq('id', activeEntity.id)
+          .single();
+        
+        const { data: claimRecord } = await supabase
+          .from('entity_claims')
+          .select('status')
+          .eq('entity_id', activeEntity.id)
+          .single();
+        
+        setClaim({
+          artists: artist,
+          status: claimRecord?.status,
+          artist_id: activeEntity.id
+        });
+      } else {
+        setClaim(null);
+      }
+    }
+    fetchClaim();
+  }, [activeEntity]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/');
   };
+
+  const handleEntityChange = React.useCallback((entity: Entity | null) => {
+    setActiveEntity(entity);
+  }, []);
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-color)' }}>
@@ -30,10 +62,10 @@ export default function ArtistLayout() {
 
       <main style={{ flex: 1, padding: '32px', overflowY: 'auto' }}>
         <header style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '32px' }}>
-          <EntitySwitcher onEntityChange={setActiveEntity} />
+          <EntitySwitcher onEntityChange={handleEntityChange} />
         </header>
         <div style={{ maxWidth: '800px', margin: '0 auto' }}>
-          {activeEntity ? <Outlet context={{ activeEntity }} /> : (
+          {activeEntity ? <Outlet context={{ activeEntity, claim }} /> : (
             <div style={{ padding: '40px', textAlign: 'center', color: 'var(--text-secondary)' }}>
               <h3>{t('artist_layout_no_profile')}</h3>
               <p>{t('artist_layout_manage_desc')}</p>

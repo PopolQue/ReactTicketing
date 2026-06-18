@@ -50,6 +50,18 @@ export interface StorageAdapter {
   deleteScanAccount(accountId: string): Promise<void>;
   incrementScanAccountLoginTimestamp(accountId: string, at: Date): Promise<void>;
 
+  // Friendships
+  createFriendship(userId: string, friendId: string): Promise<void>;
+  updateFriendshipStatus(friendshipId: string, status: 'pending' | 'accepted' | 'blocked'): Promise<void>;
+  getFriends(userId: string): Promise<any[]>;
+
+  // Ticket Transfers
+  createTransfer(ticketId: string, senderId: string, receiverId: string): Promise<void>;
+  finalizeTransfer(transferId: string): Promise<void>;
+
+  // Posts
+  createPost(post: { user_id: string; event_id: string; is_public: boolean }): Promise<void>;
+
   // Optional RPC overrides for atomicity
   validateTicketRpc?(ticketId: string, accountId: string, token: string, scannedAt: Date): Promise<any>;
 }

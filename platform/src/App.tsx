@@ -26,6 +26,10 @@ const ArtistProfile = React.lazy(() => import('./pages/marketplace/ArtistProfile
 const VenueProfile = React.lazy(() => import('./pages/marketplace/VenueProfile'))
 const OrganizerProfile = React.lazy(() => import('./pages/marketplace/OrganizerProfile'))
 const Wallet = React.lazy(() => import('./pages/fan/Wallet'))
+const Profile = React.lazy(() => import('./pages/fan/Profile'))
+const ProfileView = React.lazy(() => import('./pages/social/ProfileView'))
+const Friends = React.lazy(() => import('./pages/social/Friends'))
+const Followed = React.lazy(() => import('./pages/social/Followed'))
 const ResaleMarket = React.lazy(() => import('./pages/marketplace/ResaleMarket'))
 const ClaimPortal = React.lazy(() => import('./pages/marketplace/ClaimPortal'))
 const WriterApplication = React.lazy(() => import('./pages/marketplace/WriterApplication'))
@@ -68,6 +72,8 @@ import { ToastProvider } from './components/Toast'
 import { ErrorBoundary } from './components/ErrorBoundary'
 import ProtectedRoute from './components/ProtectedRoute'
 import { LanguageProvider } from './contexts/LanguageContext'
+import { AppHome } from './components/AppHome'
+import { SocialLayout } from './components/SocialLayout'
 
 import MarketplaceLayout from './components/MarketplaceLayout'
 
@@ -83,100 +89,110 @@ function App() {
     <LanguageProvider>
       <ErrorBoundary>
         <ToastProvider>
-        <Suspense fallback={<div style={{padding: '24px'}}>Loading module...</div>}>
-          <Routes>
-        {/* Public Fan Marketplace */}
-        <Route element={<MarketplaceLayout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/discover" element={<Discover />} />
-          <Route path="/events/:id" element={<EventDetails />} />
-          <Route path="/artist/:id" element={<ArtistProfile />} />
-          <Route path="/venue/:id" element={<VenueProfile />} />
-          <Route path="/organizer/:id" element={<OrganizerProfile />} />
-          
-          <Route element={<ProtectedRoute />}>
-            <Route path="/wallet" element={<Wallet />} />
-          </Route>
-          <Route path="/resale" element={<ResaleMarket />} />
-          <Route path="/blogs" element={<BlogFeed />} />
-          <Route path="/blogs/:slug" element={<BlogPost />} />
-          <Route path="/auth" element={<Auth />} />
-          <Route path="/claim" element={<ClaimPortal />} />
-          <Route path="/apply/writer" element={<WriterApplication />} />
-          <Route path="/scan/:id" element={<ScanPage />} />
-          <Route path="/for-artists" element={<ForArtists />} />
-          <Route path="/for-fans" element={<ForFans />} />
-          <Route path="/for-organizers" element={<ForOrganizers />} />
-          <Route path="/for-venues" element={<ForVenues />} />
-          <Route path="/for-writers" element={<ForWriters />} />
-          <Route path="/imprint" element={<Imprint />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/sitemap" element={<SitemapPage />} />
-          <Route path="/invite/:rawToken" element={<InviteAcceptPage />} />
-        </Route>
+          <Suspense fallback={<div style={{padding: '24px'}}>Loading module...</div>}>
+            <Routes>
+              {/* Public Fan Marketplace */}
+              <Route element={<MarketplaceLayout />}>
+                <Route path="/" element={<AppHome />} />
+                <Route path="/discover" element={<Discover />} />
+                <Route path="/events/:id" element={<EventDetails />} />
+                <Route path="/artist/:id" element={<ArtistProfile />} />
+                <Route path="/venue/:id" element={<VenueProfile />} />
+                <Route path="/organizer/:id" element={<OrganizerProfile />} />
+                <Route path="/resale" element={<ResaleMarket />} />
+                <Route path="/blogs" element={<BlogFeed />} />
+                <Route path="/blogs/:slug" element={<BlogPost />} />
+                <Route path="/auth" element={<Auth />} />
+                <Route path="/claim" element={<ClaimPortal />} />
+                <Route path="/apply/writer" element={<WriterApplication />} />
+                <Route path="/scan/:id" element={<ScanPage />} />
+                <Route path="/for-artists" element={<ForArtists />} />
+                <Route path="/for-fans" element={<ForFans />} />
+                <Route path="/for-organizers" element={<ForOrganizers />} />
+                <Route path="/for-venues" element={<ForVenues />} />
+                <Route path="/for-writers" element={<ForWriters />} />
+                <Route path="/imprint" element={<Imprint />} />
+                <Route path="/privacy" element={<Privacy />} />
+                <Route path="/terms" element={<Terms />} />
+                <Route path="/sitemap" element={<SitemapPage />} />
+                <Route path="/invite/:rawToken" element={<InviteAcceptPage />} />
+                
+                {/* Moved Profile inside MarketplaceLayout */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path="/wallet" element={<Wallet />} />
+                  <Route path="/profile" element={<Profile />} />
+                </Route>
+              </Route>
+              
+              <Route element={<ProtectedRoute />}>
+                <Route element={<SocialLayout />}>
+                  <Route path="/friends" element={<Friends />} />
+                  <Route path="/followed/:type" element={<Followed />} />
+                  <Route path="/profile/:id" element={<ProfileView />} />
+                </Route>
+              </Route>
 
-        {/* Organizer Portal */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/organizer" element={<OrganizerLayout />}>
-            <Route index element={<Dashboard />} />
-            <Route path="events" element={<EventsList />} />
-            <Route path="events/new" element={<CreateEvent />} />
-            <Route path="events/:id" element={<ManageEvent />} />
-            <Route path="events/:id/promos" element={<PromosFullPage />} />
-            <Route path="scan" element={<ScanTickets />} />
-            <Route path="settings" element={<Settings />} />
-            <Route path="marketing" element={<MarketingAndAnalytics />} />
-            <Route path="artists" element={<ArtistsList />} />
-            <Route path="invites" element={<OrganizerInviteManagerPage />} />
-            <Route path="blogs" element={<BlogsList />} />
-          </Route>
-        </Route>
+              {/* Organizer Portal */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/organizer" element={<OrganizerLayout />}>
+                  <Route index element={<Dashboard />} />
+                  <Route path="events" element={<EventsList />} />
+                  <Route path="events/new" element={<CreateEvent />} />
+                  <Route path="events/:id" element={<ManageEvent />} />
+                  <Route path="events/:id/promos" element={<PromosFullPage />} />
+                  <Route path="scan" element={<ScanTickets />} />
+                  <Route path="settings" element={<Settings />} />
+                  <Route path="marketing" element={<MarketingAndAnalytics />} />
+                  <Route path="artists" element={<ArtistsList />} />
+                  <Route path="invites" element={<OrganizerInviteManagerPage />} />
+                  <Route path="blogs" element={<BlogsList />} />
+                </Route>
+              </Route>
 
-        {/* Artist Portal */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/artist" element={<ArtistLayout />}>
-            <Route index element={<ArtistDashboard />} />
-            <Route path="edit" element={<ArtistEditProfile />} />
-          </Route>
+              {/* Artist Portal */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/artist" element={<ArtistLayout />}>
+                  <Route index element={<ArtistDashboard />} />
+                  <Route path="edit" element={<ArtistEditProfile />} />
+                </Route>
 
-          {/* Writer Portal */}
-          <Route path="/writer" element={<WriterLayout />}>
-            <Route index element={<WriterDashboard />} />
-          </Route>
-        </Route>
+                {/* Writer Portal */}
+                <Route path="/writer" element={<WriterLayout />}>
+                  <Route index element={<WriterDashboard />} />
+                </Route>
+              </Route>
 
-        {/* Venue Portal */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/venue" element={<VenueLayout />}>
-            <Route index element={<VenueDashboard />} />
-            <Route path="edit" element={<VenueSettings />} />
-          </Route>
-        </Route>
+              {/* Venue Portal */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/venue" element={<VenueLayout />}>
+                  <Route index element={<VenueDashboard />} />
+                  <Route path="edit" element={<VenueSettings />} />
+                </Route>
+              </Route>
 
-        {/* Public Support */}
-        <Route path="/support" element={<ContactSupport />} />
+              {/* Public Support */}
+              <Route path="/support" element={<ContactSupport />} />
 
-        {/* Admin Portal */}
-        <Route element={<ProtectedRoute allowedRoles={['admin', 'superadmin']} />}>
-          <Route path="/admin" element={<AdminLayout />}>
-            <Route index element={<div style={{ padding: '24px' }}><h1>Admin Dashboard</h1><p>Welcome to the Admit employee portal. Select an option from the sidebar to manage events or support tickets.</p></div>} />
-            <Route path="events" element={<EventReview />} />
-            <Route path="support" element={<SupportDesk />} />
-            <Route path="claims" element={<EntityClaims />} />
-            <Route path="invites" element={<AdminInviteManagerPage />} />
-            <Route path="writer-applications" element={<WriterApplicationsReview />} />
-          </Route>
-        </Route>
+              {/* Admin Portal */}
+              <Route element={<ProtectedRoute allowedRoles={['admin', 'superadmin']} />}>
+                <Route path="/admin" element={<AdminLayout />}>
+                  <Route index element={<div style={{ padding: '24px' }}><h1>Admin Dashboard</h1><p>Welcome to the Admit employee portal. Select an option from the sidebar to manage events or support tickets.</p></div>} />
+                  <Route path="events" element={<EventReview />} />
+                  <Route path="support" element={<SupportDesk />} />
+                  <Route path="claims" element={<EntityClaims />} />
+                  <Route path="invites" element={<AdminInviteManagerPage />} />
+                  <Route path="writer-applications" element={<WriterApplicationsReview />} />
+                </Route>
+              </Route>
 
-        {/* SuperAdmin Portal */}
-        <Route element={<ProtectedRoute allowedRoles={['superadmin']} />}>
-          <Route path="/superadmin" element={<SuperAdminLayout />}>
-            <Route index element={<div style={{ padding: '24px' }}><h1>SuperAdmin Dashboard</h1><p>Welcome to the top-level management dashboard. Here you can monitor system metrics and manage admins.</p></div>} />
-            <Route path="admins" element={<AdminManagement />} />
-          </Route>
-        </Route>
-      </Routes>
+              {/* SuperAdmin Portal */}
+              <Route element={<ProtectedRoute allowedRoles={['superadmin']} />}>
+                <Route path="/superadmin" element={<SuperAdminLayout />}>
+                  <Route index element={<div style={{ padding: '24px' }}><h1>SuperAdmin Dashboard</h1><p>Welcome to the top-level management dashboard. Here you can monitor system metrics and manage admins.</p></div>} />
+                  <Route path="admins" element={<AdminManagement />} />
+                </Route>
+              </Route>
+            </Routes>
           </Suspense>
         </ToastProvider>
       </ErrorBoundary>

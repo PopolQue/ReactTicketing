@@ -7,6 +7,7 @@ export default function ClaimsList({
   searchResults,
   onSelectEntity
 }: ClaimsListProps) {
+  const { t } = useLanguage();
   if (searchResults.length === 0) return null;
   return <div style={{
     marginTop: '24px',

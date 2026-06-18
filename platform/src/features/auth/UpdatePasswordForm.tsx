@@ -14,10 +14,16 @@ export default function UpdatePasswordForm({
     showToast
   } = useToast();
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Passwords do not match');
+      return;
+    }
     setLoading(true);
     setError(null);
     try {
@@ -67,7 +73,8 @@ export default function UpdatePasswordForm({
       flexDirection: 'column',
       gap: '16px'
     }}>
-        <input required type="password" placeholder={t("newPasswordMin6Chars")} className="input-field" value={password} onChange={e => setPassword(e.target.value)} minLength={6} />
+        <input required type="password" placeholder={t("newPasswordMin8Chars")} className="input-field" value={password} onChange={e => setPassword(e.target.value)} minLength={8} pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;|<>?,./`~]).{8,}$" title="Must contain at least 8 characters, including uppercase, lowercase, numbers, and symbols" />
+        <input required type="password" placeholder="Confirm new password" className="input-field" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} minLength={8} pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;|<>?,./`~]).{8,}$" title="Must contain at least 8 characters, including uppercase, lowercase, numbers, and symbols" />
         <button type="submit" disabled={loading} className="btn-primary" style={{
         marginTop: '8px',
         width: '100%',

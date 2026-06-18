@@ -58,10 +58,10 @@ export default function ArtistProfile() {
           filter: 'blur(20px) brightness(0.4)',
           transform: 'scale(1.1)'
         }} />
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1000px', margin: '0 auto', padding: '40px', display: 'flex', alignItems: 'flex-end', height: '100%', gap: '32px' }}>
-          <img src={imageUrl} alt={artist.name} style={{ width: '200px', height: '200px', borderRadius: '50%', objectFit: 'cover', border: '4px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 40px rgba(0,0,0,0.5)' }} />
-          <div style={{ paddingBottom: '20px' }}>
-            <h1 style={{ fontSize: '4rem', margin: '0 0 8px 0', fontWeight: 800, letterSpacing: '-2px', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>{artist.name}</h1>
+        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1000px', margin: '0 auto', padding: '40px', display: 'flex', alignItems: 'flex-end', height: '100%', gap: '32px', flexWrap: 'wrap' }}>
+          <img src={imageUrl} alt={artist.name} style={{ width: '200px', height: '200px', borderRadius: '50%', objectFit: 'cover', border: '4px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 40px rgba(0,0,0,0.5)', flexShrink: 0 }} />
+          <div style={{ paddingBottom: '20px', flex: '1 1 300px' }}>
+            <h1 style={{ fontSize: 'clamp(2rem, 8vw, 4rem)', margin: '0 0 8px 0', fontWeight: 800, letterSpacing: '-2px', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>{artist.name}</h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
               <FollowButton 
                 entityId={id!} 

@@ -28,8 +28,6 @@
     "react-dom": "19.2.7",
     "react-leaflet": "^5.0.0",
     "leaflet-draw": "^1.0.4",
-    "react-leaflet-draw-next": "file:./react-leaflet-draw-next",
-    "@types/leaflet-draw": "^1.0.13",
     "react-router-dom": "^6.30.4",
     "reactticket": "file:../reactticket",
     "reactticket-core": "file:../reactticket-core",

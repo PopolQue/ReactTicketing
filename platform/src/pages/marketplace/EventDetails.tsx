@@ -10,6 +10,7 @@ import { mapEventToAdmitConfig } from '../../lib/Admit/mappers';
 import CheckoutModal from '../../components/CheckoutModal';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { FollowButton } from '../../components/FollowButton';
+import { EventMapDisplay } from '../../components/EventMapDisplay';
 
 const ReactTicket = React.lazy(() => import('reactticket').then(m => ({ default: m.ReactTicket })));
 
@@ -120,6 +121,14 @@ export default function EventDetails() {
           </div>
 
           <EventAboutSection event={event} eventArtists={eventArtists} customAccentColor={customAccentColor} />
+
+          {(event.event_geometry || event.venues?.venue_geometry) && (
+            <EventMapDisplay 
+              geometry={event.event_geometry && Object.keys(event.event_geometry).length > 0 ? event.event_geometry : event.venues?.venue_geometry} 
+              position={[event.latitude || 52.52, event.longitude || 13.40]}
+              accentColor={customAccentColor}
+            />
+          )}
 
           {event.is_external ? (
             <div style={{ padding: '40px', textAlign: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '12px', marginTop: '32px' }}>

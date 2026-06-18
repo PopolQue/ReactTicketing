@@ -1,64 +1,98 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { MapContainer, TileLayer, FeatureGroup, useMapEvents } from 'react-leaflet';
-import { EditControl } from 'react-leaflet-draw-next'; // Re-enabled
+import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { MapContainer, TileLayer, FeatureGroup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
 import L from 'leaflet';
-import { useLanguage } from '../../contexts/LanguageContext';
+import 'leaflet-draw';
 import { useToast } from '../../components/Toast';
 
+interface EventGeometry {
+  type: string;
+  features: GeoJSON.Feature[];
+}
+
 interface InteractiveMapManagerProps {
-  event: any;
-  updateEvent: (updates: any) => Promise<{ error: any }>;
+  event: {
+    event_geometry?: EventGeometry;
+    latitude?: number;
+    longitude?: number;
+  };
+  updateEvent: (updates: { event_geometry: GeoJSON.GeoJsonObject }) => Promise<{ error: any }>;
+}
+
+function DrawController({ 
+  featureGroupRef, 
+  onCreated 
+}: { 
+  featureGroupRef: React.RefObject<L.FeatureGroup>, 
+  onCreated: (e: L.DrawEvents.Created) => void 
+}) {
+  const map = useMap();
+  useEffect(() => {
+    if (!featureGroupRef.current) return;
+
+    // Type casting for leaflet-draw extension
+    const drawControl = new (L.Control as any).Draw({
+      edit: { featureGroup: featureGroupRef.current },
+      draw: {
+        rectangle: true,
+        polygon: true,
+        marker: true,
+        circle: false,
+        circlemarker: false,
+        polyline: false
+      }
+    });
+    map.addControl(drawControl);
+
+    map.on(L.Draw.Event.CREATED, onCreated);
+
+    return () => {
+      map.removeControl(drawControl);
+      map.off(L.Draw.Event.CREATED, onCreated);
+    };
+  }, [map, featureGroupRef, onCreated]);
+  return null;
 }
 
 export default function InteractiveMapManager({ event, updateEvent }: InteractiveMapManagerProps) {
-  const { t } = useLanguage();
   const { showToast } = useToast();
   const [loading, setLoading] = useState(false);
-  const [geoJson, setGeoJson] = useState<any>(null);
   const featureGroupRef = useRef<L.FeatureGroup>(null);
 
   useEffect(() => {
     // Fix Leaflet icon issue
-    // This needs to be in useEffect to ensure L is loaded
     delete (L.Icon.Default.prototype as any)._getIconUrl;
     L.Icon.Default.mergeOptions({
       iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
       iconUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png',
       shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
     });
+  }, []);
 
-    if (event && event.event_geometry) {
-      setGeoJson(event.event_geometry);
-    }
-  }, [event]);
-
-  // Load initial GeoJSON layers when featureGroupRef and geoJson are available
+  // Load initial GeoJSON layers
   useEffect(() => {
-    if (geoJson && featureGroupRef.current) {
-      featureGroupRef.current.clearLayers(); // Clear existing layers
+    if (event.event_geometry && featureGroupRef.current) {
+      featureGroupRef.current.clearLayers(); 
 
-      L.geoJSON(geoJson).eachLayer((layer: any) => {
-        featureGroupRef.current?.addLayer(layer);
-      });
+      try {
+        L.geoJSON(event.event_geometry as GeoJSON.GeoJsonObject).eachLayer((layer: L.Layer) => {
+          featureGroupRef.current?.addLayer(layer);
+        });
+      } catch (e) {
+        console.error('Invalid GeoJSON detected:', e);
+      }
     }
-  }, [geoJson]); // Re-run when geoJson changes
+  }, [event.event_geometry]);
 
-  const onCreated = (e: any) => {
-    const layer = e.layer;
-    const geo = layer.toGeoJSON();
-    setGeoJson((prev: any) => ({
-      ...prev,
-      features: [...(prev?.features || []), geo]
-    }));
-  };
+  const onCreated = useCallback((e: L.DrawEvents.Created) => {
+    featureGroupRef.current?.addLayer(e.layer);
+  }, []);
 
   const handleSave = async () => {
     setLoading(true);
-    // Extract GeoJSON from the FeatureGroup layers
     const currentGeoJson = featureGroupRef.current?.toGeoJSON();
-    const { error } = await updateEvent({ event_geometry: currentGeoJson });
+    const { error } = await updateEvent({ event_geometry: currentGeoJson as GeoJSON.GeoJsonObject });
     if (error) {
       showToast('Error saving map data.', 'error');
     } else {
@@ -81,21 +115,7 @@ export default function InteractiveMapManager({ event, updateEvent }: Interactiv
         <MapContainer center={position} zoom={13} style={{ height: '100%', width: '100%' }}>
           <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <FeatureGroup ref={featureGroupRef}>
-            {featureGroupRef.current && (
-              <EditControl
-                position="topright"
-                onCreated={onCreated}
-                featureGroup={featureGroupRef.current}
-                draw={{
-                  rectangle: true,
-                  polygon: true,
-                  marker: true,
-                  circle: false,
-                  circlemarker: false,
-                  polyline: false
-                }}
-              />
-            )}
+            <DrawController featureGroupRef={featureGroupRef} onCreated={onCreated} />
           </FeatureGroup>
         </MapContainer>
       </div>

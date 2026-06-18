@@ -112,9 +112,6 @@ export default function PromoManager({
         {promos.length === 0 ? <p style={{
         color: 'var(--text-secondary)'
       }}>{t("noPromoCodesAddedYet")}</p> : promos.map((p: any) => {
-        const {
-          t
-        } = useLanguage();
         return <div key={p.id} style={{
           display: 'flex',
           justifyContent: 'space-between',
