@@ -19,8 +19,8 @@ export interface EventSettings {
   requireBuyerEmail: boolean;
   scanWindowMinutes?: number;
   adminKey: string;
-  scanSessionSecret: string;
-  qrSigningSecret: string;
+  scanSessionSecret?: string;
+  qrSigningSecret?: string;
   scanSessionTTLHours?: number;
   maxClockSkewSeconds?: number;
   locale?: string;

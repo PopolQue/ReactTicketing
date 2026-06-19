@@ -214,9 +214,6 @@ export function mapEventToAdmitConfig(event: any): any {
       maxOrderSize: event.settings?.maxOrderSize || 10,
       requireBuyerEmail: true,
       adminKey: '',
-      // ponytail: secrets come from Supabase RPCs, NOT client env vars
-      scanSessionSecret: '',
-      qrSigningSecret: '',
     },
     theme: {
       bgColor: event.theme_customization?.bgColor,

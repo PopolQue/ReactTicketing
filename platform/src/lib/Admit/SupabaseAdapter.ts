@@ -225,6 +225,24 @@ export class SupabaseAdapter implements StorageAdapter {
     if (error) throw error;
   }
 
+  async verifyQRPayload(qrPayload: string): Promise<boolean> {
+    const { data, error } = await this.supabase.rpc('verify_qr_payload', { p_qr_payload: qrPayload });
+    if (error) throw error;
+    return data;
+  }
+
+  async verifyScanToken(token: string, expectedEventId: string): Promise<any> {
+    const { data, error } = await this.supabase.rpc('verify_scan_token', { p_token: token, p_expected_event_id: expectedEventId });
+    if (error) throw error;
+    return data;
+  }
+
+  async createScanToken(payload: object): Promise<string> {
+    const { data, error } = await this.supabase.rpc('sign_scan_token', { p_payload: payload });
+    if (error) throw error;
+    return data;
+  }
+
   async validateTicketRpc(ticketId: string, accountId: string, token: string, scannedAt: Date): Promise<any> {
     const { data, error } = await this.supabase.rpc('validate_ticket', {
       p_ticket_id: ticketId,

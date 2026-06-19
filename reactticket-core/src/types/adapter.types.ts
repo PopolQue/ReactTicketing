@@ -64,4 +64,9 @@ export interface StorageAdapter {
 
   // Optional RPC overrides for atomicity
   validateTicketRpc?(ticketId: string, accountId: string, token: string, scannedAt: Date): Promise<any>;
+
+  // Server-side HMAC operations — when available, keeps signing secrets off the client
+  verifyQRPayload?(qrPayload: string): Promise<boolean>;
+  verifyScanToken?(token: string, expectedEventId: string): Promise<any>;
+  createScanToken?(payload: object): Promise<string>;
 }
