@@ -41,19 +41,19 @@ jobs:
           cd ../platform && npx vitest run --coverage
           
       - name: Upload Core Coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: reactticket-core-coverage
           path: reactticket-core/coverage/
 
       - name: Upload React Coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: reactticket-coverage
           path: reactticket/coverage/
 
       - name: Upload Platform Coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: platform-coverage
           path: platform/coverage/
