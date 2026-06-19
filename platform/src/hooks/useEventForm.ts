@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { supabase } from '../lib/supabase';
 import type { Entity } from '../components/EntitySwitcher';
 import { useNavigate } from 'react-router-dom';
+import { usePostHog } from '@posthog/react';
 
 export function useEventForm(activeEntity: Entity | null) {
   const navigate = useNavigate();
+  const posthog = usePostHog();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   
@@ -67,6 +69,16 @@ export function useEventForm(activeEntity: Entity | null) {
         .select();
 
       if (insertError) throw insertError;
+
+      posthog?.capture('event_created', {
+        event_id: data[0].id,
+        event_name: formData.title,
+        category: formData.category,
+        city: formData.city,
+        country: formData.country,
+        is_external: formData.is_external,
+        organizer_id: activeEntity.id,
+      });
 
       // Trigger notifications for followers
       await supabase.functions.invoke('notify-followers', {

@@ -9,6 +9,23 @@ describe('validation utils', () => {
     });
   });
 
+  describe('isValidUsername', () => {
+    it('should validate usernames correctly', () => {
+      expect(isValidUsername('user_123')).toBe(true);
+      expect(isValidUsername('ab')).toBe(false); // too short
+      expect(isValidUsername('user!name')).toBe(false); // invalid characters
+    });
+  });
+
+  describe('isValidPin', () => {
+    it('should validate pins correctly', () => {
+      expect(isValidPin('1234')).toBe(true);
+      expect(isValidPin('12345678')).toBe(true);
+      expect(isValidPin('123')).toBe(false); // too short
+      expect(isValidPin('123a')).toBe(false); // invalid characters
+    });
+  });
+
   describe('validateAdapterSettings (UT-GUARD-*)', () => {
     it('should error for LocalStorage in production scanner mode (UT-GUARD-01)', () => {
       const result = validateAdapterSettings('LocalStorageAdapter', 'scanner', 'production');

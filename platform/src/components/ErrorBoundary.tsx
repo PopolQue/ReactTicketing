@@ -1,6 +1,7 @@
 import { useLanguage } from "../contexts/LanguageContext";
 import React from 'react';
 import { AlertTriangle } from 'lucide-react';
+import posthog from 'posthog-js';
 interface Props {
   children?: React.ReactNode;
 }
@@ -21,6 +22,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
   public componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error('Uncaught error:', error, errorInfo);
+    posthog.captureException(error, { extra: { componentStack: errorInfo.componentStack } });
   }
   public render() {
 

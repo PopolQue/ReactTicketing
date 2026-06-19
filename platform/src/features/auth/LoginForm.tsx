@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
 import { useAuthRedirect } from '../../hooks/useAuthRedirect';
+import { usePostHog } from '@posthog/react';
 export default function LoginForm({
   onForgotPassword
 }: {
@@ -15,10 +16,11 @@ export default function LoginForm({
     showToast
   } = useToast();
   const { redirectAfterLogin } = useAuthRedirect();
+  const posthog = usePostHog();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  
+
   const handleSSO = async (provider: 'google' | 'apple') => {
     setLoading(true);
     try {
@@ -31,6 +33,7 @@ export default function LoginForm({
         }
       });
       if (error) throw error;
+      posthog?.capture('user_logged_in', { method: provider });
     } catch (err: any) {
       showToast("Error during SSO: " + err.message, 'error');
     } finally {
@@ -42,11 +45,13 @@ export default function LoginForm({
     e.preventDefault();
     setLoading(true);
     try {
-        const { error } = await supabase.auth.signInWithPassword({
+        const { data, error } = await supabase.auth.signInWithPassword({
             email,
             password
         });
         if (error) throw error;
+        posthog?.identify(data.user.id, { email: data.user.email });
+        posthog?.capture('user_logged_in', { method: 'email' });
         showToast("Logged in successfully!", 'success');
         await redirectAfterLogin();
     } catch (err: any) {

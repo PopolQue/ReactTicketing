@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">46.66% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>7/15</span>
+                <span class='fraction'>15/15</span>
             </div>
         
             
@@ -37,16 +37,16 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">25% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>1/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>7/14</span>
+                <span class='fraction'>14/14</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line low'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -90,34 +90,34 @@
 <a name='L25'></a><a href='#L25'>25</a>
 <a name='L26'></a><a href='#L26'>26</a>
 <a name='L27'></a><a href='#L27'>27</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export async function <span class="fstat-no" title="function not covered" >generateHMAC(k</span>ey: CryptoKey, data: string): Promise&lt;ArrayBuffer&gt; {
-  const encoder = <span class="cstat-no" title="statement not covered" >new TextEncoder();</span>
-<span class="cstat-no" title="statement not covered" >  return crypto.subtle.sign("HMAC", key, encoder.encode(data));</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">37x</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span></td><td class="text"><pre class="prettyprint lang-js">export async function generateHMAC(key: CryptoKey, data: string): Promise&lt;ArrayBuffer&gt; {
+  const encoder = new TextEncoder();
+  return crypto.subtle.sign("HMAC", key, encoder.encode(data));
 }
 &nbsp;
 export async function signToken(
@@ -134,12 +134,12 @@ export async function signToken(
   return `${data}.${signatureB64}`;
 }
 &nbsp;
-export async function <span class="fstat-no" title="function not covered" >verifyToken(t</span>oken: string, key: CryptoKey): Promise&lt;boolean&gt; {
-  const [headerB64, payloadB64, signatureB64] = <span class="cstat-no" title="statement not covered" >token.split(".");</span>
-  const data = <span class="cstat-no" title="statement not covered" >`${headerB64}.${payloadB64}`;</span>
-  const encoder = <span class="cstat-no" title="statement not covered" >new TextEncoder();</span>
-  const signature = <span class="cstat-no" title="statement not covered" >Uint8Array.from(atob(signatureB64.replace(/-/g, "+").replace(/_/g, "/")<span class="fstat-no" title="function not covered" >), (c</span>) =&gt; <span class="cstat-no" title="statement not covered" >c.charCodeAt(0))</span>;</span>
-<span class="cstat-no" title="statement not covered" >  return crypto.subtle.verify("HMAC", key, signature, encoder.encode(data));</span>
+export async function verifyToken(token: string, key: CryptoKey): Promise&lt;boolean&gt; {
+  const [headerB64, payloadB64, signatureB64] = token.split(".");
+  const data = `${headerB64}.${payloadB64}`;
+  const encoder = new TextEncoder();
+  const signature = Uint8Array.from(atob(signatureB64.replace(/-/g, "+").replace(/_/g, "/")), (c) =&gt; c.charCodeAt(0));
+  return crypto.subtle.verify("HMAC", key, signature, encoder.encode(data));
 }
 &nbsp;</pre></td></tr></table></pre>
 
@@ -148,7 +148,7 @@ export async function <span class="fstat-no" title="function not covered" >verif
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-15T14:12:54.433Z
+                at 2026-06-19T16:40:26.670Z
             </div>
         <script src="../prettify.js"></script>
         <script>

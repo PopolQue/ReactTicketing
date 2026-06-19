@@ -74,4 +74,127 @@ describe('TicketOverview Component', () => {
         expect(mockTransferTicket).toHaveBeenCalled();
     });
   });
+
+  it('handles ticket transfer validation error', async () => {
+    const mockTickets = [{ id: 't1', status: 'pending_delivery', personalization: {} }];
+    mockAdapter.getIssuedTickets.mockResolvedValue(mockTickets);
+    
+    render(
+      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+        <TicketOverview />
+      </ReactTicketProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('t1')).toBeDefined();
+    });
+
+    const transferButton = screen.getByLabelText('Transfer ticket t1');
+    fireEvent.click(transferButton);
+
+    const confirmButton = screen.getByText('Confirm');
+    fireEvent.click(confirmButton);
+    
+    expect(global.alert).toHaveBeenCalledWith('Please fill in all mandatory fields');
+  });
+
+  it('handles ticket transfer failure', async () => {
+    mockTransferTicket.mockRejectedValueOnce(new Error('Transfer failed API'));
+    const mockTickets = [{ id: 't1', status: 'pending_delivery', personalization: {} }];
+    mockAdapter.getIssuedTickets.mockResolvedValue(mockTickets);
+    
+    render(
+      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+        <TicketOverview />
+      </ReactTicketProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('t1')).toBeDefined();
+    });
+
+    const transferButton = screen.getByLabelText('Transfer ticket t1');
+    fireEvent.click(transferButton);
+
+    fireEvent.change(screen.getByLabelText('Recipient Name'), { target: { value: 'New Name' } });
+    fireEvent.change(screen.getByLabelText('Recipient Surname'), { target: { value: 'New Surname' } });
+    fireEvent.change(screen.getByLabelText('Recipient Email'), { target: { value: 'new@email.com' } });
+    fireEvent.change(screen.getByLabelText('Recipient Country'), { target: { value: 'US' } });
+    fireEvent.change(screen.getByLabelText('Recipient City'), { target: { value: 'NYC' } });
+    
+    const confirmButton = screen.getByText('Confirm');
+    fireEvent.click(confirmButton);
+    
+    await waitFor(() => {
+        expect(global.alert).toHaveBeenCalledWith('Transfer failed: Transfer failed API');
+    });
+  });
+
+  it('cancels transfer modal', async () => {
+    const mockTickets = [{ id: 't1', status: 'pending_delivery', personalization: {} }];
+    mockAdapter.getIssuedTickets.mockResolvedValue(mockTickets);
+    
+    render(
+      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+        <TicketOverview />
+      </ReactTicketProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('t1')).toBeDefined();
+    });
+
+    const transferButton = screen.getByLabelText('Transfer ticket t1');
+    fireEvent.click(transferButton);
+
+    const cancelButton = screen.getByText('Cancel');
+    fireEvent.click(cancelButton);
+    
+    expect(screen.queryByText('Transfer Ticket')).toBeNull();
+  });
+
+  it('handles ticket delivery successfully', async () => {
+    const mockTickets = [{ id: 't1', status: 'pending_delivery', personalization: {} }];
+    mockAdapter.getIssuedTickets.mockResolvedValue(mockTickets);
+    
+    render(
+      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+        <TicketOverview />
+      </ReactTicketProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('t1')).toBeDefined();
+    });
+
+    const deliverButton = screen.getByLabelText('Deliver QR for ticket t1');
+    fireEvent.click(deliverButton);
+    
+    await waitFor(() => {
+        expect(mockDeliverTicket).toHaveBeenCalledWith('t1');
+    });
+  });
+
+  it('handles ticket delivery failure', async () => {
+    mockDeliverTicket.mockRejectedValueOnce(new Error('Delivery error'));
+    const mockTickets = [{ id: 't1', status: 'pending_delivery', personalization: {} }];
+    mockAdapter.getIssuedTickets.mockResolvedValue(mockTickets);
+    
+    render(
+      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+        <TicketOverview />
+      </ReactTicketProvider>
+    );
+
+    await waitFor(() => {
+      expect(screen.getByText('t1')).toBeDefined();
+    });
+
+    const deliverButton = screen.getByLabelText('Deliver QR for ticket t1');
+    fireEvent.click(deliverButton);
+    
+    await waitFor(() => {
+        expect(global.alert).toHaveBeenCalledWith('Delivery failed: Delivery error');
+    });
+  });
 });

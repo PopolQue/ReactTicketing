@@ -7,6 +7,7 @@ import { usePromoCode } from '../../hooks/usePromoCode';
 import { useCheckout } from '../../hooks/useCheckout';
 import TicketPersonalizationForm from './TicketPersonalizationForm';
 import CheckoutSummary from './CheckoutSummary';
+import { usePostHog } from '@posthog/react';
 export default function CheckoutFlow({
   event,
   tiers,
@@ -28,6 +29,7 @@ export default function CheckoutFlow({
   const {
     showToast
   } = useToast();
+  const posthog = usePostHog();
   const [currentStep, setCurrentStep] = useState(0); // 0 = Forms, 1 = Review & Pay
   const [user, setUser] = useState<any>(null);
   const [guestEmail, setGuestEmail] = useState('');
@@ -68,12 +70,28 @@ export default function CheckoutFlow({
       showToast(`Please fill out all required fields for all tickets.`, 'error');
       return;
     }
+    posthog?.capture('checkout_step_completed', {
+      event_id: event.id,
+      event_name: event.name,
+      ticket_count: ticketForms.length,
+      subtotal_cents: subtotalCents,
+      final_total_cents: finalTotalCents,
+      promo_applied: !!appliedPromo,
+    });
     setCurrentStep(1);
   };
   const handlePurchaseExecution = () => {
     executePurchase({
       finalTotalCents,
       onSuccess: () => {
+        posthog?.capture('order_completed', {
+          event_id: event.id,
+          event_name: event.name,
+          ticket_count: ticketForms.length,
+          total_cents: finalTotalCents,
+          promo_applied: !!appliedPromo,
+          is_free: finalTotalCents === 0,
+        });
         showToast('Tickets purchased successfully! View them in your wallet.', 'success');
         onComplete();
       },

@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">62.5% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>10/16</span>
+                <span class='fraction'>16/16</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">80% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>30/40</span>
+                <span class='fraction'>32/40</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">57.14% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>8/14</span>
+                <span class='fraction'>14/14</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">62.5% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>10/16</span>
+                <span class='fraction'>16/16</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -178,7 +178,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
-<span class="cline-any cline-yes">4x</span>
+<span class="cline-any cline-yes">9x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
@@ -193,7 +193,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">7x</span>
+<span class="cline-any cline-yes">11x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -202,16 +202,8 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -219,8 +211,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -228,7 +228,7 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -292,16 +292,16 @@ export const TicketTypeRow: React.FC&lt;TicketTypeRowProps&gt; = ({
         {isEditing ? (
           &lt;PricingInput 
             valueCents={getPrice(editValues.pricing)}
-<span class="fstat-no" title="function not covered" >            onChangeCents={(c</span>ents) =&gt; <span class="cstat-no" title="statement not covered" >setEditValues({ ...editValues, pricing: { kind: 'paid', priceInCents: cents, currency: (editValues.pricing as any)?.currency || (type.pricing as any)?.currency || 'USD' } })}</span>
+            onChangeCents={(cents) =&gt; setEditValues({ ...editValues, pricing: { kind: 'paid', priceInCents: cents, currency: (editValues.pricing as any)?.currency || (type.pricing as any)?.currency || <span class="branch-2 cbranch-no" title="branch not covered" >'USD' }</span> })}
             currency={(editValues.pricing as any)?.currency || (type.pricing as any)?.currency || <span class="branch-2 cbranch-no" title="branch not covered" >'USD'}</span>
-<span class="fstat-no" title="function not covered" >            onCurrencyChange={(c</span>urr) =&gt; <span class="cstat-no" title="statement not covered" >setEditValues({ ...editValues, pricing: { kind: 'paid', priceInCents: getPrice(editValues.pricing), currency: curr } })}</span>
+            onCurrencyChange={(curr) =&gt; setEditValues({ ...editValues, pricing: { kind: 'paid', priceInCents: getPrice(editValues.pricing), currency: curr } })}
           /&gt;
         ) : type.pricing.kind === 'paid' ? formatCurrency(type.pricing.priceInCents, type.pricing.currency) : <span class="branch-1 cbranch-no" title="branch not covered" >'Free'}</span>
       &lt;/td&gt;
       &lt;td style={{ padding: '10px' }}&gt;
         {isEditing ? (
           &lt;div style={{ display: 'flex', gap: '5px', flexDirection: 'column' }}&gt;
-            &lt;input type="date" value={editTimes.validFromDate} <span class="fstat-no" title="function not covered" >onChange={e</span> =&gt; <span class="cstat-no" title="statement not covered" >setEditTimes({...editTimes, validFromDate: e.target.value})} a</span>ria-label={`Edit valid from date for ${type.name}`} /&gt;
+            &lt;input type="date" value={editTimes.validFromDate} onChange={e =&gt; setEditTimes({...editTimes, validFromDate: e.target.value})} aria-label={`Edit valid from date for ${type.name}`} /&gt;
             &lt;input type="time" value={editTimes.validFromTime} onChange={e =&gt; setEditTimes({...editTimes, validFromTime: e.target.value})} aria-label={`Edit valid from time for ${type.name}`} /&gt;
           &lt;/div&gt;
         ) : formatDateTimeForTimezone(type.validFrom)}
@@ -309,8 +309,8 @@ export const TicketTypeRow: React.FC&lt;TicketTypeRowProps&gt; = ({
       &lt;td style={{ padding: '10px' }}&gt;
         {isEditing ? (
           &lt;div style={{ display: 'flex', gap: '5px', flexDirection: 'column' }}&gt;
-            &lt;input type="date" value={editTimes.validUntilDate} <span class="fstat-no" title="function not covered" >onChange={e</span> =&gt; <span class="cstat-no" title="statement not covered" >setEditTimes({...editTimes, validUntilDate: e.target.value})} a</span>ria-label={`Edit valid until date for ${type.name}`} /&gt;
-            &lt;input type="time" value={editTimes.validUntilTime} <span class="fstat-no" title="function not covered" >onChange={e</span> =&gt; <span class="cstat-no" title="statement not covered" >setEditTimes({...editTimes, validUntilTime: e.target.value})} a</span>ria-label={`Edit valid until time for ${type.name}`} /&gt;
+            &lt;input type="date" value={editTimes.validUntilDate} onChange={e =&gt; setEditTimes({...editTimes, validUntilDate: e.target.value})} aria-label={`Edit valid until date for ${type.name}`} /&gt;
+            &lt;input type="time" value={editTimes.validUntilTime} onChange={e =&gt; setEditTimes({...editTimes, validUntilTime: e.target.value})} aria-label={`Edit valid until time for ${type.name}`} /&gt;
           &lt;/div&gt;
         ) : formatDateTimeForTimezone(type.validUntil)}
       &lt;/td&gt;
@@ -318,7 +318,7 @@ export const TicketTypeRow: React.FC&lt;TicketTypeRowProps&gt; = ({
         {isEditing ? &lt;input style={{ width: '100%' }} type="number" value={editValues.capacity ?? type.capacity} onChange={e =&gt; setEditValues({ ...editValues, capacity: parseInt(e.target.value) })} aria-label={`Edit capacity for ${type.name}`} /&gt; : type.capacity}
       &lt;/td&gt;
       &lt;td style={{ padding: '10px' }}&gt;
-        {isEditing ? &lt;input type="checkbox" checked={editValues.visible ?? type.visible} <span class="fstat-no" title="function not covered" >onChange={e</span> =&gt; <span class="cstat-no" title="statement not covered" >setEditValues({ ...editValues, visible: e.target.checked })} a</span>ria-label={`Edit visible status for ${type.name}`} /&gt; : (type.visible ? 'Visible' : <span class="branch-1 cbranch-no" title="branch not covered" >'Hidden')}</span>
+        {isEditing ? &lt;input type="checkbox" checked={editValues.visible ?? type.visible} onChange={e =&gt; setEditValues({ ...editValues, visible: e.target.checked })} aria-label={`Edit visible status for ${type.name}`} /&gt; : (type.visible ? 'Visible' : <span class="branch-1 cbranch-no" title="branch not covered" >'Hidden')}</span>
       &lt;/td&gt;
       &lt;td style={{ padding: '10px' }}&gt;
         {isEditing ? (
@@ -340,7 +340,7 @@ export const TicketTypeRow: React.FC&lt;TicketTypeRowProps&gt; = ({
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-15T14:12:53.103Z
+                at 2026-06-19T16:40:12.988Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

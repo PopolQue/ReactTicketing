@@ -2,6 +2,7 @@ import { useLanguage } from "../../contexts/LanguageContext";
 import React, { useState } from 'react';
 import { supabase } from '../../lib/supabase';
 import { useToast } from '../../components/Toast';
+import { usePostHog } from '@posthog/react';
 export default function SignUpForm({
   onSwitchToLogin
 }: {
@@ -13,6 +14,7 @@ export default function SignUpForm({
   const {
     showToast
   } = useToast();
+  const posthog = usePostHog();
   const [loading, setLoading] = useState(false);
   const [phone, setPhone] = useState('');
   const [otpMode, setOtpMode] = useState(false);
@@ -29,6 +31,7 @@ export default function SignUpForm({
         }
       });
       if (error) throw error;
+      posthog?.capture('user_signed_up', { method: provider });
     } catch (err: any) {
       showToast("Error during SSO: " + err.message, 'error');
     } finally {
@@ -40,14 +43,16 @@ export default function SignUpForm({
     setLoading(true);
     try {
       if (otpMode) {
-        const {
-          error
-        } = await supabase.auth.verifyOtp({
+        const { data, error } = await supabase.auth.verifyOtp({
           phone,
           token,
           type: 'sms'
         });
         if (error) throw error;
+        if (data.user) {
+          posthog?.identify(data.user.id, { phone: data.user.phone });
+          posthog?.capture('user_signed_up', { method: 'phone_otp' });
+        }
         // The listener in Navbar or App handles redirect on auth state change
       } else {
         const {

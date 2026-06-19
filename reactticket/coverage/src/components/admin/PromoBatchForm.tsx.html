@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">55.55% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>5/9</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>3/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">50% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>4/8</span>
+                <span class='fraction'>8/8</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">55.55% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>5/9</span>
+                <span class='fraction'>9/9</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -133,10 +133,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">7x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -145,18 +142,21 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -189,7 +189,7 @@ export const PromoBatchForm: React.FC&lt;PromoBatchFormProps&gt; = ({
   return (
     &lt;div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '15px', background: '#f8fafc', padding: '20px', borderRadius: '12px', marginBottom: '25px', border: '1px solid #e2e8f0' }} role="region" aria-label="Create Promo Code Batch Form"&gt;
       &lt;label style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '12px', fontWeight: 600 }}&gt;Batch Name
-        &lt;input placeholder="Summer Sale" value={newBatch.name} <span class="fstat-no" title="function not covered" >onChange={e</span> =&gt; <span class="cstat-no" title="statement not covered" >setNewBatch({...newBatch, name: e.target.value})} /&gt;</span>
+        &lt;input placeholder="Summer Sale" value={newBatch.name} onChange={e =&gt; setNewBatch({...newBatch, name: e.target.value})} /&gt;
       &lt;/label&gt;
       &lt;label style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '12px', fontWeight: 600 }}&gt;Count
         &lt;input type="number" value={newBatch.count} onChange={e =&gt; setNewBatch({...newBatch, count: parseInt(e.target.value)})} /&gt;
@@ -202,14 +202,14 @@ export const PromoBatchForm: React.FC&lt;PromoBatchFormProps&gt; = ({
       &lt;/label&gt;
       {newBatch.discountType === 'percent' &amp;&amp; (
           &lt;label style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '12px', fontWeight: 600 }}&gt;Discount %
-            &lt;input type="number" value={newBatch.discountValue} <span class="fstat-no" title="function not covered" >onChange={e</span> =&gt; <span class="cstat-no" title="statement not covered" >setNewBatch({...newBatch, discountValue: parseInt(e.target.value)})} /&gt;</span>
+            &lt;input type="number" value={newBatch.discountValue} onChange={e =&gt; setNewBatch({...newBatch, discountValue: parseInt(e.target.value)})} /&gt;
           &lt;/label&gt;
       )}
       {newBatch.discountType === 'free' &amp;&amp; (
-<span class="branch-1 cbranch-no" title="branch not covered" >          &lt;label style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '12px', fontWeight: 600 }}&gt;Applies To</span>
-            &lt;select value={newBatch.ticketTypeId} <span class="fstat-no" title="function not covered" >onChange={e</span> =&gt; <span class="cstat-no" title="statement not covered" >setNewBatch({...newBatch, ticketTypeId: e.target.value})}&gt;</span>
+          &lt;label style={{ display: 'flex', flexDirection: 'column', gap: '5px', fontSize: '12px', fontWeight: 600 }}&gt;Applies To
+            &lt;select value={newBatch.ticketTypeId} onChange={e =&gt; setNewBatch({...newBatch, ticketTypeId: e.target.value})}&gt;
               &lt;option value=""&gt;Select Ticket Type&lt;/option&gt;
-              {ticketTypes.<span class="fstat-no" title="function not covered" >map(t</span> =&gt; <span class="cstat-no" title="statement not covered" >&lt;option key={t.id} value={t.id}&gt;{t.name}&lt;/option&gt;)</span>}
+              {ticketTypes.map(t =&gt; &lt;option key={t.id} value={t.id}&gt;{t.name}&lt;/option&gt;)}
             &lt;/select&gt;
           &lt;/label&gt;
       )}
@@ -229,7 +229,7 @@ export const PromoBatchForm: React.FC&lt;PromoBatchFormProps&gt; = ({
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-15T14:12:53.103Z
+                at 2026-06-19T16:40:12.988Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

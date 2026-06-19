@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { supabase } from '../lib/supabase';
+import { usePostHog } from '@posthog/react';
 
 export function usePromoCode(eventId: string) {
+  const posthog = usePostHog();
   const [promoCode, setPromoCode] = useState('');
   const [appliedPromo, setAppliedPromo] = useState<any>(null);
   const [promoError, setPromoError] = useState('');
@@ -16,11 +18,16 @@ export function usePromoCode(eventId: string) {
       .eq('code', promoCode.toUpperCase())
       .eq('active', true)
       .single();
-    
+
     if (error || !data) {
       setPromoError('Invalid or expired promo code');
     } else {
       setAppliedPromo(data);
+      posthog?.capture('promo_code_applied', {
+        event_id: eventId,
+        discount_kind: data.discount_kind,
+        discount_value: data.discount_value,
+      });
     }
   };
 

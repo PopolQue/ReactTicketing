@@ -86,4 +86,56 @@ describe('PromoBatchForm Component', () => {
     
     expect(generateBatch).toHaveBeenCalled();
   });
+
+  it('calls setNewBatch when Batch Name changes', () => {
+    const setNewBatch = vi.fn();
+    render(
+      <PromoBatchForm 
+        newBatch={mockNewBatch} 
+        setNewBatch={setNewBatch} 
+        generateBatch={vi.fn()} 
+        ticketTypes={ticketTypes} 
+      />
+    );
+    
+    const nameInput = screen.getByLabelText('Batch Name');
+    fireEvent.change(nameInput, { target: { value: 'Winter Sale' } });
+    
+    expect(setNewBatch).toHaveBeenCalledWith({ ...mockNewBatch, name: 'Winter Sale' });
+  });
+
+  it('calls setNewBatch when discount value changes', () => {
+    const setNewBatch = vi.fn();
+    render(
+      <PromoBatchForm 
+        newBatch={mockNewBatch} 
+        setNewBatch={setNewBatch} 
+        generateBatch={vi.fn()} 
+        ticketTypes={ticketTypes} 
+      />
+    );
+    
+    const discountInput = screen.getByLabelText('Discount %');
+    fireEvent.change(discountInput, { target: { value: '25' } });
+    
+    expect(setNewBatch).toHaveBeenCalledWith({ ...mockNewBatch, discountValue: 25 });
+  });
+
+  it('calls setNewBatch when Applies To ticket type changes for free discount', () => {
+    const setNewBatch = vi.fn();
+    const mockFreeBatch = { ...mockNewBatch, discountType: 'free' as const };
+    render(
+      <PromoBatchForm 
+        newBatch={mockFreeBatch} 
+        setNewBatch={setNewBatch} 
+        generateBatch={vi.fn()} 
+        ticketTypes={ticketTypes} 
+      />
+    );
+    
+    const ticketSelect = screen.getByLabelText('Applies To');
+    fireEvent.change(ticketSelect, { target: { value: 't1' } });
+    
+    expect(setNewBatch).toHaveBeenCalledWith({ ...mockFreeBatch, ticketTypeId: 't1' });
+  });
 });

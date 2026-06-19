@@ -10,6 +10,7 @@ import { mapEventToAdmitConfig } from '../../lib/Admit/mappers';
 import CheckoutModal from '../../components/CheckoutModal';
 import { useLanguage } from '../../contexts/LanguageContext';
 import { FollowButton } from '../../components/FollowButton';
+import { usePostHog } from '@posthog/react';
 const EventMapDisplay = React.lazy(() => import('../../components/EventMapDisplay').then(m => ({ default: m.EventMapDisplay })));
 
 const ReactTicket = React.lazy(() => import('reactticket').then(m => ({ default: m.ReactTicket })));
@@ -19,6 +20,7 @@ export default function EventDetails() {
   const { id } = useParams();
   const navigate = useNavigate();
   const { showToast } = useToast();
+  const posthog = usePostHog();
 
   const { event, tiers, eventArtists, loading } = useEventData(id);
 
@@ -38,9 +40,16 @@ export default function EventDetails() {
       navigate('/auth');
       return "cancelled";
     }
-    
+
     order.buyerId = user.id;
-    
+
+    posthog?.capture('checkout_started', {
+      event_id: event?.id,
+      event_name: event?.name,
+      total_cents: order.totalCents,
+      ticket_count: order.items?.length,
+    });
+
     return new Promise((resolve) => {
       setCheckoutOrder(order);
       setCheckoutResolve(() => resolve);
@@ -68,6 +77,14 @@ export default function EventDetails() {
         organizer_id: event.organizer_id,
         user_agent: navigator.userAgent
       }]).then();
+      posthog?.capture('event_viewed', {
+        event_id: event.id,
+        event_name: event.name,
+        organizer_id: event.organizer_id,
+        category: event.category,
+        city: event.city,
+        is_external: event.is_external,
+      });
     }
   }, [event]);
 
@@ -88,6 +105,11 @@ export default function EventDetails() {
           amountCents={checkoutOrder.totalCents}
           itemName={`Order for ${event.name}`}
           onConfirm={async () => {
+            posthog?.capture('order_completed', {
+              event_id: event.id,
+              event_name: event.name,
+              total_cents: checkoutOrder.totalCents,
+            });
             checkoutResolve("confirmed");
             setCheckoutOrder(null);
             setCheckoutResolve(null);
@@ -137,12 +159,13 @@ export default function EventDetails() {
             <div style={{ padding: '40px', textAlign: 'center', backgroundColor: 'rgba(255,255,255,0.05)', borderRadius: '12px', marginTop: '32px' }}>
               <h3 style={{ marginBottom: '16px' }}>{t('marketplace.eventDetails.ticketsAvailableExternally')}</h3>
               {event.external_url ? (
-                <a 
-                  href={event.external_url} 
-                  target="_blank" 
-                  rel="noopener noreferrer" 
-                  className="btn-primary" 
+                <a
+                  href={event.external_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary"
                   style={{ display: 'inline-block', backgroundColor: customAccentColor, textDecoration: 'none' }}
+                  onClick={() => posthog?.capture('external_ticket_link_clicked', { event_id: event.id, event_name: event.name, external_url: event.external_url })}
                 >
                   {t('marketplace.eventDetails.getTickets')}
                 </a>

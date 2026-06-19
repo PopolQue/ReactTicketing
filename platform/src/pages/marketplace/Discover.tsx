@@ -13,9 +13,11 @@ import DiscoverTabs from '../../components/marketplace/DiscoverTabs';
 import CityFilterList from '../../components/marketplace/CityFilterList';
 import { useLanguage } from '../../contexts/LanguageContext';
 import EventMap from '../../components/marketplace/EventMap';
+import { usePostHog } from '@posthog/react';
 
 export default function Discover() {
   const { t } = useLanguage();
+  const posthog = usePostHog();
   const [activeTab, setActiveTab] = useState<TabType>('events');
   const [user, setUser] = useState<unknown>(null);
   const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
@@ -84,6 +86,7 @@ export default function Discover() {
               placeholder={getPlaceholder()}
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
+              onBlur={() => { if (searchQuery.trim()) posthog?.capture('event_searched', { query: searchQuery.trim(), tab: activeTab }); }}
               className="input-field"
               style={{ flexGrow: 1, padding: '16px 24px', fontSize: '1.1rem', borderRadius: '30px', border: '1px solid var(--border)', backgroundColor: 'rgba(255,255,255,0.05)' }}
             />

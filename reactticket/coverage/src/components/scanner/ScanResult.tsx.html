@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">76.08% </span>
+                <span class="strong">76.59% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>35/46</span>
+                <span class='fraction'>36/47</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">44.82% </span>
+                <span class="strong">43.33% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>13/29</span>
+                <span class='fraction'>13/30</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">71.42% </span>
+                <span class="strong">85.71% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>5/7</span>
+                <span class='fraction'>6/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">79.06% </span>
+                <span class="strong">77.27% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>34/43</span>
+                <span class='fraction'>34/44</span>
             </div>
         
             
@@ -171,7 +171,27 @@
 <a name='L106'></a><a href='#L106'>106</a>
 <a name='L107'></a><a href='#L107'>107</a>
 <a name='L108'></a><a href='#L108'>108</a>
-<a name='L109'></a><a href='#L109'>109</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
+<a name='L109'></a><a href='#L109'>109</a>
+<a name='L110'></a><a href='#L110'>110</a>
+<a name='L111'></a><a href='#L111'>111</a>
+<a name='L112'></a><a href='#L112'>112</a>
+<a name='L113'></a><a href='#L113'>113</a>
+<a name='L114'></a><a href='#L114'>114</a>
+<a name='L115'></a><a href='#L115'>115</a>
+<a name='L116'></a><a href='#L116'>116</a>
+<a name='L117'></a><a href='#L117'>117</a>
+<a name='L118'></a><a href='#L118'>118</a>
+<a name='L119'></a><a href='#L119'>119</a>
+<a name='L120'></a><a href='#L120'>120</a>
+<a name='L121'></a><a href='#L121'>121</a>
+<a name='L122'></a><a href='#L122'>122</a>
+<a name='L123'></a><a href='#L123'>123</a>
+<a name='L124'></a><a href='#L124'>124</a>
+<a name='L125'></a><a href='#L125'>125</a>
+<a name='L126'></a><a href='#L126'>126</a>
+<a name='L127'></a><a href='#L127'>127</a>
+<a name='L128'></a><a href='#L128'>128</a>
+<a name='L129'></a><a href='#L129'>129</a></td><td class="line-coverage quiet"><span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -241,6 +261,7 @@
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -251,6 +272,25 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -331,7 +371,7 @@ export const ScanResult: React.FC&lt;ScanResultProps&gt; = ({ result, onDismiss 
       if (result.result === 'admitted') {
         oscillator.frequency.setValueAtTime(880, audioContext.currentTime); // A5
         oscillator.start();
-<span class="fstat-no" title="function not covered" >        setTimeout(() =&gt; <span class="cstat-no" title="statement not covered" >o</span>scillator.stop(), 1</span>50);
+        setTimeout(() =&gt; oscillator.stop(), 150);
       } else <span class="missing-if-branch" title="else path not taken" >E</span>{
 <span class="cstat-no" title="statement not covered" >        oscillator.frequency.setValueAtTime(220, audioContext.currentTime); // A3</span>
 <span class="cstat-no" title="statement not covered" >        oscillator.start();</span>
@@ -348,13 +388,14 @@ export const ScanResult: React.FC&lt;ScanResultProps&gt; = ({ result, onDismiss 
   const getBackgroundColor = () =&gt; {
     switch (result.result) {
       case 'admitted': return '#22c55e'; // green-500
-<span class="branch-1 cbranch-no" title="branch not covered" >      case 'already_used': <span class="cstat-no" title="statement not covered" >return '#f59e0b'; // amber-500</span></span>
-<span class="branch-2 cbranch-no" title="branch not covered" >      case 'invalid':</span>
-<span class="branch-3 cbranch-no" title="branch not covered" >      case 'cancelled':</span>
-<span class="branch-4 cbranch-no" title="branch not covered" >      case 'expired':</span>
+<span class="branch-1 cbranch-no" title="branch not covered" >      case 'offline_queued': <span class="cstat-no" title="statement not covered" >return '#3b82f6'; // blue-500</span></span>
+<span class="branch-2 cbranch-no" title="branch not covered" >      case 'already_used': <span class="cstat-no" title="statement not covered" >return '#f59e0b'; // amber-500</span></span>
+<span class="branch-3 cbranch-no" title="branch not covered" >      case 'invalid':</span>
+<span class="branch-4 cbranch-no" title="branch not covered" >      case 'cancelled':</span>
+<span class="branch-5 cbranch-no" title="branch not covered" >      case 'expired':</span>
 <span class="cstat-no" title="statement not covered" >        return '#ef4444'; // red-500</span>
-<span class="branch-5 cbranch-no" title="branch not covered" >      case 'clock_skew_anomaly': <span class="cstat-no" title="statement not covered" >return '#eab308'; // yellow-500</span></span>
-<span class="branch-6 cbranch-no" title="branch not covered" >      default: <span class="cstat-no" title="statement not covered" >return '#6b7280'; // gray-500</span></span>
+<span class="branch-6 cbranch-no" title="branch not covered" >      case 'clock_skew_anomaly': <span class="cstat-no" title="statement not covered" >return '#eab308'; // yellow-500</span></span>
+<span class="branch-7 cbranch-no" title="branch not covered" >      default: <span class="cstat-no" title="statement not covered" >return '#6b7280'; // gray-500</span></span>
     }
   };
 &nbsp;
@@ -368,22 +409,41 @@ export const ScanResult: React.FC&lt;ScanResultProps&gt; = ({ result, onDismiss 
       justifyContent: 'center',
       alignItems: 'center',
       padding: '20px',
-      textAlign: 'center'
+      textAlign: 'center',
+      fontFamily: 'monospace' // Aesthetic for high-tech feel
     }}
     role="alert"
     aria-live="assertive"
     aria-label={`Scan Result: ${result.result.replace('_', ' ')}`}
     &gt;
-      &lt;h2&gt;{result.result.replace('_', ' ').toUpperCase()}&lt;/h2&gt;
+      &lt;h2 style={{ fontSize: '3rem', margin: '0 0 10px 0', textShadow: '0 0 10px rgba(0,0,0,0.5)' }}&gt;
+        {result.result.replace('_', ' ').toUpperCase()}
+      &lt;/h2&gt;
       {ticket &amp;&amp; (
-        &lt;div&gt;
-          &lt;p&gt;Ticket ID: {ticket.id}&lt;/p&gt;
-          &lt;p&gt;Type: {ticketTypeName}&lt;/p&gt;
-          &lt;p&gt;Buyer: {typeof ticket.personalization?.name === 'string' ? ticket.personalization.name : <span class="branch-1 cbranch-no" title="branch not covered" >'Unknown'} </span>{typeof ticket.personalization?.surname === 'string' ? ticket.personalization.surname : <span class="branch-1 cbranch-no" title="branch not covered" >''}&lt;/p&gt;</span>
+        &lt;div style={{ backgroundColor: 'rgba(0,0,0,0.3)', padding: '15px', borderRadius: '10px', width: '100%' }}&gt;
+          &lt;p style={{ margin: '5px 0' }}&gt;Ticket ID: {ticket.id}&lt;/p&gt;
+          &lt;p style={{ margin: '5px 0' }}&gt;Type: {ticketTypeName}&lt;/p&gt;
+          &lt;p style={{ margin: '5px 0' }}&gt;Buyer: {typeof ticket.personalization?.name === 'string' ? ticket.personalization.name : <span class="branch-1 cbranch-no" title="branch not covered" >'Unknown'} </span>{typeof ticket.personalization?.surname === 'string' ? ticket.personalization.surname : <span class="branch-1 cbranch-no" title="branch not covered" >''}&lt;/p&gt;</span>
         &lt;/div&gt;
       )}
-      &lt;p&gt;Scanned by: {result.scannedByAccountName}&lt;/p&gt;
-      &lt;button onClick={onDismiss} style={{ marginTop: '20px' }} aria-label="Scan Next Ticket"&gt;Scan Next&lt;/button&gt;
+      &lt;p style={{ marginTop: '15px' }}&gt;Scanned by: {result.scannedByAccountName}&lt;/p&gt;
+      &lt;button 
+        onClick={onDismiss} 
+        style={{ 
+          marginTop: '30px', 
+          padding: '15px 40px', 
+          fontSize: '1.2rem',
+          backgroundColor: '#000',
+          color: '#39ff14', // Acid green
+          border: '2px solid #39ff14',
+          borderRadius: '50px',
+          cursor: 'pointer',
+          boxShadow: '0 0 15px rgba(57, 255, 20, 0.5)'
+        }} 
+        aria-label="Scan Next Ticket"
+      &gt;
+        SCAN NEXT
+      &lt;/button&gt;
     &lt;/div&gt;
   );
 };
@@ -394,7 +454,7 @@ export const ScanResult: React.FC&lt;ScanResultProps&gt; = ({ result, onDismiss 
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-06-15T14:12:53.103Z
+                at 2026-06-19T16:40:12.988Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

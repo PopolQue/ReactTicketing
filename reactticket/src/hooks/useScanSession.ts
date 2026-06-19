@@ -112,7 +112,7 @@ export const useScanSession = (
     if (animationFrameId.current !== null) { // Check if still scanning
         animationFrameId.current = requestAnimationFrame(scanLoop);
     }
-  }, [videoRef, qrParser, authSession, scanService]);
+  }, [videoRef, qrParser, authSession, scanService, isOnline, adapter, eventId]);
 
   const startCamera = useCallback(async () => {
     if (animationFrameId.current !== null) {

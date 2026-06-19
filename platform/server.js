@@ -39,15 +39,26 @@ if (process.env.STRIPE_SECRET_KEY) {
   });
 }
 
+// PostHog server-side client factory
+async function createPostHogClient() {
+  if (!process.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN) return null;
+  const { PostHog } = await import('posthog-node');
+  return new PostHog(process.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN, {
+    host: process.env.VITE_PUBLIC_POSTHOG_HOST,
+    flushAt: 1,
+    flushInterval: 0,
+  });
+}
+
 // API Routes
 app.post('/api/create-payment-intent', async (req, res) => {
   if (!stripeClient) {
     return res.status(500).json({ error: 'Stripe is not configured on the server.' });
   }
-  
+
   try {
     const { amountCents, itemName } = req.body;
-    
+
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripeClient.paymentIntents.create({
       amount: amountCents,
@@ -58,6 +69,18 @@ app.post('/api/create-payment-intent', async (req, res) => {
         enabled: true,
       },
     });
+
+    const sessionId = req.headers['x-posthog-session-id'];
+    const distinctId = req.headers['x-posthog-distinct-id'];
+    if (distinctId) {
+      const posthog = await createPostHogClient();
+      if (posthog) {
+        await posthog.withContext({ sessionId, distinctId }, async () => {
+          posthog.capture({ event: 'payment_intent_created', properties: { amount_cents: amountCents, item_name: itemName } });
+        });
+        await posthog.shutdown().catch(() => {});
+      }
+    }
 
     res.send({
       clientSecret: paymentIntent.client_secret,
