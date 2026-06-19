@@ -6,7 +6,7 @@ import { TicketService } from 'reactticket-core/services/TicketService';
 import { PDFRenderer } from 'reactticket-core/services/PDFRenderer';
 
 export const useCheckout = (cartTotals: { subtotalCents: number, discountCents: number, totalCents: number }) => {
-  const { cart, dispatch, ticketTypes, adapter, event, onCheckout, onTicketIssued } = useReactTicket();
+  const { cart, dispatch, ticketTypes, adapter, event, onCheckout, onCheckoutComplete, onTicketIssued } = useReactTicket();
 
   const checkout = useCallback(async () => {
     if (cart.items.length === 0) {
@@ -83,7 +83,11 @@ export const useCheckout = (cartTotals: { subtotalCents: number, discountCents: 
                     dispatch({ type: 'CLEAR_PROMO' });
                     dispatch({ type: 'SET_PROMO_DETAILS', payload: null });
                 }
-                alert('Checkout successful!');
+                
+                if (onCheckoutComplete) {
+                    onCheckoutComplete(order);
+                }
+                // alert('Checkout successful!');
             } catch (err: any) {
                 console.error("Ticket issuance failed:", err);
                 alert(`Checkout failed: ${err.message}`);
@@ -92,7 +96,7 @@ export const useCheckout = (cartTotals: { subtotalCents: number, discountCents: 
     } else {
         console.error("onCheckout prop missing");
     }
-  }, [cart, ticketTypes, adapter, onCheckout, event, cartTotals, dispatch, onTicketIssued]);
+  }, [cart, ticketTypes, adapter, onCheckout, onCheckoutComplete, event, cartTotals, dispatch, onTicketIssued]);
 
   return { checkout };
 };

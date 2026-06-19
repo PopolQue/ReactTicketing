@@ -39,6 +39,7 @@ async prepareTickets(order: any): Promise<IssuedTicket[]> {
           validUntil: ticketType?.validUntil ? new Date(ticketType.validUntil) : undefined,
           status: "pending_delivery",
           pricePaidCents: item.unitPriceCents,
+          ownerId: order.buyerId,
       };
       tickets.push(ticket);
     }

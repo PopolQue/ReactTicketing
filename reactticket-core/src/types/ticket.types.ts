@@ -53,6 +53,7 @@ export interface IssuedTicket {
   readonly transferHistory?: TransferRecord[];
   readonly promoCodeUsed?: string;
   readonly pricePaidCents: number;
+  readonly ownerId?: string;
 }
 
 export interface TransferRecord {
@@ -72,6 +73,7 @@ export interface Order {
   readonly totalCents: number;
   readonly status: "pending" | "confirmed" | "refunded";
   readonly createdAt: Date;
+  readonly buyerId?: string;
 }
 
 export interface OrderItem {

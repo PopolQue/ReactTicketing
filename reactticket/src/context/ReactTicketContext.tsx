@@ -34,10 +34,11 @@ export interface ReactTicketContextValue {
   scanState: ScanState;
   dispatch: React.Dispatch<any>;
   onCheckout: (order: Order) => Promise<"confirmed" | "cancelled">;
+  onCheckoutComplete?: (order: Order) => void;
   onTicketIssued?: (ticket: IssuedTicket, assets: any) => void;
 }
 
-export type ReactTicketState = Omit<ReactTicketContextValue, 'dispatch' | 'onCheckout' | 'onTicketIssued'>;
+export type ReactTicketState = Omit<ReactTicketContextValue, 'dispatch' | 'onCheckout' | 'onTicketIssued' | 'onCheckoutComplete'>;
 
 export const ReactTicketContext = createContext<ReactTicketContextValue | undefined>(undefined);
 
@@ -46,6 +47,7 @@ export const ReactTicketProvider = ({
   event,
   adapter,
   onCheckout,
+  onCheckoutComplete,
   onTicketIssued,
   authSession
 }: {
@@ -53,6 +55,7 @@ export const ReactTicketProvider = ({
   event: EventConfig,
   adapter: StorageAdapter,
   onCheckout: (order: Order) => Promise<"confirmed" | "cancelled">,
+  onCheckoutComplete?: (order: Order) => void,
   onTicketIssued?: (ticket: IssuedTicket, assets: any) => void,
   authSession?: any,
 }) => {
@@ -92,7 +95,7 @@ export const ReactTicketProvider = ({
   }, [state.cart, event.id]);
 
   return (
-    <ReactTicketContext.Provider value={{ ...state, dispatch, onCheckout, onTicketIssued }}>
+    <ReactTicketContext.Provider value={{ ...state, dispatch, onCheckout, onCheckoutComplete, onTicketIssued }}>
       {children}
     </ReactTicketContext.Provider>
   );

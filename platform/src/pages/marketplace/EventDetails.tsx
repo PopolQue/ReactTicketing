@@ -39,6 +39,8 @@ export default function EventDetails() {
       return "cancelled";
     }
     
+    order.buyerId = user.id;
+    
     return new Promise((resolve) => {
       setCheckoutOrder(order);
       setCheckoutResolve(() => resolve);
@@ -90,7 +92,6 @@ export default function EventDetails() {
             setCheckoutOrder(null);
             setCheckoutResolve(null);
             showToast(t('marketplace.eventDetails.orderConfirmed'), 'success');
-            navigate('/wallet');
           }}
           onCancel={() => {
             checkoutResolve("cancelled");
@@ -158,6 +159,9 @@ export default function EventDetails() {
                     event={admitConfig}
                     adapter={adapter}
                     onCheckout={handleCheckout}
+                    onCheckoutComplete={() => {
+                      navigate('/wallet');
+                    }}
                     onTicketIssued={handleTicketIssued}
                     theme={theme}
                   />

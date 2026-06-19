@@ -18,6 +18,7 @@ interface ReactTicketProps {
   adapter: StorageAdapter;
   mode?: "storefront" | "scanner" | "admin" | "tickets" | "full";
   onCheckout: (order: Order) => Promise<"confirmed" | "cancelled">;
+  onCheckoutComplete?: (order: Order) => void;
   onTicketIssued?: (ticket: IssuedTicket, assets: any) => void;
   onScanEvent?: (scan: ScanEvent, ticket: IssuedTicket) => void;
   qrParser?: (data: Uint8ClampedArray, width: number, height: number) => { data: string } | null;
@@ -57,7 +58,7 @@ export const ReactTicket = (props: ReactTicketProps) => {
 
   return (
     <I18nProvider locale={props.locale || props.event?.settings?.locale} dictionary={props.dictionary}>
-      <ReactTicketProvider event={props.event} adapter={props.adapter} onCheckout={props.onCheckout} onTicketIssued={props.onTicketIssued} authSession={props.authSession}>
+      <ReactTicketProvider event={props.event} adapter={props.adapter} onCheckout={props.onCheckout} onCheckoutComplete={props.onCheckoutComplete} onTicketIssued={props.onTicketIssued} authSession={props.authSession}>
         <div className={`ReactTicket-root ${props.className || ''}`} style={props.style} role="region" aria-label="Ticket Management System">
           {renderMode(props.mode, props.qrParser)}
         </div>
