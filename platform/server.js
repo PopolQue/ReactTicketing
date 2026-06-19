@@ -24,7 +24,7 @@ app.use(express.json())
 // Security headers
 app.use((req, res, next) => {
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; frame-src 'self' https://js.stripe.com https://m.stripe.network; connect-src 'self' https://api.stripe.com wss: ws: https:;");
+  res.setHeader('Content-Security-Policy', "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; frame-src 'self' https://js.stripe.com https://m.stripe.network; connect-src 'self' https://api.stripe.com wss: ws: https: http://127.0.0.1:* http://localhost:*;");
   res.setHeader('X-Frame-Options', 'SAMEORIGIN'); // Required for some Stripe inner frames, or DENY
   res.setHeader('X-Content-Type-Options', 'nosniff');
   next();

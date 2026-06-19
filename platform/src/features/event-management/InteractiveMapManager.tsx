@@ -1,10 +1,18 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { MapContainer, TileLayer, FeatureGroup, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-draw/dist/leaflet.draw.css';
-import L from 'leaflet';
-import 'leaflet-draw';
 import { useToast } from '../../components/Toast';
+
+// Lazy load Leaflet (client-only)
+let L: any = null;
+const initLeaflet = async () => {
+  if (!L && typeof window !== 'undefined') {
+    L = (await import('leaflet')).default;
+    await import('leaflet-draw');
+  }
+  return L;
+};
 
 interface EventGeometry {
   type: string;
