@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS public.friendships (
 CREATE TABLE IF NOT EXISTS public.posts (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     user_id UUID REFERENCES auth.users(id) NOT NULL,
-    event_id TEXT REFERENCES public.events(id) NOT NULL,
+    event_id TEXT NOT NULL,
     is_public BOOLEAN DEFAULT true,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
 );
@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS public.posts (
 -- Ticket Transfers Table
 CREATE TABLE IF NOT EXISTS public.ticket_transfers (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    ticket_id TEXT REFERENCES public.tickets(id) NOT NULL,
+    ticket_id TEXT NOT NULL,
     sender_id UUID REFERENCES auth.users(id) NOT NULL,
     receiver_id UUID REFERENCES auth.users(id) NOT NULL,
     status TEXT CHECK (status IN ('pending', 'accepted', 'rejected')) DEFAULT 'pending',

@@ -1,8 +1,9 @@
 # ReactTicket
 
-A professional-grade, zero-dependency React + TypeScript ticketing module. This library provides a self-contained solution for event ticketing, covering the complete lifecycle from ticket generation and QR distribution to mobile scanner validation and analytics — all without external runtime dependencies.
+A professional-grade, zero-dependency React + TypeScript ticketing module. This library provides a self-contained solution for event ticketing, covering the complete lifecycle from ticket generation and QR distribution to mobile scanner validation, analytics, social features, and ticket transfers — all without external runtime dependencies.
 
-Developed for event organizers and festival planners.
+Developed for event organizers, festival planners, artists, venues, and community platforms.
+
 Powered by Web Crypto API and pure TypeScript Canvas rendering.
 
 ReactTicket is not a payment processor; it is a sophisticated ticket lifecycle controller that integrates seamlessly into any React-based website or application.
@@ -28,6 +29,8 @@ The demo runs entirely in your browser using `LocalStorage` (no backend required
 * **Full Lifecycle:** Configuration, Sales, Generation, Scan Validation, and Analytics Dashboard included.
 * **Production-Ready:** Includes a production adapter guard, secure PIN hashing (PBKDF2), and a strict backend state machine contract.
 * **Highly Flexible:** Pluggable `StorageAdapter` allows for immediate LocalStorage-based prototypes or production-grade REST/Database backends.
+* **Social Platform Features:** Friendships, user-to-user ticket transfers, event posts, and activity feeds built-in.
+* **Adaptive Entity Navigation:** Sidebars and interfaces automatically adapt based on the currently selected entity (organizer, artist, venue, writer, or fan).
 
 ## Documentation Hub
 
@@ -44,13 +47,14 @@ Choose your path based on your role and technical stack.
 * [**Architecture & Contracts**](docs/technical/architecture-contracts.md) — Domain model and backend invariants.
 * [**Security & Safety**](docs/technical/security-safety.md) — PBKDF2 hashing, HMAC signing, and session token formats.
 * [**API Reference**](docs/technical/api-reference.md) — Hooks, Components, and the `StorageAdapter` interface.
+* [**Database Relationships**](docs/technical/database-relationships.md) — Social and ticketing table schemas.
 * [**Theming Reference**](docs/technical/theming-reference.md) — CSS custom properties for style-agnostic integration.
 * [**Testing Strategy**](docs/technical/testing-strategy.md) — Unit and integration patterns to verify ticketing logic.
 
 ### Community & Maintenance
 
 * [**Project Philosophy**](docs/community/project-philosophy.md) — Vision, goals, and non-goals.
-* [**Roadmap**](docs/community/roadmap.md) — Post-launch plans and future features.
+* [**Roadmap**](docs/community/roadmap.md) — Completed features and future plans.
 * [**Contributing Guide**](docs/community/contributing.md) — Standards & code of conduct.
 * [**Changelog**](docs/community/changelog.md) — Release history.
 
@@ -70,7 +74,7 @@ We maintain test coverage across all packages to ensure stability and quality. T
 
 | Package | Statement Coverage | Status |
 | :--- | :--- | :--- |
-| `@platform` | 91.57% | Healthy |
+| `@platform` | 92.18% | Excellent |
 | `reactticket-core` | 79.55% | Healthy |
 | `reactticket` | 12.53% | Needs Improvement |
 
