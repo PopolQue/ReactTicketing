@@ -6,13 +6,13 @@ jobs:
   test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       
-      - uses: supabase/setup-cli@v1
+      - uses: supabase/setup-cli@v2
         with:
           version: latest
           
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v6
         with:
           node-version: 22
           
@@ -41,19 +41,19 @@ jobs:
           cd ../platform && npx vitest run --coverage
           
       - name: Upload Core Coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: reactticket-core-coverage
           path: reactticket-core/coverage/
 
       - name: Upload React Coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: reactticket-coverage
           path: reactticket/coverage/
 
       - name: Upload Platform Coverage
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: platform-coverage
           path: platform/coverage/

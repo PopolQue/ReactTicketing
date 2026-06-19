@@ -11,10 +11,11 @@ export class AuthService {
   private get keyPromise(): Promise<CryptoKey> {
     if (!this._keyPromise) {
       if (!this.eventSettings || !this.eventSettings.scanSessionSecret) {
-          console.warn("[ADMIT] AuthService initialized without scanSessionSecret — scanner auth will fail");
-          this._keyPromise = Promise.reject("Missing scanSessionSecret");
+        // ponytail: secrets loaded server-side via adapter RPCs in production
+        // Local HMAC fallback only needed for dev/localStorage adapters
+        this._keyPromise = Promise.reject("Missing scanSessionSecret");
       } else {
-          this._keyPromise = this.deriveKey(this.eventSettings.scanSessionSecret);
+        this._keyPromise = this.deriveKey(this.eventSettings.scanSessionSecret);
       }
     }
     return this._keyPromise;
@@ -36,11 +37,11 @@ export class AuthService {
     }
   }
 
-  getSecret(): string {
+  getSecret(): string | undefined {
     return this.eventSettings.scanSessionSecret;
   }
 
-  getQrSecret(): string {
+  getQrSecret(): string | undefined {
     return this.eventSettings.qrSigningSecret || this.eventSettings.scanSessionSecret;
   }
 
@@ -92,6 +93,22 @@ export class AuthService {
   }
 
   async assertScanSession(token: string, eventId: string): Promise<ScanSession> {
+    if (this.adapter.verifyScanToken) {
+      const result = await this.adapter.verifyScanToken(token, eventId);
+      if (!result || !result.valid) throw new Error(result?.reason || "Invalid scan session");
+      return {
+        accountId: result.account_id,
+        accountUsername: result.account_username,
+        eventId: result.event_id,
+        assignedLocation: result.assigned_location,
+        credentialVersion: result.credential_version,
+        issuedAt: result.issued_at,
+        expiresAt: result.expires_at,
+        token,
+        role: 'scan'
+      };
+    }
+
     const key = await this.keyPromise;
     const isValid = await verifyToken(token, key);
     if (!isValid) throw new Error("Invalid token signature");
@@ -174,8 +191,9 @@ export class AuthService {
       role: 'scan',
     };
     
-    const key = await this.keyPromise;
-    const token = await signToken(header, sessionPayload, key);
+    const token = this.adapter.createScanToken
+      ? await this.adapter.createScanToken(sessionPayload)
+      : await signToken(header, sessionPayload, await this.keyPromise);
     
     await this.adapter.incrementScanAccountLoginTimestamp(account.id, new Date(issuedAt));
 
