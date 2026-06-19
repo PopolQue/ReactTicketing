@@ -21,7 +21,7 @@ export default function WriterLayout() {
         <h2 style={{ margin: '0 0 32px 0' }}>{t('writer_layout_title').split(' ')[0]}<span style={{ color: 'var(--accent)' }}>{t('writer_layout_title').split(' ').pop()}</span></h2>
         
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-          <Link to="/writer" className={`btn-nav ${location.pathname === '/writer' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px' }}>{t('writer_layout_dashboard')}</Link>
+          <button onClick={() => navigate('/writer')} className={`btn-nav ${location.pathname === '/writer' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('writer_layout_dashboard')}</button>
         </nav>
         
         <button onClick={handleLogout} className="btn-secondary" style={{ marginTop: 'auto' }}>{t('writer_layout_logout')}</button>

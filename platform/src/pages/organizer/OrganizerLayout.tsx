@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Outlet, Link, useLocation, useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import './Organizer.css';
@@ -12,9 +12,39 @@ export default function OrganizerLayout() {
   const navigate = useNavigate();
   const [activeEntity, setActiveEntity] = useState<Entity | null>(null);
 
+  useEffect(() => {
+    console.log('Active entity changed:', activeEntity);
+  }, [activeEntity]);
+
   const handleLogout = async () => {
     await supabase.auth.signOut();
     navigate('/');
+  };
+
+  const renderSidebarNav = () => {
+    if (activeEntity?.type === 'fan') {
+      return (
+        <nav className="org-nav" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+          <button onClick={() => navigate('/discover')} className={`org-nav-link ${location.pathname === '/discover' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('nav.discover')}</button>
+          <button onClick={() => navigate('/friends')} className={`org-nav-link ${location.pathname === '/friends' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('nav.friends')}</button>
+          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid var(--border)' }} />
+          <button onClick={() => navigate('/profile')} className={`org-nav-link ${location.pathname === '/profile' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('nav.profile')}</button>
+          <button onClick={() => navigate('/wallet')} className={`org-nav-link ${location.pathname === '/wallet' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('nav.wallet')}</button>
+        </nav>
+      );
+    }
+    // Default Organizer Portal Sidebar
+    return (
+      <nav className="org-nav" style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+        <button onClick={() => navigate('/organizer')} className={`org-nav-link ${location.pathname === '/organizer' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t("organizer.layout.dashboard")}</button>
+        <button onClick={() => navigate('/organizer/events')} className={`org-nav-link ${location.pathname.includes('/events') ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t("organizer.layout.myEvents")}</button>
+        <button onClick={() => navigate('/organizer/artists')} className={`org-nav-link ${location.pathname.includes('/artists') ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t("organizer.layout.artists")}</button>
+        <button onClick={() => navigate('/organizer/blogs')} className={`org-nav-link ${location.pathname.includes('/blogs') ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t("organizer.layout.blogs")}</button>
+        <button onClick={() => navigate('/organizer/scan')} className={`org-nav-link ${location.pathname.includes('/scan') ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t("organizer.layout.scanTickets")}</button>
+        <button onClick={() => navigate('/organizer/marketing')} className={`org-nav-link ${location.pathname.includes('/marketing') ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t("organizer.layout.marketing")}</button>
+        <button onClick={() => navigate('/organizer/settings')} className={`org-nav-link ${location.pathname.includes('/settings') ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t("organizer.layout.settings")}</button>
+      </nav>
+    );
   };
 
   return (
@@ -23,17 +53,9 @@ export default function OrganizerLayout() {
       <div className="org-layout" style={{ flex: 1, height: 'auto' }}>
         <aside className="org-sidebar glass-panel">
           <div className="org-logo">
-            <h2>Admit<span style={{ color: 'var(--accent)' }}></span></h2>
+            <h2>{activeEntity?.name || 'Admit'}</h2>
           </div>
-          <nav className="org-nav">
-            <Link to="/organizer" className={`org-nav-link ${location.pathname === '/organizer' ? 'active' : ''}`}>{t("organizer.layout.dashboard")}</Link>
-            <Link to="/organizer/events" className={`org-nav-link ${location.pathname.includes('/events') ? 'active' : ''}`}>{t("organizer.layout.myEvents")}</Link>
-            <Link to="/organizer/artists" className={`org-nav-link ${location.pathname.includes('/artists') ? 'active' : ''}`}>{t("organizer.layout.artists")}</Link>
-            <Link to="/organizer/blogs" className={`org-nav-link ${location.pathname.includes('/blogs') ? 'active' : ''}`}>{t("organizer.layout.blogs")}</Link>
-            <Link to="/organizer/scan" className={`org-nav-link ${location.pathname.includes('/scan') ? 'active' : ''}`}>{t("organizer.layout.scanTickets")}</Link>
-            <Link to="/organizer/marketing" className={`org-nav-link ${location.pathname.includes('/marketing') ? 'active' : ''}`}>{t("organizer.layout.marketing")}</Link>
-            <Link to="/organizer/settings" className={`org-nav-link ${location.pathname.includes('/settings') ? 'active' : ''}`}>{t("organizer.layout.settings")}</Link>
-          </nav>
+          {renderSidebarNav()}
         </aside>
         <main className="org-content">
           <header className="org-header glass-panel" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

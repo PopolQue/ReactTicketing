@@ -47,17 +47,37 @@ export default function ArtistLayout() {
     setActiveEntity(entity);
   }, []);
 
+  const renderSidebarNav = () => {
+    if (activeEntity?.type === 'fan') {
+      return (
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+          <button onClick={() => navigate('/discover')} className={`btn-nav ${location.pathname === '/discover' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('nav.discover')}</button>
+          <button onClick={() => navigate('/friends')} className={`btn-nav ${location.pathname === '/friends' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('nav.friends')}</button>
+          <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid var(--border)' }} />
+          <button onClick={() => navigate('/profile')} className={`btn-nav ${location.pathname === '/profile' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('nav.profile')}</button>
+          <button onClick={() => navigate('/wallet')} className={`btn-nav ${location.pathname === '/wallet' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('nav.wallet')}</button>
+        </nav>
+      );
+    }
+    // Default Artist Portal Sidebar
+    return (
+      <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
+        <button onClick={() => navigate('/artist')} className={`btn-nav ${location.pathname === '/artist' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('artist_layout_dashboard')}</button>
+        <button onClick={() => navigate('/artist/edit')} className={`btn-nav ${location.pathname === '/artist/edit' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('artist_layout_edit_profile')}</button>
+        <hr style={{ margin: '16px 0', border: 'none', borderTop: '1px solid var(--border)' }} />
+        <button onClick={() => navigate('/profile')} className={`btn-nav ${location.pathname === '/profile' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('nav.profile')}</button>
+        <button onClick={() => navigate('/wallet')} className={`btn-nav ${location.pathname === '/wallet' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('nav.wallet')}</button>
+      </nav>
+    );
+  };
+
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-color)' }}>
       <aside className="glass-panel" style={{ width: '250px', padding: '24px', display: 'flex', flexDirection: 'column' }}>
-        <h2 style={{ margin: '0 0 32px 0' }}>{t('artist_layout_title').replace(' Portal', '')}<span style={{ color: 'var(--accent)' }}>{t('artist_layout_title').split(' ').pop()}</span></h2>
+        <h2 style={{ margin: '0 0 32px 0' }}>{activeEntity?.name || t('nav.title')}</h2>
+        {renderSidebarNav()}
         
-        <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-          <Link to="/artist" className={`btn-nav ${location.pathname === '/artist' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px' }}>{t('artist_layout_dashboard')}</Link>
-          <Link to="/artist/edit" className={`btn-nav ${location.pathname === '/artist/edit' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px' }}>{t('artist_layout_edit_profile')}</Link>
-        </nav>
-        
-        <button onClick={handleLogout} className="btn-secondary" style={{ marginTop: 'auto' }}>{t('artist_layout_logout')}</button>
+        <button onClick={handleLogout} className="btn-secondary" style={{ marginTop: 'auto', borderColor: 'var(--text-danger)', color: 'var(--text-danger)' }}>{t('nav.logout')}</button>
       </aside>
 
       <main style={{ flex: 1, padding: '32px', overflowY: 'auto' }}>

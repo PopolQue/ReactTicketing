@@ -3,12 +3,12 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { DropdownMenu } from './DropdownMenu';
-import { ChevronDown, Building2, User, MapPin, PenTool } from 'lucide-react';
+import { ChevronDown, Building2, User, MapPin, PenTool, Heart } from 'lucide-react';
 
 export type Entity = {
   id: string;
   name: string;
-  type: 'organizer' | 'artist' | 'venue' | 'writer';
+  type: 'organizer' | 'artist' | 'venue' | 'writer' | 'fan';
 };
 
 export default React.memo(function EntitySwitcher({
@@ -39,6 +39,11 @@ export default React.memo(function EntitySwitcher({
     }
     const fetchedEntities: Entity[] = [];
 
+    // Fetch Fan Profile (User itself)
+    const { data: profile, error: profileError } = await supabase.from('user_profiles').select('id, username').eq('id', user.id).single();
+    console.log('Fan profile fetch:', { profile, profileError });
+    if (profile) fetchedEntities.push({ id: profile.id, name: profile.username, type: 'fan' });
+
     // Fetch Organizers
     const { data: orgs } = await supabase.from('organizers').select('id, name').eq('claimed_by_user_id', user.id);
     if (orgs) orgs.forEach(o => fetchedEntities.push({ ...o, type: 'organizer' }));
@@ -56,6 +61,7 @@ export default React.memo(function EntitySwitcher({
     if (writers) writers.forEach(w => fetchedEntities.push({ id: w.id, name: w.pen_name, type: 'writer' }));
     
     setEntities(fetchedEntities);
+    // ...
     const storedId = localStorage.getItem('active_entity_id');
     let selectedEntity = fetchedEntities.find(e => e.id === storedId);
 
@@ -81,10 +87,7 @@ export default React.memo(function EntitySwitcher({
     // Update parent only after local state is updated to ensure stability
     if (onEntityChange) onEntityChange(entity);
     
-    // Only navigate if the route type doesn't match the new entity type
-    if (!location.pathname.startsWith(`/${entity.type}`)) {
-      navigate(`/${entity.type}`);
-    }
+    // REMOVED: Automatic navigation logic
   };
 
   const getIcon = (type: Entity['type']) => {
@@ -93,12 +96,14 @@ export default React.memo(function EntitySwitcher({
       case 'artist': return <User size={16} />;
       case 'venue': return <MapPin size={16} />;
       case 'writer': return <PenTool size={16} />;
+      case 'fan': return <Heart size={16} />;
     }
   };
 
   if (loading) return <span style={{ color: 'var(--text-secondary)' }}>{t("loadingProfiles")}</span>;
   if (entities.length === 0) return <span style={{ color: 'var(--text-secondary)' }}>{t("noClaimedProfiles")}</span>;
 
+  // ... inside EntitySwitcher ...
   return (
     <DropdownMenu 
       trigger={
@@ -109,17 +114,19 @@ export default React.memo(function EntitySwitcher({
         </div>
       }
     >
-      {['organizer', 'artist', 'venue', 'writer'].map(type => {
+      {['fan', 'organizer', 'artist', 'venue', 'writer'].map(type => {
         const typeEntities = entities.filter(e => e.type === type);
         if (typeEntities.length === 0) return null;
         
         return (
           <div key={type} style={{ marginBottom: '16px' }}>
-            <h4 style={{ textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t(type + "s")}</h4>
+            <h4 style={{ textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t(type === 'fan' ? 'fan' : type + "s")}</h4>
             {typeEntities.map(e => (
               <button 
                 key={e.id} 
-                onClick={() => handleSelect(e)}
+                onClick={() => {
+                  handleSelect(e);
+                }}
                 style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', background: 'none', border: 'none', padding: '8px', cursor: 'pointer', textAlign: 'left', borderRadius: '4px', color: activeEntity?.id === e.id ? 'var(--accent)' : 'var(--text-primary)' }}
               >
                 {getIcon(e.type)}

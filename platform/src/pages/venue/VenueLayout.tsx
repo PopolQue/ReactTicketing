@@ -21,8 +21,8 @@ export default function VenueLayout() {
         <h2 style={{ margin: '0 0 32px 0' }}>{t('venue_layout_title').split(' ')[0]}<span style={{ color: 'var(--accent)' }}>{t('venue_layout_title').split(' ').pop()}</span></h2>
         
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
-          <Link to="/venue" className={`btn-nav ${location.pathname === '/venue' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px' }}>{t('venue_layout_dashboard')}</Link>
-          <Link to="/venue/edit" className={`btn-nav ${location.pathname === '/venue/edit' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px' }}>{t('venue_layout_edit_profile')}</Link>
+          <button onClick={() => navigate('/venue')} className={`btn-nav ${location.pathname === '/venue' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('venue_layout_dashboard')}</button>
+          <button onClick={() => navigate('/venue/edit')} className={`btn-nav ${location.pathname === '/venue/edit' ? 'active' : ''}`} style={{ padding: '12px', textAlign: 'left', borderRadius: '8px', background: 'none', border: 'none', cursor: 'pointer', color: 'inherit', width: '100%' }}>{t('venue_layout_edit_profile')}</button>
         </nav>
         
         <button onClick={handleLogout} className="btn-secondary" style={{ marginTop: 'auto' }}>{t('venue_layout_logout')}</button>
