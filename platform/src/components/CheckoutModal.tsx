@@ -30,7 +30,7 @@ export default function CheckoutModal({
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    if (!stripeKey) {
+    if (!stripeKey || amountCents === 0) {
       setLoading(false);
       return;
     }
@@ -61,6 +61,33 @@ export default function CheckoutModal({
     }
     fetchIntent();
   }, [amountCents, itemName]);
+  if (amountCents === 0) {
+    return <Modal isOpen={true} onClose={onCancel} title={t("secureCheckout")} maxWidth="400px">
+        <div style={{ textAlign: 'center' }}>
+          <p style={{ color: 'var(--text-secondary)', marginBottom: '24px' }}>
+            {t("paymentFor")} <strong>{itemName}</strong>.
+          </p>
+          <div style={{
+            padding: '16px',
+            backgroundColor: 'rgba(255,255,255,0.05)',
+            borderRadius: '8px',
+            marginBottom: '24px',
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}>
+            <strong>{t("total")}</strong>
+            <strong style={{ fontSize: '1.2rem', color: 'var(--accent)' }}>€0.00</strong>
+          </div>
+          <p style={{ marginBottom: '24px', color: 'var(--text-secondary)' }}>No payment details required for free orders.</p>
+          <div style={{ display: 'flex', gap: '12px' }}>
+            <button type="button" onClick={onCancel} className="btn-secondary" style={{ flex: 1 }}>{t("cancel")}</button>
+            <button type="button" onClick={() => onConfirm()} className="btn-primary" style={{ flex: 1, backgroundColor: '#10b981' }}>
+              Confirm Order
+            </button>
+          </div>
+        </div>
+      </Modal>;
+  }
   if (!stripeKey) {
     return <MockCheckoutForm eventId={eventId} amountCents={amountCents} itemName={itemName} onConfirm={onConfirm} onCancel={onCancel} />;
   }

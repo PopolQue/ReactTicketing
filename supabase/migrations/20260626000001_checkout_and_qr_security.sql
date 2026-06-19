@@ -63,7 +63,7 @@ BEGIN
       v_user_email := NULL;
     END;
 
-    IF v_buyer_email != v_user_email THEN
+    IF v_user_email IS NOT NULL AND lower(v_buyer_email) != lower(v_user_email) THEN
       RAISE EXCEPTION 'Authorization error: buyer_email does not match authenticated user';
     END IF;
 
