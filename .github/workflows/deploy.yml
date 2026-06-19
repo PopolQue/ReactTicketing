@@ -27,6 +27,12 @@ jobs:
           cd ../reactticket && npm install
           cd ../examples/demo-local && npm install && npm run build
       
+      - name: Upload Sourcemaps to PostHog
+        run: npx posthog-cli sourcemap upload --minified-urls "http*://*/assets/*" --sourcemap-dir ./examples/demo-local/dist/assets
+        env:
+          POSTHOG_API_KEY: ${{ secrets.POSTHOG_PERSONAL_API_KEY }}
+          POSTHOG_PROJECT_API_KEY: ${{ secrets.POSTHOG_PROJECT_API_KEY }}
+      
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v1
 

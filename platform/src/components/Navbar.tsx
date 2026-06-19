@@ -6,6 +6,7 @@ import { useLanguage } from '../contexts/LanguageContext';
 import Dropdown from './Dropdown';
 import { NotificationBell } from './NotificationBell';
 import EntitySwitcher from './EntitySwitcher';
+import { usePostHog } from '@posthog/react';
 
 export default function Navbar() {
   const [user, setUser] = useState<User | null>(null);
@@ -15,6 +16,7 @@ export default function Navbar() {
     setLanguage,
     t
   } = useLanguage();
+  const posthog = usePostHog();
 
   useEffect(() => {
     async function checkUser() {
@@ -23,18 +25,24 @@ export default function Navbar() {
           user: currentUser
         }
       } = await supabase.auth.getUser();
-      if (currentUser) setUser(currentUser);
+      if (currentUser) {
+        setUser(currentUser);
+        posthog?.identify(currentUser.id, { email: currentUser.email });
+      }
     }
     checkUser();
     const {
       data: authListener
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
+      if (session?.user) {
+        posthog?.identify(session.user.id, { email: session.user.email });
+      }
     });
     return () => {
       authListener.subscription.unsubscribe();
     };
-  }, []);
+  }, [posthog]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

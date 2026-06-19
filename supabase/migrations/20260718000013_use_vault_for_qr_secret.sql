@@ -6,10 +6,9 @@ CREATE TABLE IF NOT EXISTS public.app_secrets (
 -- Ensure the table is completely private
 ALTER TABLE public.app_secrets ENABLE ROW LEVEL SECURITY;
 
--- Insert the secret we generated
-INSERT INTO public.app_secrets (name, value) 
-VALUES ('qr_secret', 'd8b5c92c813a48bf9f1a2e8c257b4c9a') 
-ON CONFLICT (name) DO UPDATE SET value = EXCLUDED.value;
+-- DO NOT insert production secrets in migrations!
+-- Run this manually in production: 
+-- INSERT INTO public.app_secrets (name, value) VALUES ('qr_secret', 'your_secure_random_string');
 
 -- Update the HMAC function to use the new table instead of postgres settings
 CREATE OR REPLACE FUNCTION public.generate_ticket_hmac(

@@ -33,3 +33,8 @@ INSERT INTO public.events (id, organizer_id, organizer_name, name, description, 
 INSERT INTO public.support_tickets (user_id, email, subject, message, status) VALUES
 ('44444444-4444-4444-4444-444444444444', 'fan@music.com', 'Cannot access my VIP ticket', 'I bought a VIP ticket for Neon Nights but it is not showing up in my wallet. Please help!', 'open'),
 ('44444444-4444-4444-4444-444444444444', 'fan@music.com', 'Refund request', 'I can no longer attend the Jazz Evening. What is the refund policy?', 'open');
+
+-- Insert Dev Secret for QR Signing
+INSERT INTO public.app_secrets (name, value) VALUES
+('qr_secret', 'dev_qr_secret_dummy_value')
+ON CONFLICT (name) DO UPDATE SET value = EXCLUDED.value;
