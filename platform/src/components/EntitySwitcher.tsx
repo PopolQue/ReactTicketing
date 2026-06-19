@@ -73,8 +73,12 @@ export default React.memo(function EntitySwitcher({
     
     if (selectedEntity) {
       setActiveEntity(selectedEntity);
+      localStorage.setItem('active_entity', JSON.stringify(selectedEntity));
+      window.dispatchEvent(new CustomEvent('activeEntityChanged', { detail: selectedEntity }));
       if (onEntityChange) onEntityChange(selectedEntity);
     } else {
+      localStorage.removeItem('active_entity');
+      window.dispatchEvent(new CustomEvent('activeEntityChanged', { detail: null }));
       if (onEntityChange) onEntityChange(null);
     }
     setLoading(false);
@@ -83,6 +87,8 @@ export default React.memo(function EntitySwitcher({
   const handleSelect = (entity: Entity) => {
     setActiveEntity(entity);
     localStorage.setItem('active_entity_id', entity.id);
+    localStorage.setItem('active_entity', JSON.stringify(entity));
+    window.dispatchEvent(new CustomEvent('activeEntityChanged', { detail: entity }));
     
     // Update parent only after local state is updated to ensure stability
     if (onEntityChange) onEntityChange(entity);
