@@ -189,4 +189,37 @@ export class RestAdapter implements StorageAdapter {
       body: JSON.stringify({ at }),
     });
   }
+
+  // Friendships
+  async createFriendship(userId: string, friendId: string): Promise<void> {
+    await this.request('/friendships', {
+      method: 'POST',
+      body: JSON.stringify({ userId, friendId }),
+    });
+  }
+  async updateFriendshipStatus(friendshipId: string, status: 'pending' | 'accepted' | 'blocked'): Promise<void> {
+    await this.request(`/friendships/${friendshipId}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status }),
+    });
+  }
+  async getFriends(userId: string): Promise<any[]> {
+    return this.request<any[]>(`/users/${userId}/friends`);
+  }
+
+  // Ticket Transfers
+  async createTransfer(ticketId: string, senderId: string, receiverId: string): Promise<void> {
+    await this.request('/transfers', {
+      method: 'POST',
+      body: JSON.stringify({ ticketId, senderId, receiverId }),
+    });
+  }
+  async finalizeTransfer(transferId: string): Promise<void> {
+    await this.request(`/transfers/${transferId}/finalize`, { method: 'POST' });
+  }
+
+  // Posts
+  async createPost(post: { user_id: string; event_id: string; is_public: boolean }): Promise<void> {
+    await this.request('/posts', { method: 'POST', body: JSON.stringify(post) });
+  }
 }

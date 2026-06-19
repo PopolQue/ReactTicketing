@@ -319,4 +319,93 @@ export class LocalStorageAdapter implements StorageAdapter {
       localStorage.setItem('tf_scan_accounts', JSON.stringify(accounts));
     }
   }
+
+  // Friendships
+  async createFriendship(userId: string, friendId: string): Promise<void> {
+    const data = localStorage.getItem('tf_friendships');
+    const list: any[] = data ? JSON.parse(data) : [];
+    const id = `f_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+    list.push({ id, userA: userId, userB: friendId, status: 'pending', createdAt: new Date() });
+    localStorage.setItem('tf_friendships', JSON.stringify(list));
+  }
+
+  async updateFriendshipStatus(friendshipId: string, status: 'pending' | 'accepted' | 'blocked'): Promise<void> {
+    const data = localStorage.getItem('tf_friendships');
+    const list: any[] = data ? JSON.parse(data) : [];
+    const idx = list.findIndex(f => f.id === friendshipId);
+    if (idx > -1) {
+      list[idx] = { ...list[idx], status };
+      localStorage.setItem('tf_friendships', JSON.stringify(list));
+    } else {
+      throw new Error('friendship not found');
+    }
+  }
+
+  async getFriends(userId: string): Promise<any[]> {
+    const data = localStorage.getItem('tf_friendships');
+    const list: any[] = data ? JSON.parse(data) : [];
+    // return accepted friendships involving userId
+    return list.filter(f => (f.userA === userId || f.userB === userId) && f.status === 'accepted');
+  }
+
+  // Ticket Transfers
+  async createTransfer(ticketId: string, senderId: string, receiverId: string): Promise<void> {
+    const data = localStorage.getItem('tf_transfers');
+    const list: any[] = data ? JSON.parse(data) : [];
+    const id = `t_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+    list.push({ id, ticketId, senderId, receiverId, status: 'pending', createdAt: new Date() });
+    localStorage.setItem('tf_transfers', JSON.stringify(list));
+  }
+
+  async finalizeTransfer(transferId: string): Promise<void> {
+    const data = localStorage.getItem('tf_transfers');
+    const list: any[] = data ? JSON.parse(data) : [];
+    const idx = list.findIndex(t => t.id === transferId);
+    if (idx === -1) throw new Error('transfer not found');
+    const transfer = list[idx];
+    if (transfer.status === 'finalized') return;
+    // mark finalized
+    list[idx] = { ...transfer, status: 'finalized', finalizedAt: new Date() };
+    localStorage.setItem('tf_transfers', JSON.stringify(list));
+
+    // update ticket owner/email and transferHistory
+    const ticket = await this.getTicket(transfer.ticketId);
+    if (!ticket) throw new Error('ticket not found for transfer');
+    // ponytail: treat receiverId as email if looks like one, otherwise store as id in personalization.email
+    const toEmail = typeof transfer.receiverId === 'string' ? transfer.receiverId : String(transfer.receiverId);
+    const fromEmail = ticket.personalization?.email || ticket.buyerEmail || '';
+    const transferRecord = { fromEmail, toEmail, at: new Date() };
+
+    // mutate ticket
+    for (let i = 0; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
+        const d = localStorage.getItem(key);
+        if (!d) continue;
+        const tickets: any[] = JSON.parse(d);
+        const ti = tickets.findIndex(t => t.id === transfer.ticketId);
+        if (ti > -1) {
+          const existing = tickets[ti];
+          const updated = {
+            ...existing,
+            status: 'transferred',
+            transferHistory: [...(existing.transferHistory || []), transferRecord],
+            personalization: { ...(existing.personalization || {}), email: toEmail }
+          };
+          tickets[ti] = updated;
+          localStorage.setItem(key, JSON.stringify(tickets));
+          return;
+        }
+      }
+    }
+  }
+
+  // Posts
+  async createPost(post: { user_id: string; event_id: string; is_public: boolean }): Promise<void> {
+    const data = localStorage.getItem('tf_posts');
+    const list: any[] = data ? JSON.parse(data) : [];
+    const id = `p_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+    list.push({ id, ...post, createdAt: new Date() });
+    localStorage.setItem('tf_posts', JSON.stringify(list));
+  }
 }
