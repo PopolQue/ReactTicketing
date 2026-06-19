@@ -29,10 +29,11 @@ const eventConfig = {
     requireBuyerEmail: true,
     // Hash for 'password' with salt 'salt' and 100000 iterations
     adminKey: "pbkdf2-sha256$100000$c2FsdA==$A5Si7eMyyaE+uC6bJGMWBMMd+Xi04vD70sVJlE+deaU=", 
-    scanSessionSecret: "dummy-secret-at-least-32-chars-long!!!!!!!!!!",
-    qrSigningSecret: "dummy-qr-secret-at-least-32-chars-long!!!!!!!!!!",
+    scanSessionSecret: "dummy-secret-at-least-32-chars-long!!!!!!!!!!", // ponytail: replace before deploying
+    qrSigningSecret: "dummy-qr-secret-at-least-32-chars-long!!!!!!!!!!", // ponytail: replace before deploying
   }
 };
+if (typeof window !== 'undefined') { console.warn('[ADMIT] Using demo HMAC secrets — replace in production'); }
 
 const authService = new AuthService(adapter, eventConfig.settings as any);
 const ticketService = new TicketService(adapter, authService);

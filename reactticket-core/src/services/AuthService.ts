@@ -11,7 +11,7 @@ export class AuthService {
   private get keyPromise(): Promise<CryptoKey> {
     if (!this._keyPromise) {
       if (!this.eventSettings || !this.eventSettings.scanSessionSecret) {
-          console.error("AuthService initialized without scanSessionSecret", this.eventSettings);
+          console.warn("[ADMIT] AuthService initialized without scanSessionSecret — scanner auth will fail");
           this._keyPromise = Promise.reject("Missing scanSessionSecret");
       } else {
           this._keyPromise = this.deriveKey(this.eventSettings.scanSessionSecret);

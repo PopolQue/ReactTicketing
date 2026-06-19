@@ -32,7 +32,7 @@ serve(async (req) => {
           <p>Hi there,</p>
           <p>This is an automated confirmation that we've received your request:</p>
           <blockquote style="border-left: 4px solid #ccc; padding-left: 10px;">
-            ${record.message}
+            ${record.message.replace(/[<>&"']/g, c => ({ '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;', "'": '&#39;' })[c])}
           </blockquote>
           <p>Our team will review your issue and get back to you shortly.</p>
           <p>Best,<br/>ReactTicket Support Team</p>

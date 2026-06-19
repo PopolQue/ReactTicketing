@@ -199,8 +199,8 @@ describe('Admit Mappers', () => {
         maxOrderSize: 5,
         requireBuyerEmail: true,
         adminKey: '',
-        scanSessionSecret: 'fallback_do_not_use',
-        qrSigningSecret: 'fallback_do_not_use',
+        scanSessionSecret: '',
+        qrSigningSecret: '',
       },
       theme: {
         bgColor: '#000',

@@ -1,0 +1,31 @@
+version: 2
+updates:
+  # Maintain dependencies for reactticket-core
+  - package-ecosystem: "npm"
+    directory: "/reactticket-core"
+    schedule:
+      interval: "weekly"
+      
+  # Maintain dependencies for reactticket
+  - package-ecosystem: "npm"
+    directory: "/reactticket"
+    schedule:
+      interval: "weekly"
+
+  # Maintain dependencies for platform
+  - package-ecosystem: "npm"
+    directory: "/platform"
+    schedule:
+      interval: "weekly"
+      
+  # Maintain dependencies for mobile-scanner
+  - package-ecosystem: "npm"
+    directory: "/mobile-scanner"
+    schedule:
+      interval: "weekly"
+
+  # Maintain GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"

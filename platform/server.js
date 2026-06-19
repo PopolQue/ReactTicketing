@@ -1,6 +1,7 @@
 import fs from 'node:fs/promises'
 import express from 'express'
 import { Transform } from 'node:stream'
+import rateLimit from 'express-rate-limit'
 
 // Constants
 const isProduction = process.env.NODE_ENV === 'production'
@@ -21,11 +22,31 @@ const app = express()
 // Parse JSON bodies for API routes
 app.use(express.json())
 
+// Rate limiting
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000,
+  max: 30,
+  standardHeaders: true,
+  legacyHeaders: false,
+})
+app.use('/api/', apiLimiter)
+
 // Security headers
 app.use((req, res, next) => {
   res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
-  res.setHeader('Content-Security-Policy', "default-src 'self'; img-src 'self' data: https:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://unpkg.com; style-src 'self' 'unsafe-inline' https://unpkg.com; frame-src 'self' https://js.stripe.com https://m.stripe.network; connect-src 'self' https://api.stripe.com wss: ws: https: http://127.0.0.1:* http://localhost:*;");
-  res.setHeader('X-Frame-Options', 'SAMEORIGIN'); // Required for some Stripe inner frames, or DENY
+  // ponytail: unsafe-inline/eval needed for Vite dev HMR; tighten for production builds
+  const isDev = process.env.NODE_ENV !== 'production';
+  const scriptSrc = isDev
+    ? "'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://unpkg.com"
+    : "'self' https://js.stripe.com https://unpkg.com";
+  const styleSrc = isDev
+    ? "'self' 'unsafe-inline' https://unpkg.com"
+    : "'self' https://unpkg.com";
+  const connectSrc = isDev
+    ? "'self' https://api.stripe.com wss: ws: https: http://127.0.0.1:* http://localhost:*"
+    : "'self' https://api.stripe.com https:";
+  res.setHeader('Content-Security-Policy', `default-src 'self'; img-src 'self' data: https:; script-src ${scriptSrc}; style-src ${styleSrc}; frame-src 'self' https://js.stripe.com https://m.stripe.network; connect-src ${connectSrc};`);
+  res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   next();
 })
@@ -58,6 +79,11 @@ app.post('/api/create-payment-intent', async (req, res) => {
 
   try {
     const { amountCents, itemName } = req.body;
+
+    // Validate input
+    if (typeof amountCents !== 'number' || amountCents <= 0 || amountCents > 99999999) {
+      return res.status(400).json({ error: 'Invalid amount' });
+    }
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripeClient.paymentIntents.create({
@@ -158,7 +184,7 @@ app.use(async (req, res) => {
   } catch (e) {
     vite?.ssrFixStacktrace(e)
     console.log(e.stack)
-    res.status(500).end(e.stack)
+    res.status(500).end('Internal server error')
   }
 })
 

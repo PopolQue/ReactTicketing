@@ -1,6 +1,7 @@
 # .gitignore
 
 secrets
+.env.local
 codebase-analysis-docs/
 design/
 

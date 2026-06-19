@@ -425,7 +425,7 @@ entrypoint = "./functions/send-support-email/index.ts"
 
 [functions.verify-url]
 enabled = true
-verify_jwt = false
+verify_jwt = true
 import_map = "./functions/verify-url/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
@@ -447,7 +447,7 @@ entrypoint = "./functions/notify-followers/index.ts"
 
 [functions.generate-wallet-pass]
 enabled = true
-verify_jwt = false
+verify_jwt = true
 import_map = "./functions/generate-wallet-pass/deno.json"
 # Uncomment to specify a custom file path to the entrypoint.
 # Supported file extensions are: .ts, .js, .mjs, .jsx, .tsx
