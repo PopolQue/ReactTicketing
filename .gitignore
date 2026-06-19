@@ -33,3 +33,12 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 platform/seed.js
+Features
+.gitignore
+Features.md
+COMPETITIVE_ANALYSIS.md
+reactticket/merged_repository.md
+reactticket-core/merged_repository.md
+supabase/merge_files.py
+supabase/merged_repository.md
+platform/merged_repository.md

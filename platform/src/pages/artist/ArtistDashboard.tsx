@@ -3,7 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
 import type { Entity } from '../../components/EntitySwitcher';
 import { useLanguage } from '../../contexts/LanguageContext';
-import { Instagram, Music } from 'lucide-react';
+import { Share2, Music } from 'lucide-react';
 
 export default function ArtistDashboard() {
   const { t } = useLanguage();
@@ -48,7 +48,7 @@ export default function ArtistDashboard() {
             <h2 style={{ margin: '0 0 8px 0' }}>{artist?.name}</h2>
             <div style={{ display: 'flex', gap: '16px' }}>
                 {artist?.spotify_url && <a href={artist.spotify_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}><Music size={24} /></a>}
-                {artist?.instagram_url && <a href={artist.instagram_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}><Instagram size={24} /></a>}
+                {artist?.instagram_url && <a href={artist.instagram_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}><Share2 size={24} /></a>}
                 {artist?.soundcloud_url && <a href={artist.soundcloud_url} target="_blank" rel="noopener noreferrer" style={{ color: 'var(--accent)' }}><Music size={24} /></a>}
             </div>
         </div>
