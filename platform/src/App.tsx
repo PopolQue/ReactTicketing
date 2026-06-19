@@ -34,6 +34,7 @@ const ResaleMarket = React.lazy(() => import('./pages/marketplace/ResaleMarket')
 const ClaimPortal = React.lazy(() => import('./pages/marketplace/ClaimPortal'))
 const WriterApplication = React.lazy(() => import('./pages/marketplace/WriterApplication'))
 const ScanPage = React.lazy(() => import('./pages/marketplace/ScanPage'))
+const NotFound = React.lazy(() => import('./pages/NotFound'))
 
 const Settings = React.lazy(() => import('./pages/organizer/Settings'))
 const ScanTickets = React.lazy(() => import('./pages/organizer/ScanTickets'))
@@ -122,6 +123,7 @@ function App() {
                   <Route path="/wallet" element={<Wallet />} />
                   <Route path="/profile" element={<Profile />} />
                 </Route>
+                <Route path="*" element={<NotFound />} />
               </Route>
               
               <Route element={<ProtectedRoute />}>

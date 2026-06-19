@@ -199,8 +199,6 @@ describe('Admit Mappers', () => {
         maxOrderSize: 5,
         requireBuyerEmail: true,
         adminKey: '',
-        scanSessionSecret: '',
-        qrSigningSecret: '',
       },
       theme: {
         bgColor: '#000',

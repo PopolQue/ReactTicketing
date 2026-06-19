@@ -17,7 +17,7 @@ export class ScanService {
     let clockSkewSeconds: number | undefined = undefined;
 
     try {
-        // 2. Parse payload & 3. Verify HMAC
+        // 2. Parse payload
         const parts = payload.split('.');
         if (parts.length !== 4 || (parts[0] !== 'TF1' && parts[0] !== 'ADM1')) {
             throw new Error("Invalid payload format");
@@ -35,18 +35,12 @@ export class ScanService {
         }
 
         ticketIdFromPayload = ticketId;
-        
-        const enc = new TextEncoder();
-        const keyData = enc.encode(this.authService.getSecret());
-        const key = await crypto.subtle.importKey("raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, ["verify"]);
-        
-        const base64Signature = signature.replace(/-/g, "+").replace(/_/g, "/");
-        const binarySignature = atob(base64Signature);
-        const signatureBuffer = new Uint8Array(binarySignature.length);
-        for (let i = 0; i < binarySignature.length; i++) signatureBuffer[i] = binarySignature.charCodeAt(i);
-        
-        const isValid = await crypto.subtle.verify("HMAC", key, signatureBuffer, enc.encode(`${prefix}.${payloadEventId}.${ticketId}`));
-        if (!isValid) {
+
+        // 3. Verify HMAC — server-side via adapter if available, else local fallback
+        const qrValid = this.adapter.verifyQRPayload
+          ? await this.adapter.verifyQRPayload(payload)
+          : await this.verifyQRLocally(prefix, payloadEventId, ticketId, signature);
+        if (!qrValid) {
             throw new Error("Invalid signature");
         }
 
@@ -151,6 +145,17 @@ export class ScanService {
     });
 
     return summary;
+  }
+
+  private async verifyQRLocally(prefix: string, eventId: string, ticketId: string, signature: string): Promise<boolean> {
+    const enc = new TextEncoder();
+    const keyData = enc.encode(this.authService.getSecret());
+    const key = await crypto.subtle.importKey("raw", keyData, { name: "HMAC", hash: "SHA-256" }, false, ["verify"]);
+    const base64Signature = signature.replace(/-/g, "+").replace(/_/g, "/");
+    const binarySignature = atob(base64Signature);
+    const signatureBuffer = new Uint8Array(binarySignature.length);
+    for (let i = 0; i < binarySignature.length; i++) signatureBuffer[i] = binarySignature.charCodeAt(i);
+    return crypto.subtle.verify("HMAC", key, signatureBuffer, enc.encode(`${prefix}.${eventId}.${ticketId}`));
   }
 
   private _calculateScanVelocity(scans: ScanEvent[]): { timestamp: Date; count: number }[] {
