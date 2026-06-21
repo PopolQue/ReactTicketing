@@ -27,7 +27,7 @@
     "express-rate-limit": "^8.5.2",
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
-    "lucide-react": "^1.18.0",
+    "lucide-react": "^1.21.0",
     "posthog-js": "^1.391.2",
     "posthog-node": "^5.38.2",
     "react": "19.2.7",
