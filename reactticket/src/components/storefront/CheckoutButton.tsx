@@ -14,7 +14,7 @@ export const CheckoutButton = () => {
   };
 
   return (
-    <button 
+    <button
       type="button"
       onClick={handleCheckout}
       disabled={isProcessing}
@@ -31,7 +31,7 @@ export const CheckoutButton = () => {
         fontSize: '16px',
         fontWeight: 'bold',
         cursor: isProcessing ? 'not-allowed' : 'pointer',
-        zIndex: 1000
+        zIndex: 1000,
       }}
     >
       {isProcessing ? t('store.checkout.processing') : t('store.checkout.button')}

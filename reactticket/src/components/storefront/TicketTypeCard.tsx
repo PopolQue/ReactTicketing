@@ -16,72 +16,113 @@ export const TicketTypeCard = React.memo(({ type }: { type: TicketTypeConfig }) 
 
   useEffect(() => {
     const checkCapacity = async () => {
-        if (type.capacity !== undefined) {
-            const issuedCount = await adapter.countIssuedTickets(type.id, event.id);
-            const remaining = type.capacity - issuedCount;
-            setSoldOut(remaining <= 0);
-            
-            // Limit by maxPerOrder OR remaining capacity, whichever is smaller
-            const maxAllowed = Math.min(type.maxPerOrder || 10, Math.max(0, remaining));
-            setRemainingCapacity(maxAllowed);
-        }
-        setLoading(false);
+      if (type.capacity !== undefined) {
+        const issuedCount = await adapter.countIssuedTickets(type.id, event.id);
+        const remaining = type.capacity - issuedCount;
+        setSoldOut(remaining <= 0);
+
+        // Limit by maxPerOrder OR remaining capacity, whichever is smaller
+        const maxAllowed = Math.min(type.maxPerOrder || 10, Math.max(0, remaining));
+        setRemainingCapacity(maxAllowed);
+      }
+      setLoading(false);
     };
     checkCapacity();
   }, [adapter, type, event.id]);
 
-  const cartItem = items.find(item => item.ticketTypeId === type.id);
+  const cartItem = items.find((item) => item.ticketTypeId === type.id);
   const quantity = cartItem ? cartItem.quantity : 0;
 
-  const handleQuantityChange = useCallback((newQty: number) => {
-    if (newQty > quantity) {
-      addItem(type.id, newQty - quantity);
-    } else if (newQty < quantity) {
-      if (newQty === 0) {
-        removeItem(type.id);
-      } else {
+  const handleQuantityChange = useCallback(
+    (newQty: number) => {
+      if (newQty > quantity) {
         addItem(type.id, newQty - quantity);
+      } else if (newQty < quantity) {
+        if (newQty === 0) {
+          removeItem(type.id);
+        } else {
+          addItem(type.id, newQty - quantity);
+        }
       }
-    }
-  }, [quantity, type.id, addItem, removeItem]);
-
-  const price = type.pricing.kind === 'paid' ? formatCurrency(type.pricing.priceInCents, type.pricing.currency, locale) : t('store.ticket.free');
-
-  if (loading) return (
-    <div 
-      style={{ 
-        border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', 
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        background: '#f8fafc', marginBottom: '15px', animation: 'pulse 1.5s infinite'
-      }}
-      role="status"
-      aria-busy="true"
-      aria-label="Loading ticket type"
-    >
-      <div style={{ flex: 1 }}>
-        <div style={{ height: '24px', background: '#e2e8f0', borderRadius: '4px', width: '50%', marginBottom: '8px' }}></div>
-        <div style={{ height: '16px', background: '#e2e8f0', borderRadius: '4px', width: '30%' }}></div>
-      </div>
-      <div style={{ width: '80px', height: '36px', background: '#e2e8f0', borderRadius: '8px' }}></div>
-    </div>
+    },
+    [quantity, type.id, addItem, removeItem]
   );
 
+  const price =
+    type.pricing.kind === 'paid'
+      ? formatCurrency(type.pricing.priceInCents, type.pricing.currency, locale)
+      : t('store.ticket.free');
+
+  if (loading)
+    return (
+      <div
+        style={{
+          border: '1px solid #e2e8f0',
+          borderRadius: '12px',
+          padding: '20px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          background: '#f8fafc',
+          marginBottom: '15px',
+          animation: 'pulse 1.5s infinite',
+        }}
+        role="status"
+        aria-busy="true"
+        aria-label="Loading ticket type"
+      >
+        <div style={{ flex: 1 }}>
+          <div
+            style={{
+              height: '24px',
+              background: '#e2e8f0',
+              borderRadius: '4px',
+              width: '50%',
+              marginBottom: '8px',
+            }}
+          ></div>
+          <div
+            style={{ height: '16px', background: '#e2e8f0', borderRadius: '4px', width: '30%' }}
+          ></div>
+        </div>
+        <div
+          style={{ width: '80px', height: '36px', background: '#e2e8f0', borderRadius: '8px' }}
+        ></div>
+      </div>
+    );
+
   return (
-    <div 
-      style={{ 
-        border: '1px solid #e2e8f0', borderRadius: '12px', padding: '20px', 
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        background: soldOut ? '#f1f5f9' : 'white', marginBottom: '15px',
-        opacity: soldOut ? 0.7 : 1
+    <div
+      style={{
+        border: '1px solid #e2e8f0',
+        borderRadius: '12px',
+        padding: '20px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        background: soldOut ? '#f1f5f9' : 'white',
+        marginBottom: '15px',
+        opacity: soldOut ? 0.7 : 1,
       }}
       role="region"
       aria-label={`Ticket type: ${type.name}`}
     >
       <div>
-        <h3 style={{ margin: '0 0 5px 0' }}>{type.name} {soldOut && `(${t('store.ticket.soldOut')})`}</h3>
-        <p style={{ margin: 0, color: '#64748b' }} aria-label={`Price: ${price}`}>{price}</p>
+        <h3 style={{ margin: '0 0 5px 0' }}>
+          {type.name} {soldOut && `(${t('store.ticket.soldOut')})`}
+        </h3>
+        <p style={{ margin: 0, color: '#64748b' }} aria-label={`Price: ${price}`}>
+          {price}
+        </p>
       </div>
-      {!soldOut && <QuantitySelector value={quantity} onChange={handleQuantityChange} max={remainingCapacity} itemName={type.name} />}
+      {!soldOut && (
+        <QuantitySelector
+          value={quantity}
+          onChange={handleQuantityChange}
+          max={remainingCapacity}
+          itemName={type.name}
+        />
+      )}
     </div>
   );
 });

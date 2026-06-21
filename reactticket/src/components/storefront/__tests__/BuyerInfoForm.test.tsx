@@ -21,12 +21,14 @@ describe('BuyerInfoForm Component', () => {
 
   it('renders correctly and dispatches SET_PERSONALIZATION on change', () => {
     vi.spyOn(useReactTicketModule, 'useReactTicket').mockReturnValue({
-      cart: { 
-        items: [{ ticketTypeId: 't1', quantity: 1 }], 
-        personalizations: { 't1': [{ name: '', surname: '', country: '', city: '', email: '', phone: '', zip: '' }] } 
+      cart: {
+        items: [{ ticketTypeId: 't1', quantity: 1 }],
+        personalizations: {
+          t1: [{ name: '', surname: '', country: '', city: '', email: '', phone: '', zip: '' }],
+        },
       },
       dispatch: mockDispatch,
-      ticketTypes: [{ id: 't1', name: 'Standard' }]
+      ticketTypes: [{ id: 't1', name: 'Standard' }],
     } as any);
 
     render(
@@ -36,7 +38,7 @@ describe('BuyerInfoForm Component', () => {
     );
 
     expect(screen.getByText('Standard')).toBeDefined();
-    
+
     const nameInput = screen.getByLabelText('Standard ticket 1 Name');
     fireEvent.change(nameInput, { target: { value: 'John' } });
 
@@ -44,8 +46,10 @@ describe('BuyerInfoForm Component', () => {
       type: 'SET_PERSONALIZATION',
       payload: {
         ticketTypeId: 't1',
-        personalizations: [{ name: 'John', surname: '', country: '', city: '', email: '', phone: '', zip: '' }]
-      }
+        personalizations: [
+          { name: 'John', surname: '', country: '', city: '', email: '', phone: '', zip: '' },
+        ],
+      },
     });
   });
 });

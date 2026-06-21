@@ -16,7 +16,7 @@ describe('QuantitySelector Component', () => {
   it('calls onChange with decremented value', () => {
     const onChange = vi.fn();
     render(<QuantitySelector value={1} onChange={onChange} max={5} />);
-    
+
     fireEvent.click(screen.getByRole('button', { name: 'Decrease quantity' }));
     expect(onChange).toHaveBeenCalledWith(0);
   });
@@ -24,22 +24,26 @@ describe('QuantitySelector Component', () => {
   it('calls onChange with incremented value', () => {
     const onChange = vi.fn();
     render(<QuantitySelector value={1} onChange={onChange} max={5} />);
-    
+
     fireEvent.click(screen.getByRole('button', { name: 'Increase quantity' }));
     expect(onChange).toHaveBeenCalledWith(2);
   });
 
   it('disables decrease button when value is 0', () => {
     render(<QuantitySelector value={0} onChange={vi.fn()} max={5} />);
-    
-    const decreaseButton = screen.getByRole('button', { name: 'Decrease quantity' }) as HTMLButtonElement;
+
+    const decreaseButton = screen.getByRole('button', {
+      name: 'Decrease quantity',
+    }) as HTMLButtonElement;
     expect(decreaseButton.disabled).toBe(true);
   });
 
   it('disables increase button when max is reached', () => {
     render(<QuantitySelector value={5} onChange={vi.fn()} max={5} />);
-    
-    const increaseButton = screen.getByRole('button', { name: 'Increase quantity' }) as HTMLButtonElement;
+
+    const increaseButton = screen.getByRole('button', {
+      name: 'Increase quantity',
+    }) as HTMLButtonElement;
     expect(increaseButton.disabled).toBe(true);
   });
 });

@@ -18,7 +18,7 @@ export default function VenueDashboard() {
       .select('id, name, start_date, organizers(name)')
       .eq('venue_id', activeEntity.id)
       .order('start_date', { ascending: false });
-      
+
     if (data) setEvents(data);
     setLoading(false);
   }
@@ -32,10 +32,10 @@ export default function VenueDashboard() {
   return (
     <div>
       <div className="glass-panel" style={{ padding: '32px', marginBottom: '24px' }}>
-        <h2 style={{ margin: '0 0 16px 0' }}>{t('venue_dash_welcome').replace('{name}', activeEntity.name)}</h2>
-        <p style={{ color: 'var(--text-secondary)' }}>
-          {t('venue_dash_desc')}
-        </p>
+        <h2 style={{ margin: '0 0 16px 0' }}>
+          {t('venue_dash_welcome').replace('{name}', activeEntity.name)}
+        </h2>
+        <p style={{ color: 'var(--text-secondary)' }}>{t('venue_dash_desc')}</p>
       </div>
 
       <h3 style={{ marginBottom: '16px' }}>{t('venue_dash_schedule')}</h3>
@@ -46,19 +46,36 @@ export default function VenueDashboard() {
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
           {events.map((event) => (
-            <div key={event.id} className="glass-panel" style={{ padding: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div
+              key={event.id}
+              className="glass-panel"
+              style={{
+                padding: '24px',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
               <div>
                 <h4 style={{ margin: '0 0 8px 0', fontSize: '1.2rem' }}>{event.name}</h4>
                 <p style={{ margin: '0', color: 'var(--text-secondary)' }}>
-                  {t('venue_dash_organizer')} <strong style={{ color: 'white' }}>{event.organizers?.name}</strong>
+                  {t('venue_dash_organizer')}{' '}
+                  <strong style={{ color: 'white' }}>{event.organizers?.name}</strong>
                 </p>
               </div>
               <div style={{ textAlign: 'right' }}>
                 <div style={{ fontWeight: 600, color: 'var(--accent)', marginBottom: '4px' }}>
-                  {new Date(event.start_date).toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
+                  {new Date(event.start_date).toLocaleDateString(undefined, {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                  })}
                 </div>
                 <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>
-                  {new Date(event.start_date).toLocaleTimeString(undefined, { hour: '2-digit', minute: '2-digit' })}
+                  {new Date(event.start_date).toLocaleTimeString(undefined, {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                  })}
                 </div>
               </div>
             </div>

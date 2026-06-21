@@ -121,7 +121,15 @@ const styles: Record<string, React.CSSProperties> = {
   },
 };
 
-const Section = ({ number, title, children }: { number: number, title: string, children: React.ReactNode }) => (
+const Section = ({
+  number,
+  title,
+  children,
+}: {
+  number: number;
+  title: string;
+  children: React.ReactNode;
+}) => (
   <div style={styles.section}>
     <h2 style={styles.sectionTitle}>
       <span style={styles.sectionNumber}>{number}</span>
@@ -142,40 +150,28 @@ export default function Terms() {
       <div style={styles.container}>
         <div style={styles.pageLabel}>{t('legal')}</div>
         <h1 style={styles.title}>{t('termsOfService')}</h1>
-        <p style={styles.subtitle}>
-          {t('termsSubtitle')}
-        </p>
+        <p style={styles.subtitle}>{t('termsSubtitle')}</p>
         <div style={styles.lastUpdated}>{t('lastUpdatedTerms')}</div>
 
         <div className="glass-panel" style={styles.panel}>
           <Section number={1} title={t('acceptanceOfTerms')}>
-            <p style={styles.text}>
-              {t('acceptanceOfTermsDesc1')}
-            </p>
-            <p style={styles.text}>
-              {t('acceptanceOfTermsDesc2')}
-            </p>
+            <p style={styles.text}>{t('acceptanceOfTermsDesc1')}</p>
+            <p style={styles.text}>{t('acceptanceOfTermsDesc2')}</p>
           </Section>
 
           <Section number={2} title={t('accountRegistration')}>
-            <p style={styles.text}>
-              {t('accountRegistrationDesc1')}
-            </p>
+            <p style={styles.text}>{t('accountRegistrationDesc1')}</p>
             <ul style={styles.list}>
               <li style={styles.listItem}>{t('accountRegistrationList1')}</li>
               <li style={styles.listItem}>{t('accountRegistrationList2')}</li>
               <li style={styles.listItem}>{t('accountRegistrationList3')}</li>
               <li style={styles.listItem}>{t('accountRegistrationList4')}</li>
             </ul>
-            <p style={styles.text}>
-              {t('accountRegistrationDesc2')}
-            </p>
+            <p style={styles.text}>{t('accountRegistrationDesc2')}</p>
           </Section>
 
           <Section number={3} title={t('ticketPurchases')}>
-            <p style={styles.text}>
-              {t('ticketPurchasesDesc1')}
-            </p>
+            <p style={styles.text}>{t('ticketPurchasesDesc1')}</p>
             <ul style={styles.list}>
               <li style={styles.listItem}>{t('ticketPurchasesList1')}</li>
               <li style={styles.listItem}>{t('ticketPurchasesList2')}</li>
@@ -186,32 +182,29 @@ export default function Terms() {
           </Section>
 
           <Section number={4} title={t('refundsAndCancellations')}>
-            <p style={styles.text}>
-              {t('refundsAndCancellationsDesc1')}
-            </p>
+            <p style={styles.text}>{t('refundsAndCancellationsDesc1')}</p>
             <ul style={styles.list}>
               <li style={styles.listItem}>
-                <span style={styles.highlight}>{t('eventCancellation')}:</span> {t('eventCancellationDesc')}
+                <span style={styles.highlight}>{t('eventCancellation')}:</span>{' '}
+                {t('eventCancellationDesc')}
               </li>
               <li style={styles.listItem}>
-                <span style={styles.highlight}>{t('eventPostponement')}:</span> {t('eventPostponementDesc')}
+                <span style={styles.highlight}>{t('eventPostponement')}:</span>{' '}
+                {t('eventPostponementDesc')}
               </li>
               <li style={styles.listItem}>
-                <span style={styles.highlight}>{t('voluntaryCancellation')}:</span> {t('voluntaryCancellationDesc')}
+                <span style={styles.highlight}>{t('voluntaryCancellation')}:</span>{' '}
+                {t('voluntaryCancellationDesc')}
               </li>
               <li style={styles.listItem}>
                 <span style={styles.highlight}>{t('noShow')}:</span> {t('noShowDesc')}
               </li>
             </ul>
-            <p style={styles.text}>
-              {t('refundsAndCancellationsDesc2')}
-            </p>
+            <p style={styles.text}>{t('refundsAndCancellationsDesc2')}</p>
           </Section>
 
           <Section number={5} title={t('resaleMarket')}>
-            <p style={styles.text}>
-              {t('resaleMarketDesc1')}
-            </p>
+            <p style={styles.text}>{t('resaleMarketDesc1')}</p>
             <ul style={styles.list}>
               <li style={styles.listItem}>{t('resaleMarketList1')}</li>
               <li style={styles.listItem}>{t('resaleMarketList2')}</li>
@@ -222,9 +215,7 @@ export default function Terms() {
           </Section>
 
           <Section number={6} title={t('prohibitedConduct')}>
-            <p style={styles.text}>
-              {t('prohibitedConductDesc1')}
-            </p>
+            <p style={styles.text}>{t('prohibitedConductDesc1')}</p>
             <ul style={styles.list}>
               <li style={styles.listItem}>{t('prohibitedConductList1')}</li>
               <li style={styles.listItem}>{t('prohibitedConductList2')}</li>
@@ -234,30 +225,22 @@ export default function Terms() {
               <li style={styles.listItem}>{t('prohibitedConductList6')}</li>
               <li style={styles.listItem}>{t('prohibitedConductList7')}</li>
             </ul>
-            <p style={styles.text}>
-              {t('prohibitedConductDesc2')}
-            </p>
+            <p style={styles.text}>{t('prohibitedConductDesc2')}</p>
           </Section>
 
           <Section number={7} title={t('limitationOfLiability')}>
-            <p style={styles.text}>
-              {t('limitationOfLiabilityDesc1')}
-            </p>
+            <p style={styles.text}>{t('limitationOfLiabilityDesc1')}</p>
             <ul style={styles.list}>
               <li style={styles.listItem}>{t('limitationOfLiabilityList1')}</li>
               <li style={styles.listItem}>{t('limitationOfLiabilityList2')}</li>
               <li style={styles.listItem}>{t('limitationOfLiabilityList3')}</li>
               <li style={styles.listItem}>{t('limitationOfLiabilityList4')}</li>
             </ul>
-            <p style={styles.text}>
-              {t('limitationOfLiabilityDesc2')}
-            </p>
+            <p style={styles.text}>{t('limitationOfLiabilityDesc2')}</p>
           </Section>
 
           <Section number={8} title={t('governingLaw')}>
-            <p style={{ ...styles.text, marginBottom: 0 }}>
-              {t('governingLawDesc')}
-            </p>
+            <p style={{ ...styles.text, marginBottom: 0 }}>{t('governingLawDesc')}</p>
           </Section>
         </div>
 

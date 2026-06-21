@@ -11,21 +11,21 @@ describe('useVoucher', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     vi.spyOn(useReactTicketModule, 'useReactTicket').mockReturnValue({
       adapter: mockAdapter,
       dispatch: mockDispatch,
       cart: { promoCode: undefined },
-      promoDetails: null
+      promoDetails: null,
     } as any);
   });
 
   it('applies a valid promo code', async () => {
     const mockPromo = { code: 'SAVE20', active: true };
     mockAdapter.getPromoCode.mockResolvedValue(mockPromo);
-    
+
     const { result } = renderHook(() => useVoucher());
-    
+
     let success = false;
     await act(async () => {
       success = await result.current.applyVoucher('SAVE20');
@@ -38,9 +38,9 @@ describe('useVoucher', () => {
 
   it('fails to apply invalid promo code', async () => {
     mockAdapter.getPromoCode.mockResolvedValue(null);
-    
+
     const { result } = renderHook(() => useVoucher());
-    
+
     let success = true;
     await act(async () => {
       success = await result.current.applyVoucher('INVALID');
@@ -52,7 +52,7 @@ describe('useVoucher', () => {
 
   it('removes the voucher', () => {
     const { result } = renderHook(() => useVoucher());
-    
+
     act(() => {
       result.current.removeVoucher();
     });

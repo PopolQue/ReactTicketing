@@ -2,7 +2,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { TicketService } from '../TicketService';
 import { StorageAdapter } from '../../types/adapter.types';
 import { AuthService } from '../AuthService';
-import { Order, TicketTypeConfig, IssuedTicket, TicketPersonalization } from '../../types/ticket.types';
+import {
+  Order,
+  TicketTypeConfig,
+  IssuedTicket,
+  TicketPersonalization,
+} from '../../types/ticket.types';
 
 describe('TicketService', () => {
   let ticketService: TicketService;
@@ -26,7 +31,10 @@ describe('TicketService', () => {
       getQrSecret: vi.fn().mockReturnValue('super-secret-qr-key'),
     };
 
-    ticketService = new TicketService(mockAdapter as StorageAdapter, mockAuthService as AuthService);
+    ticketService = new TicketService(
+      mockAdapter as StorageAdapter,
+      mockAuthService as AuthService
+    );
   });
 
   describe('issueTickets', () => {
@@ -39,7 +47,15 @@ describe('TicketService', () => {
       const order: Order = {
         id: 'order_1',
         eventId: 'evt_1',
-        items: [{ ticketTypeId: 'tkt_type_1', quantity: 2, unitPriceBeforeDiscountCents: 1000, unitPriceCents: 1000, personalizations: [] }],
+        items: [
+          {
+            ticketTypeId: 'tkt_type_1',
+            quantity: 2,
+            unitPriceBeforeDiscountCents: 1000,
+            unitPriceCents: 1000,
+            personalizations: [],
+          },
+        ],
         buyerEmail: 'buyer@example.com',
         subtotalCents: 1000,
         discountCents: 0,
@@ -49,30 +65,53 @@ describe('TicketService', () => {
       };
 
       const ticketTypes: TicketTypeConfig[] = [
-        { id: 'tkt_type_1', name: 'General', pricing: { kind: 'free' }, capacity: 10, transferable: true, visible: true }
+        {
+          id: 'tkt_type_1',
+          name: 'General',
+          pricing: { kind: 'free' },
+          capacity: 10,
+          transferable: true,
+          visible: true,
+        },
       ];
 
       (mockAdapter.getOrder as any).mockResolvedValue(order);
       (mockAdapter.getTicketTypes as any).mockResolvedValue(ticketTypes);
       (mockAdapter.countIssuedTickets as any).mockResolvedValue(9);
 
-      await expect(ticketService.issueTickets('order_1')).rejects.toThrow('Insufficient capacity for ticket type: General');
+      await expect(ticketService.issueTickets('order_1')).rejects.toThrow(
+        'Insufficient capacity for ticket type: General'
+      );
     });
 
     it('should successfully issue tickets', async () => {
       const order: Order = {
         id: 'order_1',
         eventId: 'evt_1',
-        items: [{ 
-          ticketTypeId: 'tkt_type_1', 
-          quantity: 2, 
-          unitPriceBeforeDiscountCents: 1000, 
-          unitPriceCents: 1000, 
-          personalizations: [
-            { name: 'John', surname: 'Doe', country: 'US', city: 'NY', email: 'john@example.com' },
-            { name: 'Jane', surname: 'Doe', country: 'US', city: 'NY', email: 'jane@example.com' }
-          ] 
-        }],
+        items: [
+          {
+            ticketTypeId: 'tkt_type_1',
+            quantity: 2,
+            unitPriceBeforeDiscountCents: 1000,
+            unitPriceCents: 1000,
+            personalizations: [
+              {
+                name: 'John',
+                surname: 'Doe',
+                country: 'US',
+                city: 'NY',
+                email: 'john@example.com',
+              },
+              {
+                name: 'Jane',
+                surname: 'Doe',
+                country: 'US',
+                city: 'NY',
+                email: 'jane@example.com',
+              },
+            ],
+          },
+        ],
         buyerEmail: 'buyer@example.com',
         subtotalCents: 2000,
         discountCents: 0,
@@ -82,7 +121,16 @@ describe('TicketService', () => {
       };
 
       const ticketTypes: TicketTypeConfig[] = [
-        { id: 'tkt_type_1', name: 'General', pricing: { kind: 'free' }, capacity: 10, transferable: true, visible: true, validFrom: new Date(), validUntil: new Date() }
+        {
+          id: 'tkt_type_1',
+          name: 'General',
+          pricing: { kind: 'free' },
+          capacity: 10,
+          transferable: true,
+          visible: true,
+          validFrom: new Date(),
+          validUntil: new Date(),
+        },
       ];
 
       (mockAdapter.getOrder as any).mockResolvedValue(order);
@@ -90,7 +138,7 @@ describe('TicketService', () => {
       (mockAdapter.countIssuedTickets as any).mockResolvedValue(0);
 
       const tickets = await ticketService.issueTickets('order_1');
-      
+
       expect(tickets.length).toBe(2);
       expect(tickets[0].eventId).toBe('evt_1');
       expect(tickets[0].ticketTypeId).toBe('tkt_type_1');
@@ -109,12 +157,16 @@ describe('TicketService', () => {
 
     it('should throw an error if ticket is cancelled', async () => {
       (mockAdapter.getTicket as any).mockResolvedValue({ status: 'cancelled' });
-      await expect(ticketService.deliverTicket('tkt_1')).rejects.toThrow('Cannot deliver cancelled ticket');
+      await expect(ticketService.deliverTicket('tkt_1')).rejects.toThrow(
+        'Cannot deliver cancelled ticket'
+      );
     });
 
     it('should throw an error if ticket is used', async () => {
       (mockAdapter.getTicket as any).mockResolvedValue({ status: 'used' });
-      await expect(ticketService.deliverTicket('tkt_1')).rejects.toThrow('Cannot deliver used ticket');
+      await expect(ticketService.deliverTicket('tkt_1')).rejects.toThrow(
+        'Cannot deliver used ticket'
+      );
     });
 
     it('should successfully deliver a ticket and generate QR payload', async () => {
@@ -124,15 +176,15 @@ describe('TicketService', () => {
           subtle: {
             importKey: vi.fn().mockResolvedValue({}),
             sign: vi.fn().mockResolvedValue(new ArrayBuffer(32)),
-          }
+          },
         } as any;
       } else if (!globalThis.crypto.subtle) {
-         Object.defineProperty(globalThis.crypto, 'subtle', {
-            value: {
-              importKey: vi.fn().mockResolvedValue({}),
-              sign: vi.fn().mockResolvedValue(new ArrayBuffer(32)),
-            }
-         });
+        Object.defineProperty(globalThis.crypto, 'subtle', {
+          value: {
+            importKey: vi.fn().mockResolvedValue({}),
+            sign: vi.fn().mockResolvedValue(new ArrayBuffer(32)),
+          },
+        });
       }
 
       const ticket: IssuedTicket = {
@@ -160,12 +212,16 @@ describe('TicketService', () => {
   describe('transferTicket', () => {
     it('should throw an error if ticket not found', async () => {
       (mockAdapter.getTicket as any).mockResolvedValue(null);
-      await expect(ticketService.transferTicket('tkt_1', 'new@email.com', {} as any)).rejects.toThrow('Ticket not found');
+      await expect(
+        ticketService.transferTicket('tkt_1', 'new@email.com', {} as any)
+      ).rejects.toThrow('Ticket not found');
     });
 
     it('should throw an error if ticket is not pending_delivery', async () => {
       (mockAdapter.getTicket as any).mockResolvedValue({ status: 'delivered' });
-      await expect(ticketService.transferTicket('tkt_1', 'new@email.com', {} as any)).rejects.toThrow('Cannot transfer a ticket that has already been delivered or cancelled.');
+      await expect(
+        ticketService.transferTicket('tkt_1', 'new@email.com', {} as any)
+      ).rejects.toThrow('Cannot transfer a ticket that has already been delivered or cancelled.');
     });
 
     it('should successfully transfer a ticket', async () => {
@@ -184,11 +240,19 @@ describe('TicketService', () => {
       (mockAdapter.getTicket as any).mockResolvedValue(ticket);
 
       const newPersonalization: TicketPersonalization = {
-        name: 'New', surname: 'User', country: 'US', city: 'LA', email: 'new@email.com'
+        name: 'New',
+        surname: 'User',
+        country: 'US',
+        city: 'LA',
+        email: 'new@email.com',
       };
 
       await ticketService.transferTicket('tkt_1', 'new@email.com', newPersonalization);
-      expect(mockAdapter.transferTicket).toHaveBeenCalledWith('tkt_1', 'new@email.com', newPersonalization);
+      expect(mockAdapter.transferTicket).toHaveBeenCalledWith(
+        'tkt_1',
+        'new@email.com',
+        newPersonalization
+      );
     });
   });
 });

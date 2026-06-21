@@ -3,7 +3,7 @@ import { IssuedTicket } from 'reactticket-core/types/ticket.types';
 import { QRCode } from './QRCode';
 import { TicketDownload } from './TicketDownload';
 
-export const TicketCard = ({ ticket, eventName }: { ticket: IssuedTicket, eventName: string }) => {
+export const TicketCard = ({ ticket, eventName }: { ticket: IssuedTicket; eventName: string }) => {
   return (
     <div className="tf-ticket-card" role="region" aria-label={`Ticket for ${eventName}`}>
       <h2>{eventName}</h2>

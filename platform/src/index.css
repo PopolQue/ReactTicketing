@@ -10,8 +10,10 @@
   --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 
   /* Bloom Glow Effect based on highlight #452626 */
-  --bloom-glow: 0 0 10px rgba(69, 38, 38, 0.8), 0 0 20px rgba(69, 38, 38, 0.6), 0 0 40px rgba(69, 38, 38, 0.4);
-  --bloom-text: 0 0 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(69, 38, 38, 0.8), 0 0 24px rgba(69, 38, 38, 0.6);
+  --bloom-glow:
+    0 0 10px rgba(69, 38, 38, 0.8), 0 0 20px rgba(69, 38, 38, 0.6), 0 0 40px rgba(69, 38, 38, 0.4);
+  --bloom-text:
+    0 0 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(69, 38, 38, 0.8), 0 0 24px rgba(69, 38, 38, 0.6);
 }
 
 body {
@@ -49,7 +51,10 @@ body {
 .btn-primary:hover {
   background: var(--accent-hover);
   transform: translateY(-1px);
-  box-shadow: 0 0 15px rgba(90, 50, 50, 0.8), 0 0 30px rgba(90, 50, 50, 0.5), 0 0 50px rgba(90, 50, 50, 0.3);
+  box-shadow:
+    0 0 15px rgba(90, 50, 50, 0.8),
+    0 0 30px rgba(90, 50, 50, 0.5),
+    0 0 50px rgba(90, 50, 50, 0.3);
   text-shadow: var(--bloom-text);
 }
 
@@ -71,7 +76,9 @@ body {
 .btn-secondary:hover {
   border-color: var(--accent);
   background: rgba(69, 38, 38, 0.15);
-  box-shadow: inset 0 0 20px rgba(69, 38, 38, 0.2), 0 0 10px rgba(69, 38, 38, 0.3);
+  box-shadow:
+    inset 0 0 20px rgba(69, 38, 38, 0.2),
+    0 0 10px rgba(69, 38, 38, 0.3);
 }
 
 .btn-nav {
@@ -99,23 +106,32 @@ body {
   border-radius: 8px;
   color: white;
   font-family: var(--font-family);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
   box-sizing: border-box;
 }
 
 .input-field:focus {
   outline: none;
   border-color: var(--accent);
-  box-shadow: 0 0 0 2px rgba(69, 38, 38, 0.3), var(--bloom-glow);
+  box-shadow:
+    0 0 0 2px rgba(69, 38, 38, 0.3),
+    var(--bloom-glow);
 }
 
 .event-card-hover {
-  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.3s ease, border-color 0.3s ease;
+  transition:
+    transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    box-shadow 0.3s ease,
+    border-color 0.3s ease;
 }
 
 .event-card-hover:hover {
   transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.5), var(--bloom-glow);
+  box-shadow:
+    0 12px 24px rgba(0, 0, 0, 0.5),
+    var(--bloom-glow);
   border-color: var(--accent);
 }
 
@@ -151,8 +167,8 @@ body {
 .ReactTicket-root tr,
 .ReactTicket-root td,
 .ReactTicket-root th,
-.ReactTicket-root div[style*="background"],
-.ReactTicket-root section[style*="background"] {
+.ReactTicket-root div[style*='background'],
+.ReactTicket-root section[style*='background'] {
   background-color: rgba(255, 255, 255, 0.02) !important;
   background: rgba(255, 255, 255, 0.02) !important;
   border-color: var(--border) !important;
@@ -160,12 +176,12 @@ body {
 }
 
 /* Ensure form/batch layout form containers match glass-panel */
-.ReactTicket-root div[style*="background: rgb(248, 250, 252)"],
-.ReactTicket-root div[style*="background:#f8fafc"],
-.ReactTicket-root div[style*="background: #f8fafc"],
-.ReactTicket-root div[style*="background: rgb(241, 245, 249)"],
-.ReactTicket-root div[style*="background:#f1f5f9"],
-.ReactTicket-root div[style*="background: #f1f5f9"] {
+.ReactTicket-root div[style*='background: rgb(248, 250, 252)'],
+.ReactTicket-root div[style*='background:#f8fafc'],
+.ReactTicket-root div[style*='background: #f8fafc'],
+.ReactTicket-root div[style*='background: rgb(241, 245, 249)'],
+.ReactTicket-root div[style*='background:#f1f5f9'],
+.ReactTicket-root div[style*='background: #f1f5f9'] {
   background: var(--panel-bg) !important;
   background-color: var(--panel-bg) !important;
   backdrop-filter: blur(12px) !important;

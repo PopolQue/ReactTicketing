@@ -115,17 +115,18 @@ export default function Imprint() {
       <div style={styles.container}>
         <div style={styles.pageLabel}>{t('legal')}</div>
         <h1 style={styles.title}>{t('imprint')}</h1>
-        <p style={styles.subtitle}>
-          {t('imprintSubtitle')}
-        </p>
+        <p style={styles.subtitle}>{t('imprintSubtitle')}</p>
 
         <div className="glass-panel" style={styles.panel}>
           <div style={styles.section}>
             <h2 style={styles.sectionTitle}>{t('companyInformation')}</h2>
             <p style={styles.text}>
-              <span style={styles.label}>Admit GmbH</span><br />
-              Friedrichstraße 123<br />
-              10117 Berlin<br />
+              <span style={styles.label}>Admit GmbH</span>
+              <br />
+              Friedrichstraße 123
+              <br />
+              10117 Berlin
+              <br />
               Germany
             </p>
           </div>
@@ -152,7 +153,9 @@ export default function Imprint() {
           <div style={styles.section}>
             <h2 style={styles.sectionTitle}>{t('commercialRegister')}</h2>
             <p style={styles.text}>
-              <span style={styles.label}>{t('courtOfRegistration')}:</span> Amtsgericht Charlottenburg, Berlin<br />
+              <span style={styles.label}>{t('courtOfRegistration')}:</span> Amtsgericht
+              Charlottenburg, Berlin
+              <br />
               <span style={styles.label}>{t('registrationNumber')}:</span> HRB 234567 B
             </p>
           </div>
@@ -168,12 +171,12 @@ export default function Imprint() {
           <hr style={styles.divider} />
 
           <div style={styles.section}>
-            <h2 style={styles.sectionTitle}>
-              {t('responsibleForContent')}
-            </h2>
+            <h2 style={styles.sectionTitle}>{t('responsibleForContent')}</h2>
             <p style={styles.text}>
-              Max Hartmann<br />
-              Friedrichstraße 123<br />
+              Max Hartmann
+              <br />
+              Friedrichstraße 123
+              <br />
               10117 Berlin, Germany
             </p>
           </div>
@@ -190,7 +193,8 @@ export default function Imprint() {
               >
                 https://ec.europa.eu/consumers/odr
               </a>
-              <br /><br />
+              <br />
+              <br />
               {t('disputeResolutionDesc2')}
             </p>
           </div>

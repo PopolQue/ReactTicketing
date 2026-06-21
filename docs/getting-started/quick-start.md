@@ -15,7 +15,8 @@ cp -r ReactTicketing/reactticket ./src/
 cp -r ReactTicketing/reactticket-core ./src/
 ```
 
-*Tip: We highly recommend using the `examples/supabase-template` as a starting point if you want a production-ready backend!*
+_Tip: We highly recommend using the `examples/supabase-template` as a starting point if you want a production-ready backend!_
+
 ## Basic Setup
 
 Here is a minimal example of a storefront running with a LocalStorage adapter for testing purposes:
@@ -28,13 +29,13 @@ import { LocalStorageAdapter } from 'reactticket-core/adapters/LocalStorageAdapt
 const adapter = new LocalStorageAdapter();
 
 const eventConfig = {
-  id: "evt_my_event_01",
-  name: "My Awesome Event",
-  date: "2026-10-31T20:00:00Z",
-  venue: "Main Hall",
+  id: 'evt_my_event_01',
+  name: 'My Awesome Event',
+  date: '2026-10-31T20:00:00Z',
+  venue: 'Main Hall',
   ticketTypes: [
-    { id: "tt_gen", name: "General Admission", price: 25, totalCapacity: 500, currency: "USD" }
-  ]
+    { id: 'tt_gen', name: 'General Admission', price: 25, totalCapacity: 500, currency: 'USD' },
+  ],
 };
 
 export function App() {
@@ -45,7 +46,7 @@ export function App() {
       mode="storefront"
       onCheckout={async (order) => {
         // Integrate with Stripe/PayPal here
-        return "confirmed";
+        return 'confirmed';
       }}
     />
   );

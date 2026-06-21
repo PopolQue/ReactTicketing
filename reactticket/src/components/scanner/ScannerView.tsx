@@ -7,20 +7,14 @@ import { ScanResult } from './ScanResult';
 import { useScanAuth } from '../../hooks/useScanAuth';
 
 interface ScannerViewProps {
-    qrParser?: (data: Uint8ClampedArray, width: number, height: number) => { data: string } | null;
+  qrParser?: (data: Uint8ClampedArray, width: number, height: number) => { data: string } | null;
 }
 
 export const ScannerView: React.FC<ScannerViewProps> = ({ qrParser }) => {
   const { event, authSession } = useReactTicket();
   const videoRef = useRef<HTMLVideoElement>(null);
-  const { 
-    startCamera, 
-    stopCamera, 
-    isScanning, 
-    lastResult, 
-    setLastResult,
-    isExpired
-  } = useScanSession(event.id, videoRef, qrParser);
+  const { startCamera, stopCamera, isScanning, lastResult, setLastResult, isExpired } =
+    useScanSession(event.id, videoRef, qrParser);
   const { logout } = useScanAuth(event.id);
 
   useEffect(() => {
@@ -38,12 +32,23 @@ export const ScannerView: React.FC<ScannerViewProps> = ({ qrParser }) => {
 
   if (isExpired) {
     return (
-        <div className="ReactTicket-root scanner-view" style={{padding: '20px', textAlign: 'center'}} role="alert" aria-live="assertive">
-            <h2>Session Expired</h2>
-            <p>Your scanning session has expired. Please log in again.</p>
-            <button onClick={logout} style={{ marginTop: '20px', padding: '15px', fontSize: '18px', fontWeight: 'bold' }} aria-label="Log back in to scanner">Log In</button>
-        </div>
-    )
+      <div
+        className="ReactTicket-root scanner-view"
+        style={{ padding: '20px', textAlign: 'center' }}
+        role="alert"
+        aria-live="assertive"
+      >
+        <h2>Session Expired</h2>
+        <p>Your scanning session has expired. Please log in again.</p>
+        <button
+          onClick={logout}
+          style={{ marginTop: '20px', padding: '15px', fontSize: '18px', fontWeight: 'bold' }}
+          aria-label="Log back in to scanner"
+        >
+          Log In
+        </button>
+      </div>
+    );
   }
 
   const handleDismissResult = () => {
@@ -53,44 +58,77 @@ export const ScannerView: React.FC<ScannerViewProps> = ({ qrParser }) => {
   return (
     <div className="ReactTicket-root scanner-view" role="region" aria-label="Ticket Scanner View">
       <ScanAccountBadge />
-      <div className="camera-view" style={{ position: 'relative', height: '400px', width: '100%', backgroundColor: '#000', overflow: 'hidden' }}>
-        <video 
-           ref={videoRef} 
-           autoPlay 
-           playsInline 
-           style={{ width: '100%', height: '100%', objectFit: 'cover', display: isScanning ? 'block' : 'none' }} 
-           aria-label="Camera feed for scanning tickets"
-        />
-        
-        {isScanning && !lastResult && (
-          <div style={{
-              position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-              display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
-              pointerEvents: 'none'
+      <div
+        className="camera-view"
+        style={{
+          position: 'relative',
+          height: '400px',
+          width: '100%',
+          backgroundColor: '#000',
+          overflow: 'hidden',
+        }}
+      >
+        <video
+          ref={videoRef}
+          autoPlay
+          playsInline
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: isScanning ? 'block' : 'none',
           }}
-          aria-hidden="true"
+          aria-label="Camera feed for scanning tickets"
+        />
+
+        {isScanning && !lastResult && (
+          <div
+            style={{
+              position: 'absolute',
+              top: 0,
+              left: 0,
+              width: '100%',
+              height: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              pointerEvents: 'none',
+            }}
+            aria-hidden="true"
           >
-              <div style={{
-                  width: '200px', height: '200px',
-                  border: '3px solid rgba(255, 255, 255, 0.8)',
-                  borderRadius: '12px',
-                  boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)'
-              }}></div>
-              <p style={{ color: 'white', marginTop: '20px', fontWeight: 'bold' }}>Position QR Code</p>
+            <div
+              style={{
+                width: '200px',
+                height: '200px',
+                border: '3px solid rgba(255, 255, 255, 0.8)',
+                borderRadius: '12px',
+                boxShadow: '0 0 0 9999px rgba(0, 0, 0, 0.5)',
+              }}
+            ></div>
+            <p style={{ color: 'white', marginTop: '20px', fontWeight: 'bold' }}>
+              Position QR Code
+            </p>
           </div>
         )}
 
-        {lastResult && (
-          <ScanResult result={lastResult} onDismiss={handleDismissResult} />
-        )}
+        {lastResult && <ScanResult result={lastResult} onDismiss={handleDismissResult} />}
 
-        <button 
-           onClick={isScanning ? stopCamera : startCamera} 
-           style={{ position: 'absolute', bottom: '10px', left: '10px', right: '10px', padding: '15px', fontSize: '18px', fontWeight: 'bold' }}
-           aria-label={isScanning ? 'Stop Scanning' : 'Start Scanning'}
-           aria-pressed={isScanning}
+        <button
+          onClick={isScanning ? stopCamera : startCamera}
+          style={{
+            position: 'absolute',
+            bottom: '10px',
+            left: '10px',
+            right: '10px',
+            padding: '15px',
+            fontSize: '18px',
+            fontWeight: 'bold',
+          }}
+          aria-label={isScanning ? 'Stop Scanning' : 'Start Scanning'}
+          aria-pressed={isScanning}
         >
-            {isScanning ? 'Stop Scanning' : 'Start Scanning'}
+          {isScanning ? 'Stop Scanning' : 'Start Scanning'}
         </button>
       </div>
     </div>

@@ -1,7 +1,7 @@
 export type DiscountRule =
-  | { kind: "percent_off"; percent: number }
-  | { kind: "amount_off"; amountCents: number }
-  | { kind: "free" };
+  | { kind: 'percent_off'; percent: number }
+  | { kind: 'amount_off'; amountCents: number }
+  | { kind: 'free' };
 
 export interface PromoCode {
   code: string;
@@ -13,8 +13,8 @@ export interface PromoCode {
   createdAt: Date;
   active: boolean;
   batchId?: string;
-  sentAt?: Date;      // Marked as sent by admin/system
-  redeemedAt?: Date;  // Marked as used
+  sentAt?: Date; // Marked as sent by admin/system
+  redeemedAt?: Date; // Marked as used
 }
 
 export interface PromoBatch {

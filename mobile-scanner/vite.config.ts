@@ -13,6 +13,6 @@ export default defineConfig({
     outDir: 'dist',
   },
   esbuild: {
-    drop: ['console', 'debugger']
-  }
+    drop: ['console', 'debugger'],
+  },
 });

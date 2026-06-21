@@ -2,7 +2,7 @@ name: Deploy to GitHub Pages
 
 on:
   workflow_run:
-    workflows: ["Tests & Migrations"]
+    workflows: ['Tests & Migrations']
     types:
       - completed
     branches:
@@ -20,19 +20,19 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-      
+
       - name: Install and Build
         run: |
           cd reactticket-core && npm install
           cd ../reactticket && npm install
           cd ../examples/demo-local && npm install && npm run build
-      
+
       - name: Upload Sourcemaps to PostHog
         run: npx posthog-cli sourcemap upload --minified-urls "http*://*/assets/*" --sourcemap-dir ./examples/demo-local/dist/assets
         env:
           POSTHOG_API_KEY: ${{ secrets.POSTHOG_PERSONAL_API_KEY }}
           POSTHOG_PROJECT_API_KEY: ${{ secrets.POSTHOG_PROJECT_API_KEY }}
-      
+
       - name: Setup Supabase CLI
         uses: supabase/setup-cli@v2
 
@@ -41,7 +41,7 @@ jobs:
         env:
           SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
           SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
-      
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:

@@ -10,14 +10,14 @@ interface HalftoneMorphProps {
   style?: React.CSSProperties;
 }
 
-export default function HalftoneImage({ 
-  srcs, 
-  dotSpacing = 12, 
+export default function HalftoneImage({
+  srcs,
+  dotSpacing = 12,
   dotColor = '#a2aa5c',
   intervalMs = 3000,
   transitionMs = 500,
   baseRadiusMultiplier = 0.2,
-  style 
+  style,
 }: HalftoneMorphProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
@@ -32,11 +32,11 @@ export default function HalftoneImage({
     const dpr = window.devicePixelRatio || 1;
     let width = 0;
     let height = 0;
-    
+
     const imageRadii: Float32Array[] = [];
     let currentRadii: Float32Array | null = null;
     let targetRadii: Float32Array | null = null;
-    
+
     let currentIdx = 0;
     let isTransitioning = false;
     let transitionStartTime = 0;
@@ -48,15 +48,15 @@ export default function HalftoneImage({
       const targetHeight = 300;
       width = targetWidth;
       height = targetHeight;
-      
+
       // Canvas internal buffer size scaled for high-DPI
       canvas.width = width * dpr;
       canvas.height = height * dpr;
-      
+
       // CSS display size matches responsive dimensions
       canvas.style.width = `${width}px`;
       canvas.style.height = `${height}px`;
-      
+
       // Context scale to handle coordinate mapping for high-DPI
       ctx.scale(dpr, dpr);
 
@@ -89,32 +89,33 @@ export default function HalftoneImage({
         const x = (width - w) / 2;
         const y = (height - h) / 2;
         offCtx.drawImage(img, x, y, w, h);
-        
+
         const imgData = offCtx.getImageData(0, 0, width, height);
         const pixels = imgData.data;
 
         const radii = new Float32Array(totalDots);
-        
+
         let dotIdx = 0;
         for (let y = 0; y < height; y += dotSpacing) {
           for (let x = 0; x < width; x += dotSpacing) {
             let totalLum = 0;
             let count = 0;
-            
+
             for (let cy = 0; cy < dotSpacing; cy++) {
               for (let cx = 0; cx < dotSpacing; cx++) {
                 const py = y + cy;
                 const px = x + cx;
                 if (px < width && py < height) {
                   const pIdx = (py * width + px) * 4;
-                  totalLum += 0.299 * pixels[pIdx] + 0.587 * pixels[pIdx + 1] + 0.114 * pixels[pIdx + 2];
+                  totalLum +=
+                    0.299 * pixels[pIdx] + 0.587 * pixels[pIdx + 1] + 0.114 * pixels[pIdx + 2];
                   count++;
                 }
               }
             }
-            
+
             const brightness = (count > 0 ? totalLum / count : 0) / 255;
-            const maxRadius = dotSpacing / 1.5; 
+            const maxRadius = dotSpacing / 1.5;
             radii[dotIdx] = Math.max(brightness * maxRadius, maxRadius * baseRadiusMultiplier);
             dotIdx++;
           }
@@ -147,7 +148,7 @@ export default function HalftoneImage({
       // Clear canvas based on logical size (ctx is scaled, so clearing logical size clears all)
       ctx.clearRect(0, 0, width, height);
       ctx.fillStyle = dotColor;
-      
+
       // Apply bloom effect
       ctx.shadowColor = dotColor;
       ctx.shadowBlur = 8 * dpr; // Scale blur by dpr to look consistent on high-res
@@ -158,7 +159,10 @@ export default function HalftoneImage({
         if (progress >= 1) isTransitioning = false;
 
         // ease-in-out-cubic
-        const ease = progress < 0.5 ? 4 * progress * progress * progress : 1 - Math.pow(-2 * progress + 2, 3) / 2;
+        const ease =
+          progress < 0.5
+            ? 4 * progress * progress * progress
+            : 1 - Math.pow(-2 * progress + 2, 3) / 2;
 
         for (let i = 0; i < currentRadii!.length; i++) {
           currentRadii![i] = startRadii![i] + (targetRadii![i] - startRadii![i]) * ease;
@@ -192,13 +196,13 @@ export default function HalftoneImage({
 
   return (
     <div style={{ ...style, position: 'relative', overflow: 'hidden' }}>
-      <canvas 
-        ref={canvasRef} 
-        style={{ 
-          width: '100%', 
-          height: '100%', 
-          display: 'block'
-        }} 
+      <canvas
+        ref={canvasRef}
+        style={{
+          width: '100%',
+          height: '100%',
+          display: 'block',
+        }}
       />
     </div>
   );

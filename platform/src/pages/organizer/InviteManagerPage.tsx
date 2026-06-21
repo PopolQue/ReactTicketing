@@ -10,10 +10,12 @@ export default function OrganizerInviteManagerPage() {
   return (
     <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '24px' }}>
       <div style={{ marginBottom: '32px' }}>
-        <h1 style={{ margin: '0 0 8px 0' }}>{t("organizer.invites.title")}</h1>
-        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>{t("organizer.invites.description")}</p>
+        <h1 style={{ margin: '0 0 8px 0' }}>{t('organizer.invites.title')}</h1>
+        <p style={{ color: 'var(--text-secondary)', margin: 0 }}>
+          {t('organizer.invites.description')}
+        </p>
       </div>
-      
+
       <InviteManager scope="artist" organizerId={id} />
     </div>
   );

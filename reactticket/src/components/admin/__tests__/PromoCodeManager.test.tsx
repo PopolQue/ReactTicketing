@@ -7,11 +7,11 @@ import * as usePromoBatchesModule from '../../../hooks/usePromoBatches';
 afterEach(cleanup);
 
 vi.mock('../PromoBatchForm', () => ({
-  PromoBatchForm: () => <div data-testid="promo-batch-form" />
+  PromoBatchForm: () => <div data-testid="promo-batch-form" />,
 }));
 
 vi.mock('../PromoBatchList', () => ({
-  PromoBatchList: () => <div data-testid="promo-batch-list" />
+  PromoBatchList: () => <div data-testid="promo-batch-list" />,
 }));
 
 describe('PromoCodeManager Component', () => {
@@ -30,11 +30,11 @@ describe('PromoCodeManager Component', () => {
       toggleBatchActive: vi.fn(),
       toggleBatchArchive: vi.fn(),
       exportCSV: vi.fn(),
-      ticketTypes: []
+      ticketTypes: [],
     } as any);
 
     render(<PromoCodeManager />);
-    
+
     expect(screen.getByTestId('promo-batch-form')).toBeDefined();
     expect(screen.getByTestId('promo-batch-list')).toBeDefined();
     expect(screen.getByText('Promo Code Batches')).toBeDefined();

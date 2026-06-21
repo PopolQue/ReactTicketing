@@ -13,7 +13,10 @@ export class PayPalService {
 
   async createOrder(orderRequest: PayPalOrderRequest): Promise<PayPalOrderResponse> {
     // Stub: Implement with fetch to PayPal API
-    console.log('Creating PayPal order for merchant:', orderRequest.purchase_units[0].payee.merchant_id);
+    console.log(
+      'Creating PayPal order for merchant:',
+      orderRequest.purchase_units[0].payee.merchant_id
+    );
     return { id: 'mock-order-id', status: 'CREATED', links: [] };
   }
 

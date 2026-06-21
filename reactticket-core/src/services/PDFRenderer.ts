@@ -7,7 +7,7 @@ export class PDFRenderer {
     canvas.width = 888;
     canvas.height = 630;
     const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error("Canvas context unavailable");
+    if (!ctx) throw new Error('Canvas context unavailable');
 
     // Background
     ctx.fillStyle = '#ffffff';
@@ -19,6 +19,6 @@ export class PDFRenderer {
     ctx.fillText(`Event: ${eventName}`, 50, 50);
     ctx.fillText(`Ticket ID: ${ticketId}`, 50, 100);
 
-    return new Promise(resolve => canvas.toBlob(blob => resolve(blob!)));
+    return new Promise((resolve) => canvas.toBlob((blob) => resolve(blob!)));
   }
 }

@@ -47,8 +47,8 @@ This guide walks you through setting up PostHog for React Router V7 in framework
     export default defineConfig({
       plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
       ssr: {
-        noExternal: ['posthog-js', '@posthog/react']
-      }
+        noExternal: ['posthog-js', '@posthog/react'],
+      },
     });
     ```
 
@@ -119,11 +119,11 @@ This guide walks you through setting up PostHog for React Router V7 in framework
 
     ```jsx
     useEffect(() => {
-      posthog?.capture('test') // using optional chaining (recommended)
+      posthog?.capture('test'); // using optional chaining (recommended)
       if (posthog) {
-        posthog.capture('test') // using an if statement
+        posthog.capture('test'); // using an if statement
       }
-    }, [posthog])
+    }, [posthog]);
     ```
 
     Typescript helps protect against these errors.
@@ -132,7 +132,7 @@ This guide walks you through setting up PostHog for React Router V7 in framework
 
     Checkpoint
 
-    *Confirm that you can capture client-side events and see them in your PostHog project*
+    _Confirm that you can capture client-side events and see them in your PostHog project_
 
     At this point, you should be able to capture client-side events and see them in your PostHog project. This includes basic events like page views and button clicks that are [autocaptured](/docs/product-analytics/autocapture.md).
 
@@ -143,10 +143,10 @@ This guide walks you through setting up PostHog for React Router V7 in framework
     PostHog AI
 
     ```jsx
-    import { usePostHog } from '@posthog/react'
+    import { usePostHog } from '@posthog/react';
     function App() {
-      const posthog = usePostHog()
-      return <button onClick={() => posthog?.capture('button_clicked')}>Click me</button>
+      const posthog = usePostHog();
+      return <button onClick={() => posthog?.capture('button_clicked')}>Click me</button>;
     }
     ```
 
@@ -165,10 +165,10 @@ This guide walks you through setting up PostHog for React Router V7 in framework
     PostHog AI
 
     ```jsx
-    import { usePostHog } from '@posthog/react'
+    import { usePostHog } from '@posthog/react';
     function App() {
-      const posthog = usePostHog()
-      return <button onClick={() => posthog?.capture('button_clicked')}>Click me</button>
+      const posthog = usePostHog();
+      return <button onClick={() => posthog?.capture('button_clicked')}>Click me</button>;
     }
     ```
 
@@ -260,13 +260,13 @@ This guide walks you through setting up PostHog for React Router V7 in framework
     PostHog AI
 
     ```jsx
-    import { PostHogCaptureOnViewed } from '@posthog/react'
+    import { PostHogCaptureOnViewed } from '@posthog/react';
     function App() {
-        return (
-            <PostHogCaptureOnViewed name="hero-banner">
-                <div>Your important content here</div>
-            </PostHogCaptureOnViewed>
-        )
+      return (
+        <PostHogCaptureOnViewed name="hero-banner">
+          <div>Your important content here</div>
+        </PostHogCaptureOnViewed>
+      );
     }
     ```
 
@@ -280,14 +280,14 @@ This guide walks you through setting up PostHog for React Router V7 in framework
 
     ```jsx
     <PostHogCaptureOnViewed
-        name="product-card"
-        properties={{
-            product_id: '123',
-            category: 'electronics',
-            price: 299.99
-        }}
+      name="product-card"
+      properties={{
+        product_id: '123',
+        category: 'electronics',
+        price: 299.99,
+      }}
     >
-        <ProductCard />
+      <ProductCard />
     </PostHogCaptureOnViewed>
     ```
 
@@ -301,13 +301,13 @@ This guide walks you through setting up PostHog for React Router V7 in framework
 
     ```jsx
     <PostHogCaptureOnViewed
-        name="product-gallery"
-        properties={{ gallery_type: 'featured' }}
-        trackAllChildren
+      name="product-gallery"
+      properties={{ gallery_type: 'featured' }}
+      trackAllChildren
     >
-        <ProductCard id="1" />
-        <ProductCard id="2" />
-        <ProductCard id="3" />
+      <ProductCard id="1" />
+      <ProductCard id="2" />
+      <ProductCard id="3" />
     </PostHogCaptureOnViewed>
     ```
 
@@ -323,13 +323,13 @@ This guide walks you through setting up PostHog for React Router V7 in framework
 
     ```jsx
     <PostHogCaptureOnViewed
-        name="footer"
-        observerOptions={{
-            threshold: 0.5,  // Element is 50% visible
-            rootMargin: '0px'
-        }}
+      name="footer"
+      observerOptions={{
+        threshold: 0.5, // Element is 50% visible
+        rootMargin: '0px',
+      }}
     >
-        <Footer />
+      <Footer />
     </PostHogCaptureOnViewed>
     ```
 
@@ -369,106 +369,109 @@ This guide walks you through setting up PostHog for React Router V7 in framework
     bun add posthog-node
     ```
 
-10.  9
+10. 9
 
-     ## Create a server-side middleware
+    ## Create a server-side middleware
 
-     Recommended
+    Recommended
 
-     Next, create a server-side middleware to help you capture server-side events. This middleware helps you achieve the following:
+    Next, create a server-side middleware to help you capture server-side events. This middleware helps you achieve the following:
 
-     -   Initialize a PostHog client
-     -   Fetch the session and distinct ID from the `X-POSTHOG-SESSION-ID` and `X-POSTHOG-DISTINCT-ID` headers and pass them to your request as a [context](/docs/libraries/node.md#contexts). This automatically identifies the user and session for you in all subsequent event captures.
-     -   Calls `shutdown()` on the PostHog client to ensure all events are sent before the request is completed.
+    - Initialize a PostHog client
+    - Fetch the session and distinct ID from the `X-POSTHOG-SESSION-ID` and `X-POSTHOG-DISTINCT-ID` headers and pass them to your request as a [context](/docs/libraries/node.md#contexts). This automatically identifies the user and session for you in all subsequent event captures.
+    - Calls `shutdown()` on the PostHog client to ensure all events are sent before the request is completed.
 
-     app/lib/posthog-middleware.ts
+    app/lib/posthog-middleware.ts
 
-     PostHog AI
+    PostHog AI
 
-     ```typescript
-     import { PostHog } from "posthog-node";
-     import type { RouterContextProvider } from "react-router";
-     import type { Route } from "../+types/root";
-     export interface PostHogContext extends RouterContextProvider {
-       posthog?: PostHog;
-     }
-     export const posthogMiddleware: Route.MiddlewareFunction = async ({ request, context }, next) => {
-       const posthog = new PostHog(process.env.VITE_POSTHOG_PROJECT_TOKEN!, {
-         host: process.env.VITE_POSTHOG_HOST!,
-         flushAt: 1,
-         flushInterval: 0,
-       });
-       const sessionId = request.headers.get('X-POSTHOG-SESSION-ID');
-       const distinctId = request.headers.get('X-POSTHOG-DISTINCT-ID');
-       (context as PostHogContext).posthog = posthog;
-       const response = await posthog.withContext(
-         { sessionId: sessionId ?? undefined, distinctId: distinctId ?? undefined },
-         next
-       );
-       await posthog.shutdown().catch(() => {});
-       return response;
-     };
-     ```
+    ```typescript
+    import { PostHog } from 'posthog-node';
+    import type { RouterContextProvider } from 'react-router';
+    import type { Route } from '../+types/root';
+    export interface PostHogContext extends RouterContextProvider {
+      posthog?: PostHog;
+    }
+    export const posthogMiddleware: Route.MiddlewareFunction = async (
+      { request, context },
+      next
+    ) => {
+      const posthog = new PostHog(process.env.VITE_POSTHOG_PROJECT_TOKEN!, {
+        host: process.env.VITE_POSTHOG_HOST!,
+        flushAt: 1,
+        flushInterval: 0,
+      });
+      const sessionId = request.headers.get('X-POSTHOG-SESSION-ID');
+      const distinctId = request.headers.get('X-POSTHOG-DISTINCT-ID');
+      (context as PostHogContext).posthog = posthog;
+      const response = await posthog.withContext(
+        { sessionId: sessionId ?? undefined, distinctId: distinctId ?? undefined },
+        next
+      );
+      await posthog.shutdown().catch(() => {});
+      return response;
+    };
+    ```
 
-     Then, you'll need to register the middleware in your app in the `app/root.tsx` file by exporting it in the `Route.MiddlewareFunction[]` array.
+    Then, you'll need to register the middleware in your app in the `app/root.tsx` file by exporting it in the `Route.MiddlewareFunction[]` array.
 
-     app/root.tsx
+    app/root.tsx
 
-     PostHog AI
+    PostHog AI
 
-     ```jsx
-     import { posthogMiddleware } from './lib/posthog-middleware';
-     export const middleware: Route.MiddlewareFunction[] = [
-       posthogMiddleware,
-       // other middlewares...
-     ];
-     ```
+    ```jsx
+    import { posthogMiddleware } from './lib/posthog-middleware';
+    export const middleware: Route.MiddlewareFunction[] = [
+      posthogMiddleware,
+      // other middlewares...
+    ];
+    ```
 
-11.  ## Verify server-side events are captured
+11. ## Verify server-side events are captured
 
-     Checkpoint
+    Checkpoint
 
-     *Confirm that you can capture server-side events and see them in your PostHog project*
+    _Confirm that you can capture server-side events and see them in your PostHog project_
 
-     At this point, you should be able to capture server-side events and see them in your PostHog project.
+    At this point, you should be able to capture server-side events and see them in your PostHog project.
 
-     In a route, you can access the PostHog client from the context and capture an event. The middleware assigns the session ID and the distinct ID. This ensures that the system associates events with the correct user and session.
+    In a route, you can access the PostHog client from the context and capture an event. The middleware assigns the session ID and the distinct ID. This ensures that the system associates events with the correct user and session.
 
-     app/routes/api.checkout.ts
+    app/routes/api.checkout.ts
 
-     PostHog AI
+    PostHog AI
 
-     ```jsx
-     import type { PostHogContext } from "../lib/posthog-middleware";
-     export async function action({ request, context }: Route.ActionArgs) {
-       const body = await request.json();
-       // ... existing code ...
-       // Access the PostHog client from the context and capture an event
-       const posthog = (context as PostHogContext).posthog;
-       posthog?.capture({ event: 'checkout_completed' });
-       return Response.json({
-         success: true,
-         // ... existing code ...
-       });
-     }
-     ```
+    ```jsx
+    import type { PostHogContext } from "../lib/posthog-middleware";
+    export async function action({ request, context }: Route.ActionArgs) {
+      const body = await request.json();
+      // ... existing code ...
+      // Access the PostHog client from the context and capture an event
+      const posthog = (context as PostHogContext).posthog;
+      posthog?.capture({ event: 'checkout_completed' });
+      return Response.json({
+        success: true,
+        // ... existing code ...
+      });
+    }
+    ```
 
-12.  10
+12. 10
 
-     ## Next steps
+    ## Next steps
 
-     Recommended
+    Recommended
 
-     Now that you've set up PostHog for React Router, you can start capturing events and exceptions in your app.
+    Now that you've set up PostHog for React Router, you can start capturing events and exceptions in your app.
 
-     To get the most out of PostHog, you should familiarize yourself with the following:
+    To get the most out of PostHog, you should familiarize yourself with the following:
 
-     -   [PostHog Web SDK docs](/docs/libraries/js.md): Learn more about the PostHog Web SDK and how to use it on the client-side.
-     -   [PostHog Node SDK docs](/docs/libraries/node.md): Learn more about the PostHog Node SDK and how to use it on the server-side.
-     -   [Identify users](/docs/product-analytics/identify.md): Learn more about how to identify users in your app.
-     -   [Group analytics](/docs/product-analytics/group-analytics.md): Learn more about how to use group analytics in your app.
-     -   [PostHog AI](/docs/posthog-ai.md): After capturing events, use PostHog AI to help you understand your data and build insights.
-     -   [Feature flags and experiments](/docs/libraries/react.md#feature-flags): Feature flag and experiment setup is the same as React. You can find more details in the React integration guide.
+    - [PostHog Web SDK docs](/docs/libraries/js.md): Learn more about the PostHog Web SDK and how to use it on the client-side.
+    - [PostHog Node SDK docs](/docs/libraries/node.md): Learn more about the PostHog Node SDK and how to use it on the server-side.
+    - [Identify users](/docs/product-analytics/identify.md): Learn more about how to identify users in your app.
+    - [Group analytics](/docs/product-analytics/group-analytics.md): Learn more about how to use group analytics in your app.
+    - [PostHog AI](/docs/posthog-ai.md): After capturing events, use PostHog AI to help you understand your data and build insights.
+    - [Feature flags and experiments](/docs/libraries/react.md#feature-flags): Feature flag and experiment setup is the same as React. You can find more details in the React integration guide.
 
 ### Community questions
 

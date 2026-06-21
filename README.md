@@ -24,13 +24,13 @@ The demo runs entirely in your browser using `LocalStorage` (no backend required
 
 ## Key Features
 
-* **Zero Dependencies:** React + ReactDOM are the only peer dependencies.
-* **Self-Contained Rendering:** QR codes and ticket cards are generated entirely client-side.
-* **Full Lifecycle:** Configuration, Sales, Generation, Scan Validation, and Analytics Dashboard included.
-* **Production-Ready:** Includes a production adapter guard, secure PIN hashing (PBKDF2), and a strict backend state machine contract.
-* **Highly Flexible:** Pluggable `StorageAdapter` allows for immediate LocalStorage-based prototypes or production-grade REST/Database backends.
-* **Social Platform Features:** Friendships, user-to-user ticket transfers, event posts, and activity feeds built-in.
-* **Adaptive Entity Navigation:** Sidebars and interfaces automatically adapt based on the currently selected entity (organizer, artist, venue, writer, or fan).
+- **Zero Dependencies:** React + ReactDOM are the only peer dependencies.
+- **Self-Contained Rendering:** QR codes and ticket cards are generated entirely client-side.
+- **Full Lifecycle:** Configuration, Sales, Generation, Scan Validation, and Analytics Dashboard included.
+- **Production-Ready:** Includes a production adapter guard, secure PIN hashing (PBKDF2), and a strict backend state machine contract.
+- **Highly Flexible:** Pluggable `StorageAdapter` allows for immediate LocalStorage-based prototypes or production-grade REST/Database backends.
+- **Social Platform Features:** Friendships, user-to-user ticket transfers, event posts, and activity feeds built-in.
+- **Adaptive Entity Navigation:** Sidebars and interfaces automatically adapt based on the currently selected entity (organizer, artist, venue, writer, or fan).
 
 ## Documentation Hub
 
@@ -38,45 +38,45 @@ Choose your path based on your role and technical stack.
 
 ### Getting Started
 
-* [**Quick Start**](docs/getting-started/quick-start.md) — Minimal storefront setup.
-* [**Dedicated Scanner**](docs/getting-started/dedicated-scanner.md) — Route configuration for crew phones.
-* [**Admin Integration**](docs/getting-started/admin-integration.md) — Panel setup and Scan Account management.
+- [**Quick Start**](docs/getting-started/quick-start.md) — Minimal storefront setup.
+- [**Dedicated Scanner**](docs/getting-started/dedicated-scanner.md) — Route configuration for crew phones.
+- [**Admin Integration**](docs/getting-started/admin-integration.md) — Panel setup and Scan Account management.
 
 ### Technical Deep-Dives
 
-* [**Architecture & Contracts**](docs/technical/architecture-contracts.md) — Domain model and backend invariants.
-* [**Security & Safety**](docs/technical/security-safety.md) — PBKDF2 hashing, HMAC signing, and session token formats.
-* [**API Reference**](docs/technical/api-reference.md) — Hooks, Components, and the `StorageAdapter` interface.
-* [**Database Relationships**](docs/technical/database-relationships.md) — Social and ticketing table schemas.
-* [**Theming Reference**](docs/technical/theming-reference.md) — CSS custom properties for style-agnostic integration.
-* [**Testing Strategy**](docs/technical/testing-strategy.md) — Unit and integration patterns to verify ticketing logic.
+- [**Architecture & Contracts**](docs/technical/architecture-contracts.md) — Domain model and backend invariants.
+- [**Security & Safety**](docs/technical/security-safety.md) — PBKDF2 hashing, HMAC signing, and session token formats.
+- [**API Reference**](docs/technical/api-reference.md) — Hooks, Components, and the `StorageAdapter` interface.
+- [**Database Relationships**](docs/technical/database-relationships.md) — Social and ticketing table schemas.
+- [**Theming Reference**](docs/technical/theming-reference.md) — CSS custom properties for style-agnostic integration.
+- [**Testing Strategy**](docs/technical/testing-strategy.md) — Unit and integration patterns to verify ticketing logic.
 
 ### Community & Maintenance
 
-* [**Project Philosophy**](docs/community/project-philosophy.md) — Vision, goals, and non-goals.
-* [**Roadmap**](docs/community/roadmap.md) — Completed features and future plans.
-* [**Contributing Guide**](docs/community/contributing.md) — Standards & code of conduct.
-* [**Changelog**](docs/community/changelog.md) — Release history.
+- [**Project Philosophy**](docs/community/project-philosophy.md) — Vision, goals, and non-goals.
+- [**Roadmap**](docs/community/roadmap.md) — Completed features and future plans.
+- [**Contributing Guide**](docs/community/contributing.md) — Standards & code of conduct.
+- [**Changelog**](docs/community/changelog.md) — Release history.
 
 ## Configuration (via `<ReactTicket />`)
 
-| Property | Default | Description |
-| :--- | :--- | :--- |
-| `event` | - | Full event configuration and settings. |
-| `adapter` | - | `StorageAdapter` implementation (LocalStorage or REST). |
-| `mode` | `full` | Operating mode: `storefront`, `scanner`, `admin`, or `full`. |
-| `onCheckout` | - | Callback for payment integration. |
-| `onTicketIssued` | - | Callback for PDF/QR delivery. |
+| Property         | Default | Description                                                  |
+| :--------------- | :------ | :----------------------------------------------------------- |
+| `event`          | -       | Full event configuration and settings.                       |
+| `adapter`        | -       | `StorageAdapter` implementation (LocalStorage or REST).      |
+| `mode`           | `full`  | Operating mode: `storefront`, `scanner`, `admin`, or `full`. |
+| `onCheckout`     | -       | Callback for payment integration.                            |
+| `onTicketIssued` | -       | Callback for PDF/QR delivery.                                |
 
 ## Testing & Coverage
 
 We maintain test coverage across all packages to ensure stability and quality. The following table summarizes the current statement coverage.
 
-| Package | Statement Coverage | Status |
-| :--- | :--- | :--- |
-| `@platform` | 92.18% | Excellent |
-| `reactticket-core` | 79.55% | Healthy |
-| `reactticket` | 12.53% | Needs Improvement |
+| Package            | Statement Coverage | Status            |
+| :----------------- | :----------------- | :---------------- |
+| `@platform`        | 92.18%             | Excellent         |
+| `reactticket-core` | 79.55%             | Healthy           |
+| `reactticket`      | 12.53%             | Needs Improvement |
 
 Run tests for a specific package via `npm run test` within its directory.
 

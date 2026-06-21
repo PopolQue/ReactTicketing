@@ -40,18 +40,24 @@ export function usePromoCode(eventId: string) {
   const getDiscountedAmount = (subtotalCents: number) => {
     if (!appliedPromo) return subtotalCents;
     if (appliedPromo.discount_kind === 'percent_off') {
-        return Math.max(0, subtotalCents - Math.round(subtotalCents * (appliedPromo.discount_value / 100)));
+      return Math.max(
+        0,
+        subtotalCents - Math.round(subtotalCents * (appliedPromo.discount_value / 100))
+      );
     } else if (appliedPromo.discount_kind === 'amount_off') {
-        return Math.max(0, subtotalCents - appliedPromo.discount_value);
+      return Math.max(0, subtotalCents - appliedPromo.discount_value);
     } else if (appliedPromo.discount_kind === 'free') {
-        return 0;
+      return 0;
     }
     return subtotalCents;
   };
 
   const incrementUsage = async () => {
     if (appliedPromo) {
-      await supabase.rpc('increment_promo_usage', { p_code: appliedPromo.code, p_event_id: eventId });
+      await supabase.rpc('increment_promo_usage', {
+        p_code: appliedPromo.code,
+        p_event_id: eventId,
+      });
     }
   };
 
@@ -63,6 +69,6 @@ export function usePromoCode(eventId: string) {
     applyPromo,
     removePromo,
     getDiscountedAmount,
-    incrementUsage
+    incrementUsage,
   };
 }

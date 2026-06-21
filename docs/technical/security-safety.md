@@ -15,4 +15,4 @@ When a scanner scans the ticket, the backend adapter validates the signature to 
 1. The ticket was issued by your system.
 2. The payload was not tampered with.
 
-*Note: The LocalStorageAdapter bypasses this validation for demo purposes. Always use a secure backend adapter in production!*
+_Note: The LocalStorageAdapter bypasses this validation for demo purposes. Always use a secure backend adapter in production!_

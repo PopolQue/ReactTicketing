@@ -6,10 +6,12 @@ import { TicketCard } from '../TicketCard';
 afterEach(cleanup);
 
 vi.mock('../QRCode', () => ({
-  QRCode: ({ payload }: { payload: string }) => <div data-testid="qrcode">{payload}</div>
+  QRCode: ({ payload }: { payload: string }) => <div data-testid="qrcode">{payload}</div>,
 }));
 vi.mock('../TicketDownload', () => ({
-  TicketDownload: ({ ticket, eventName }: any) => <div data-testid="ticket-download">Download {eventName}</div>
+  TicketDownload: ({ ticket, eventName }: any) => (
+    <div data-testid="ticket-download">Download {eventName}</div>
+  ),
 }));
 
 describe('TicketCard', () => {
@@ -18,7 +20,7 @@ describe('TicketCard', () => {
     typeId: 'type_1',
     status: 'issued',
     issuedAt: Date.now(),
-    qrPayload: 'qr_payload_123'
+    qrPayload: 'qr_payload_123',
   } as any;
 
   it('renders ticket information correctly', () => {

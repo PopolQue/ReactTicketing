@@ -1,26 +1,24 @@
-import fs from 'node:fs/promises'
-import express from 'express'
-import { Transform } from 'node:stream'
-import rateLimit from 'express-rate-limit'
+import fs from 'node:fs/promises';
+import express from 'express';
+import { Transform } from 'node:stream';
+import rateLimit from 'express-rate-limit';
 
 // Constants
-const isProduction = process.env.NODE_ENV === 'production'
-const port = process.env.PORT || 5173
-const base = process.env.BASE || '/'
+const isProduction = process.env.NODE_ENV === 'production';
+const port = process.env.PORT || 5173;
+const base = process.env.BASE || '/';
 
 // Cached production assets
-const templateHtml = isProduction
-  ? await fs.readFile('./dist/client/index.html', 'utf-8')
-  : ''
+const templateHtml = isProduction ? await fs.readFile('./dist/client/index.html', 'utf-8') : '';
 const ssrManifest = isProduction
   ? await fs.readFile('./dist/client/.vite/ssr-manifest.json', 'utf-8')
-  : undefined
+  : undefined;
 
 // Create http server
-const app = express()
+const app = express();
 
 // Parse JSON bodies for API routes
-app.use(express.json())
+app.use(express.json());
 
 // Rate limiting
 const apiLimiter = rateLimit({
@@ -28,8 +26,8 @@ const apiLimiter = rateLimit({
   max: 30,
   standardHeaders: true,
   legacyHeaders: false,
-})
-app.use('/api/', apiLimiter)
+});
+app.use('/api/', apiLimiter);
 
 // Security headers
 app.use((req, res, next) => {
@@ -39,17 +37,18 @@ app.use((req, res, next) => {
   const scriptSrc = isDev
     ? "'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://unpkg.com"
     : "'self' https://js.stripe.com https://unpkg.com";
-  const styleSrc = isDev
-    ? "'self' 'unsafe-inline' https://unpkg.com"
-    : "'self' https://unpkg.com";
+  const styleSrc = isDev ? "'self' 'unsafe-inline' https://unpkg.com" : "'self' https://unpkg.com";
   const connectSrc = isDev
     ? "'self' https://api.stripe.com wss: ws: https: http://127.0.0.1:* http://localhost:*"
     : "'self' https://api.stripe.com https:";
-  res.setHeader('Content-Security-Policy', `default-src 'self'; img-src 'self' data: https:; script-src ${scriptSrc}; style-src ${styleSrc}; frame-src 'self' https://js.stripe.com https://m.stripe.network; connect-src ${connectSrc};`);
+  res.setHeader(
+    'Content-Security-Policy',
+    `default-src 'self'; img-src 'self' data: https:; script-src ${scriptSrc}; style-src ${styleSrc}; frame-src 'self' https://js.stripe.com https://m.stripe.network; connect-src ${connectSrc};`
+  );
   res.setHeader('X-Frame-Options', 'SAMEORIGIN');
   res.setHeader('X-Content-Type-Options', 'nosniff');
   next();
-})
+});
 
 // Stripe backend setup
 let stripeClient;
@@ -102,7 +101,10 @@ app.post('/api/create-payment-intent', async (req, res) => {
       const posthog = await createPostHogClient();
       if (posthog) {
         await posthog.withContext({ sessionId, distinctId }, async () => {
-          posthog.capture({ event: 'payment_intent_created', properties: { amount_cents: amountCents, item_name: itemName } });
+          posthog.capture({
+            event: 'payment_intent_created',
+            properties: { amount_cents: amountCents, item_name: itemName },
+          });
         });
         await posthog.shutdown().catch(() => {});
       }
@@ -112,83 +114,82 @@ app.post('/api/create-payment-intent', async (req, res) => {
       clientSecret: paymentIntent.client_secret,
     });
   } catch (err) {
-    console.error("Stripe error:", err);
+    console.error('Stripe error:', err);
     res.status(500).json({ error: err.message });
   }
 });
 
 // Add Vite or respective production middlewares
-let vite
+let vite;
 if (!isProduction) {
-  const { createServer } = await import('vite')
+  const { createServer } = await import('vite');
   vite = await createServer({
     server: { middlewareMode: true },
     appType: 'custom',
-    base
-  })
-  app.use(vite.middlewares)
+    base,
+  });
+  app.use(vite.middlewares);
 } else {
-  const compression = (await import('compression')).default
-  const sirv = (await import('sirv')).default
-  app.use(compression())
-  app.use(base, sirv('./dist/client', { extensions: [] }))
+  const compression = (await import('compression')).default;
+  const sirv = (await import('sirv')).default;
+  app.use(compression());
+  app.use(base, sirv('./dist/client', { extensions: [] }));
 }
 
 // Serve HTML
 app.use(async (req, res) => {
   try {
-    let url = req.originalUrl
+    let url = req.originalUrl;
     if (base !== '/' && url.startsWith(base)) {
-      url = url.replace(base, '')
+      url = url.replace(base, '');
     }
     if (!url.startsWith('/')) {
-      url = '/' + url
+      url = '/' + url;
     }
 
-    let template
-    let render
+    let template;
+    let render;
     if (!isProduction) {
       // Always read fresh template in dev
-      template = await fs.readFile('./index.html', 'utf-8')
-      template = await vite.transformIndexHtml(url, template)
-      render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render
+      template = await fs.readFile('./index.html', 'utf-8');
+      template = await vite.transformIndexHtml(url, template);
+      render = (await vite.ssrLoadModule('/src/entry-server.tsx')).render;
     } else {
-      template = templateHtml
-      render = (await import('./dist/server/entry-server.js')).render
+      template = templateHtml;
+      render = (await import('./dist/server/entry-server.js')).render;
     }
 
-    const [htmlStart, htmlEnd] = template.split('<!--ssr-outlet-->')
+    const [htmlStart, htmlEnd] = template.split('<!--ssr-outlet-->');
 
     const { pipe } = render(url, {
       onShellReady() {
-        res.status(200).set({ 'Content-Type': 'text/html' })
-        res.write(htmlStart)
-        
+        res.status(200).set({ 'Content-Type': 'text/html' });
+        res.write(htmlStart);
+
         const transformStream = new Transform({
           transform(chunk, encoding, callback) {
-            callback(null, chunk)
+            callback(null, chunk);
           },
           flush(callback) {
-            this.push(htmlEnd)
-            callback()
-          }
-        })
-        
-        pipe(transformStream).pipe(res)
+            this.push(htmlEnd);
+            callback();
+          },
+        });
+
+        pipe(transformStream).pipe(res);
       },
       onShellError(err) {
-        res.status(500).send(err.message)
-      }
-    })
-    
+        res.status(500).send(err.message);
+      },
+    });
   } catch (e) {
-    vite?.ssrFixStacktrace(e)
-    console.log(e.stack)
-    res.status(500).end('Internal server error')
+    vite?.ssrFixStacktrace(e);
+    console.log(e.stack);
+    res.status(500).end('Internal server error');
   }
-})
+});
 
 // Start http server
 app.listen(port, () => {
-  console.log(`Server started at http://localhost:${port}`)
-})
+  console.log(`Server started at http://localhost:${port}`);
+});

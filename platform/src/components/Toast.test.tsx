@@ -6,30 +6,28 @@ import { LanguageProvider, useLanguage } from '../contexts/LanguageContext';
 
 const ToastConsumer = ({
   message,
-  type
+  type,
 }: {
   message: string;
   type?: 'success' | 'error' | 'info';
 }) => {
-  const {
-    t
-  } = useLanguage();
-  const {
-    showToast
-  } = useToast();
+  const { t } = useLanguage();
+  const { showToast } = useToast();
   useEffect(() => {
     showToast(message, type);
   }, [message, type, showToast]);
-  return <div>{t("consumer")}</div>;
+  return <div>{t('consumer')}</div>;
 };
 describe('Toast Component', () => {
   it('renders a toast message and automatically removes it', () => {
     vi.useFakeTimers();
-    render(<LanguageProvider>
-      <ToastProvider>
-        <ToastConsumer message="Test Success!" type="success" />
-      </ToastProvider>
-    </LanguageProvider>);
+    render(
+      <LanguageProvider>
+        <ToastProvider>
+          <ToastConsumer message="Test Success!" type="success" />
+        </ToastProvider>
+      </LanguageProvider>
+    );
 
     // Toast should be in the document
     const toastElement = screen.getByText('Test Success!');

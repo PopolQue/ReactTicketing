@@ -6,11 +6,13 @@ import { supabase } from '../lib/supabase';
 vi.mock('../lib/supabase', () => ({
   supabase: {
     from: vi.fn(),
-  }
+  },
 }));
 
 const mockSelect = vi.fn();
-const mockIlike = vi.fn().mockReturnValue({ order: vi.fn().mockReturnValue({ limit: mockSelect }) });
+const mockIlike = vi
+  .fn()
+  .mockReturnValue({ order: vi.fn().mockReturnValue({ limit: mockSelect }) });
 const mockFrom = vi.fn().mockReturnValue({ select: vi.fn().mockReturnValue({ ilike: mockIlike }) });
 
 describe('useDebouncedSearch', () => {

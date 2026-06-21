@@ -1,11 +1,11 @@
 export type ScanResult =
-  | "admitted"
-  | "already_used"
-  | "invalid"
-  | "expired"
-  | "cancelled"
-  | "clock_skew_anomaly"
-  | "offline_queued";
+  | 'admitted'
+  | 'already_used'
+  | 'invalid'
+  | 'expired'
+  | 'cancelled'
+  | 'clock_skew_anomaly'
+  | 'offline_queued';
 
 export interface ScanEvent {
   readonly id: string;

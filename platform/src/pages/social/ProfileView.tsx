@@ -12,7 +12,9 @@ export default function ProfileView() {
 
   useEffect(() => {
     async function checkAccess() {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return;
 
       // Check if it's their own profile
@@ -29,7 +31,9 @@ export default function ProfileView() {
         const { data: friendship } = await supabase
           .from('friendships')
           .select('id')
-          .or(`and(user_id.eq.${user.id},friend_id.eq.${id}),and(user_id.eq.${id},friend_id.eq.${user.id})`)
+          .or(
+            `and(user_id.eq.${user.id},friend_id.eq.${id}),and(user_id.eq.${id},friend_id.eq.${user.id})`
+          )
           .eq('status', 'accepted')
           .maybeSingle();
 
@@ -50,18 +54,24 @@ export default function ProfileView() {
       // Realtime listener for friendship changes
       const channel = supabase
         .channel('friendships_channel')
-        .on('postgres_changes', { 
-          event: 'DELETE', 
-          schema: 'public', 
-          table: 'friendships'
-        }, (payload) => {
-          // Check if the deleted friendship involves the current user and the profile owner
-          const oldRecord = payload.old;
-          if ((oldRecord.user_id === user.id && oldRecord.friend_id === id) || 
-              (oldRecord.user_id === id && oldRecord.friend_id === user.id)) {
-            setIsFriend(false);
+        .on(
+          'postgres_changes',
+          {
+            event: 'DELETE',
+            schema: 'public',
+            table: 'friendships',
+          },
+          (payload) => {
+            // Check if the deleted friendship involves the current user and the profile owner
+            const oldRecord = payload.old;
+            if (
+              (oldRecord.user_id === user.id && oldRecord.friend_id === id) ||
+              (oldRecord.user_id === id && oldRecord.friend_id === user.id)
+            ) {
+              setIsFriend(false);
+            }
           }
-        })
+        )
         .subscribe();
 
       return () => {

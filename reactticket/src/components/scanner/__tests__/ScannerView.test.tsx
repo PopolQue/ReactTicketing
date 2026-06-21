@@ -10,33 +10,33 @@ afterEach(cleanup);
 
 // Mock reactticket-core and other imports
 vi.mock('reactticket-core/utils/jsQR', () => ({
-  default: vi.fn()
+  default: vi.fn(),
 }));
 
 describe('ScannerView Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     // Mock ScanSession hook
     vi.spyOn(useScanSessionModule, 'useScanSession').mockReturnValue({
-        isScanning: true,
-        lastResult: null,
-        startCamera: vi.fn(),
-        stopCamera: vi.fn(),
-        scanManual: vi.fn(),
-        setLastResult: vi.fn(),
-        isExpired: false
+      isScanning: true,
+      lastResult: null,
+      startCamera: vi.fn(),
+      stopCamera: vi.fn(),
+      scanManual: vi.fn(),
+      setLastResult: vi.fn(),
+      isExpired: false,
     } as any);
 
     // Mock ReactTicket hook
     vi.spyOn(useReactTicketModule, 'useReactTicket').mockReturnValue({
       event: { id: 'evt_1' },
-      authSession: { role: 'scan' }
+      authSession: { role: 'scan' },
     } as any);
 
     // Mock ScanAuth hook
     vi.spyOn(useScanAuthModule, 'useScanAuth').mockReturnValue({
-        logout: vi.fn()
+      logout: vi.fn(),
     } as any);
   });
 

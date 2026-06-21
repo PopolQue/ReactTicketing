@@ -9,12 +9,21 @@ export const QRCode = ({ payload }: { payload: string }) => {
       try {
         setDataUri(QRGenerator.generate(payload));
       } catch (e) {
-        console.error("Failed to generate QR", e);
+        console.error('Failed to generate QR', e);
       }
     }
   }, [payload]);
 
-  if (!dataUri) return <div className="tf-qr-code-placeholder" style={{ width: 150, height: 150, background: '#eee' }} role="status" aria-busy="true" aria-label="Generating QR Code" />;
+  if (!dataUri)
+    return (
+      <div
+        className="tf-qr-code-placeholder"
+        style={{ width: 150, height: 150, background: '#eee' }}
+        role="status"
+        aria-busy="true"
+        aria-label="Generating QR Code"
+      />
+    );
 
   return <img src={dataUri} alt="Ticket QR Code" className="tf-qr-code" role="img" />;
 };

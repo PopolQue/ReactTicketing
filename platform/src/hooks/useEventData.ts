@@ -37,14 +37,16 @@ export function useEventData(eventId: string | undefined) {
         .from('event_artists')
         .select('*, artists(*)')
         .eq('event_id', eventId);
-        
+
       if (artistsData) setEventArtists(artistsData);
 
       setLoading(false);
     }
 
     fetchEventDetails();
-    return () => { document.title = 'Admit'; }
+    return () => {
+      document.title = 'Admit';
+    };
   }, [eventId]);
 
   return { event, tiers, eventArtists, loading };

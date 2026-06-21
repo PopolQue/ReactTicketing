@@ -1,9 +1,9 @@
-import { StorageAdapter } from "../types/adapter.types";
+import { StorageAdapter } from '../types/adapter.types';
 
 export interface Post {
-    user_id: string;
-    event_id: string;
-    is_public: boolean;
+  user_id: string;
+  event_id: string;
+  is_public: boolean;
 }
 
 export class PostService {

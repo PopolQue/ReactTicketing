@@ -7,7 +7,7 @@ describe('Skeleton Component', () => {
   it('renders correctly with default props', () => {
     const { container } = render(<Skeleton />);
     const skeletonDiv = container.firstChild as HTMLElement;
-    
+
     expect(skeletonDiv).toBeInTheDocument();
     expect(skeletonDiv).toHaveStyle({
       width: '100%',
@@ -19,7 +19,7 @@ describe('Skeleton Component', () => {
   it('accepts custom width and height', () => {
     const { container } = render(<Skeleton width="50px" height="50px" />);
     const skeletonDiv = container.firstChild as HTMLElement;
-    
+
     expect(skeletonDiv).toHaveStyle({
       width: '50px',
       height: '50px',

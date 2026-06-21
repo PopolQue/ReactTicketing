@@ -28,16 +28,18 @@ export default function AdminManagement() {
       <div className="glass-panel" style={{ padding: '24px', marginBottom: '32px' }}>
         <h3 style={{ marginBottom: '16px' }}>{t('admin_mgmt_promote')}</h3>
         <form onSubmit={handlePromote} style={{ display: 'flex', gap: '12px' }}>
-          <input 
-            type="email" 
-            placeholder="User's email address" 
-            value={emailToPromote} 
-            onChange={e => setEmailToPromote(e.target.value)} 
-            className="input-field" 
-            required 
+          <input
+            type="email"
+            placeholder="User's email address"
+            value={emailToPromote}
+            onChange={(e) => setEmailToPromote(e.target.value)}
+            className="input-field"
+            required
             style={{ flex: 1 }}
           />
-          <button type="submit" className="btn-primary" style={{ backgroundColor: '#c084fc' }}>{t('admin_mgmt_grant_access')}</button>
+          <button type="submit" className="btn-primary" style={{ backgroundColor: '#c084fc' }}>
+            {t('admin_mgmt_grant_access')}
+          </button>
         </form>
         <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '8px' }}>
           * User must already have created an account on Admit.

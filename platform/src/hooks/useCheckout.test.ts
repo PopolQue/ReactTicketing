@@ -9,15 +9,14 @@ vi.mock('../lib/supabase', () => ({
   supabase: {
     from: vi.fn(),
     auth: {
-      getUser: vi.fn()
+      getUser: vi.fn(),
     },
-    rpc: vi.fn()
-  }
+    rpc: vi.fn(),
+  },
 }));
 
-const wrapper = ({ children }: { children: React.ReactNode }) => (
-  React.createElement(ToastProvider, null, children)
-);
+const wrapper = ({ children }: { children: React.ReactNode }) =>
+  React.createElement(ToastProvider, null, children);
 
 const mockSelect = vi.fn();
 const mockEq = vi.fn().mockReturnValue({ order: mockSelect });
@@ -40,11 +39,14 @@ describe('useCheckout', () => {
 
     const mockCart = {
       'tier-1': 2,
-      'tier-2': 1
+      'tier-2': 1,
     };
 
-    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }), { wrapper });
-    
+    const { result } = renderHook(
+      () => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }),
+      { wrapper }
+    );
+
     // Initially loading is true
     expect(result.current.loading).toBe(true);
 
@@ -55,10 +57,10 @@ describe('useCheckout', () => {
 
     // 2 GA tickets + 1 VIP ticket = 3 forms
     expect(result.current.ticketForms.length).toBe(3);
-    
-    const gaForms = result.current.ticketForms.filter(t => t.tier.id === 'tier-1');
-    const vipForms = result.current.ticketForms.filter(t => t.tier.id === 'tier-2');
-    
+
+    const gaForms = result.current.ticketForms.filter((t) => t.tier.id === 'tier-1');
+    const vipForms = result.current.ticketForms.filter((t) => t.tier.id === 'tier-2');
+
     expect(gaForms.length).toBe(2);
     expect(vipForms.length).toBe(1);
 
@@ -68,13 +70,22 @@ describe('useCheckout', () => {
 
   it('validates forms correctly based on required fields', async () => {
     // Return a required checkout field
-    mockSelect.mockResolvedValueOnce({ 
-      data: [{ id: 'field-1', label: 'First Name', is_required: true, field_type: 'TEXT' }], 
-      error: null 
+    mockSelect.mockResolvedValueOnce({
+      data: [{ id: 'field-1', label: 'First Name', is_required: true, field_type: 'TEXT' }],
+      error: null,
     });
 
     const mockCart = { 'tier-1': 1 };
-    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart, guestEmail: 'test@example.com' }), { wrapper });
+    const { result } = renderHook(
+      () =>
+        useCheckout({
+          eventId: 'event-123',
+          tiers: mockTiers,
+          cart: mockCart,
+          guestEmail: 'test@example.com',
+        }),
+      { wrapper }
+    );
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -97,13 +108,22 @@ describe('useCheckout', () => {
   it('executes purchase transaction successfully', async () => {
     mockSelect.mockResolvedValueOnce({ data: [], error: null });
     vi.mocked(supabase.auth.getUser).mockResolvedValueOnce({
-      data: { user: { id: 'user-123', email: 'user@email.com' } }
+      data: { user: { id: 'user-123', email: 'user@email.com' } },
     } as any);
     const mockRpc = vi.fn().mockResolvedValue({ error: null });
     vi.mocked(supabase.rpc).mockImplementation(mockRpc);
 
     const mockCart = { 'tier-1': 1 };
-    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart, guestEmail: 'test@example.com' }), { wrapper });
+    const { result } = renderHook(
+      () =>
+        useCheckout({
+          eventId: 'event-123',
+          tiers: mockTiers,
+          cart: mockCart,
+          guestEmail: 'test@example.com',
+        }),
+      { wrapper }
+    );
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -116,7 +136,7 @@ describe('useCheckout', () => {
       await result.current.executePurchase({
         finalTotalCents: 2000,
         onSuccess: successMock,
-        onError: errorMock
+        onError: errorMock,
       });
     });
 
@@ -128,12 +148,15 @@ describe('useCheckout', () => {
   it('does nothing if user is not logged in during purchase', async () => {
     mockSelect.mockResolvedValueOnce({ data: [], error: null });
     vi.mocked(supabase.auth.getUser).mockResolvedValueOnce({
-      data: { user: null }
+      data: { user: null },
     } as any);
 
     const mockCart = { 'tier-1': 1 };
     // Explicitly NO guestEmail
-    const { result } = renderHook(() => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }), { wrapper });
+    const { result } = renderHook(
+      () => useCheckout({ eventId: 'event-123', tiers: mockTiers, cart: mockCart }),
+      { wrapper }
+    );
 
     await waitFor(() => {
       expect(result.current.loading).toBe(false);
@@ -144,7 +167,7 @@ describe('useCheckout', () => {
       await result.current.executePurchase({
         finalTotalCents: 2000,
         onSuccess: successMock,
-        onError: vi.fn()
+        onError: vi.fn(),
       });
     });
 

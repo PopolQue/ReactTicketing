@@ -11,7 +11,9 @@ export default function SuperAdminLayout() {
 
   useEffect(() => {
     async function checkSuperAdmin() {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) {
         navigate('/auth');
         return;
@@ -32,45 +34,63 @@ export default function SuperAdminLayout() {
     checkSuperAdmin();
   }, [navigate]);
 
-  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('super_admin_layout_loading')}</div>;
+  if (loading)
+    return (
+      <div style={{ padding: '60px', textAlign: 'center' }}>{t('super_admin_layout_loading')}</div>
+    );
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <div style={{ display: 'flex', minHeight: '100vh', backgroundColor: 'var(--bg-color)' }}>
       {/* Sidebar */}
-      <aside style={{ width: '250px', backgroundColor: '#1e1b4b', borderRight: '1px solid var(--border)', padding: '24px', display: 'flex', flexDirection: 'column' }}>
-        <h2 style={{ fontSize: '1.2rem', marginBottom: '32px', color: '#c084fc' }}>{t('super_admin_layout_title')}</h2>
-        
+      <aside
+        style={{
+          width: '250px',
+          backgroundColor: '#1e1b4b',
+          borderRight: '1px solid var(--border)',
+          padding: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+        }}
+      >
+        <h2 style={{ fontSize: '1.2rem', marginBottom: '32px', color: '#c084fc' }}>
+          {t('super_admin_layout_title')}
+        </h2>
+
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
-          <Link 
-            to="/superadmin" 
-            style={{ 
-              padding: '12px 16px', 
-              borderRadius: '8px', 
-              textDecoration: 'none', 
+          <Link
+            to="/superadmin"
+            style={{
+              padding: '12px 16px',
+              borderRadius: '8px',
+              textDecoration: 'none',
               color: 'white',
-              backgroundColor: isActive('/superadmin') ? 'rgba(255,255,255,0.1)' : 'transparent'
+              backgroundColor: isActive('/superadmin') ? 'rgba(255,255,255,0.1)' : 'transparent',
             }}
-          >{t('super_admin_layout_dashboard')}</Link>
-          <Link 
-            to="/superadmin/admins" 
-            style={{ 
-              padding: '12px 16px', 
-              borderRadius: '8px', 
-              textDecoration: 'none', 
+          >
+            {t('super_admin_layout_dashboard')}
+          </Link>
+          <Link
+            to="/superadmin/admins"
+            style={{
+              padding: '12px 16px',
+              borderRadius: '8px',
+              textDecoration: 'none',
               color: 'white',
-              backgroundColor: isActive('/superadmin/admins') ? 'rgba(255,255,255,0.1)' : 'transparent'
+              backgroundColor: isActive('/superadmin/admins')
+                ? 'rgba(255,255,255,0.1)'
+                : 'transparent',
             }}
           >
             {t('super_admin_layout_admins')}
           </Link>
-          <Link 
-            to="/admin" 
-            style={{ 
-              padding: '12px 16px', 
-              borderRadius: '8px', 
-              textDecoration: 'none', 
+          <Link
+            to="/admin"
+            style={{
+              padding: '12px 16px',
+              borderRadius: '8px',
+              textDecoration: 'none',
               color: 'var(--text-secondary)',
             }}
           >
@@ -78,8 +98,14 @@ export default function SuperAdminLayout() {
           </Link>
         </nav>
 
-        <div style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid var(--border)' }}>
-          <Link to="/" className="btn-nav" style={{ padding: '8px 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+        <div
+          style={{ marginTop: 'auto', paddingTop: '24px', borderTop: '1px solid var(--border)' }}
+        >
+          <Link
+            to="/"
+            className="btn-nav"
+            style={{ padding: '8px 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}
+          >
             {t('super_admin_layout_back')}
           </Link>
         </div>

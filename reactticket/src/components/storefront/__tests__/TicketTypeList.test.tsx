@@ -8,17 +8,21 @@ import * as useReactTicketModule from '../../../hooks/useReactTicket';
 afterEach(cleanup);
 
 // Mock child components
-vi.mock('../TicketTypeCard', () => ({ TicketTypeCard: ({ type }: any) => <div data-testid="ticket-type-card">{type.name}</div> }));
+vi.mock('../TicketTypeCard', () => ({
+  TicketTypeCard: ({ type }: any) => <div data-testid="ticket-type-card">{type.name}</div>,
+}));
 vi.mock('../OrderSummary', () => ({ OrderSummary: () => <div data-testid="order-summary" /> }));
 vi.mock('../PromoCodeInput', () => ({ PromoCodeInput: () => <div data-testid="promo-input" /> }));
-vi.mock('../CheckoutButton', () => ({ CheckoutButton: () => <div data-testid="checkout-button" /> }));
+vi.mock('../CheckoutButton', () => ({
+  CheckoutButton: () => <div data-testid="checkout-button" />,
+}));
 vi.mock('../Cart', () => ({ Cart: () => <div data-testid="cart" /> }));
 vi.mock('../BuyerInfoForm', () => ({ BuyerInfoForm: () => <div data-testid="buyer-form" /> }));
 
 vi.mock('../../../context/I18nContext', () => ({
-    useI18n: () => ({
-        t: (key: string) => key,
-    }),
+  useI18n: () => ({
+    t: (key: string) => key,
+  }),
 }));
 
 describe('TicketTypeList Component', () => {
@@ -37,24 +41,29 @@ describe('TicketTypeList Component', () => {
       event: mockEvent,
       ticketTypes: [],
       dispatch: mockDispatch,
-      cart: { items: [] }
+      cart: { items: [] },
     } as any);
   });
 
   it('fetches and renders ticket types', async () => {
-    mockAdapter.getTicketTypes.mockResolvedValue([
-        { id: 't1', name: 'Standard', visible: true }
-    ]);
+    mockAdapter.getTicketTypes.mockResolvedValue([{ id: 't1', name: 'Standard', visible: true }]);
 
     render(
-      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+      <ReactTicketProvider
+        event={mockEvent as any}
+        adapter={mockAdapter as any}
+        onCheckout={vi.fn()}
+      >
         <TicketTypeList />
       </ReactTicketProvider>
     );
 
     await waitFor(() => {
-        expect(mockAdapter.getTicketTypes).toHaveBeenCalledWith('evt_1');
-        expect(mockDispatch).toHaveBeenCalledWith({ type: 'SET_TICKET_TYPES', payload: [{ id: 't1', name: 'Standard', visible: true }] });
+      expect(mockAdapter.getTicketTypes).toHaveBeenCalledWith('evt_1');
+      expect(mockDispatch).toHaveBeenCalledWith({
+        type: 'SET_TICKET_TYPES',
+        payload: [{ id: 't1', name: 'Standard', visible: true }],
+      });
     });
   });
 });

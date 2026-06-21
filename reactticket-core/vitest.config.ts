@@ -4,7 +4,7 @@ export default defineConfig({
   test: {
     exclude: ['**/node_modules/**', '**/dist/**'],
     coverage: {
-      thresholds: { lines: 70, functions: 70 }
-    }
-  }
+      thresholds: { lines: 70, functions: 70 },
+    },
+  },
 });

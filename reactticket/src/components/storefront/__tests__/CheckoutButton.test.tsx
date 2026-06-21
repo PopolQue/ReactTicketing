@@ -8,13 +8,13 @@ import * as useCartModule from '../../../hooks/useCart';
 afterEach(cleanup);
 
 vi.mock('../../../hooks/useCart', () => ({
-  useCart: vi.fn()
+  useCart: vi.fn(),
 }));
 
 vi.mock('../../../context/I18nContext', () => ({
   useI18n: () => ({
-    t: (key: string) => key
-  })
+    t: (key: string) => key,
+  }),
 }));
 
 describe('CheckoutButton Component', () => {
@@ -37,7 +37,7 @@ describe('CheckoutButton Component', () => {
   it('calls checkout on click', async () => {
     const mockCheckout = vi.fn().mockResolvedValue(undefined);
     vi.spyOn(useCartModule, 'useCart').mockReturnValue({ checkout: mockCheckout } as any);
-    
+
     render(
       <ReactTicketProvider {...mockContext}>
         <CheckoutButton />
@@ -45,7 +45,7 @@ describe('CheckoutButton Component', () => {
     );
     const button = screen.getByRole('button');
     fireEvent.click(button);
-    
+
     expect(mockCheckout).toHaveBeenCalled();
   });
 });

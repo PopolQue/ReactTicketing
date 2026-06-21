@@ -22,7 +22,7 @@ export function validateAdapterSettings(
   ) {
     return {
       type: 'error',
-      message: `LocalStorageAdapter is not supported in production for '${mode}' mode. Please use RestAdapter or another production-ready adapter.`
+      message: `LocalStorageAdapter is not supported in production for '${mode}' mode. Please use RestAdapter or another production-ready adapter.`,
     };
   }
 
@@ -33,7 +33,7 @@ export function validateAdapterSettings(
   ) {
     return {
       type: 'warn',
-      message: `Using LocalStorageAdapter in '${mode}' mode. This is not suitable for production.`
+      message: `Using LocalStorageAdapter in '${mode}' mode. This is not suitable for production.`,
     };
   }
 

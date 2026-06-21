@@ -8,7 +8,7 @@ function ScannerApp() {
   const adapter = useMemo(() => new SupabaseAdapter(supabase), []);
 
   const qrParser = (data: Uint8ClampedArray, width: number, height: number) => {
-    return jsQR(data, width, height, { inversionAttempts: "dontInvert" });
+    return jsQR(data, width, height, { inversionAttempts: 'dontInvert' });
   };
 
   // Basic routing for /scan/:eventId
@@ -24,7 +24,7 @@ function ScannerApp() {
     organizerId: 'org_1',
     date: new Date().toISOString(),
     location: 'Gate A',
-    status: 'published' as const
+    status: 'published' as const,
   };
 
   return (

@@ -8,23 +8,23 @@ afterEach(cleanup);
 
 vi.mock('../../../hooks/useCart', () => ({
   useCart: vi.fn(() => ({
-    totals: { subtotalCents: 2000, discountCents: 500, totalCents: 1500 }
-  }))
+    totals: { subtotalCents: 2000, discountCents: 500, totalCents: 1500 },
+  })),
 }));
 
 vi.mock('../../../context/I18nContext', () => ({
   useI18n: () => ({
     t: (key: string) => {
-        const translations: Record<string, string> = {
-            'store.order.summary': 'Order Summary',
-            'store.cart.subtotal': 'Subtotal',
-            'store.cart.discount': 'Discount',
-            'store.cart.total': 'Total'
-        };
-        return translations[key] || key;
+      const translations: Record<string, string> = {
+        'store.order.summary': 'Order Summary',
+        'store.cart.subtotal': 'Subtotal',
+        'store.cart.discount': 'Discount',
+        'store.cart.total': 'Total',
+      };
+      return translations[key] || key;
     },
-    locale: 'en-US'
-  })
+    locale: 'en-US',
+  }),
 }));
 
 describe('OrderSummary Component', () => {
@@ -33,8 +33,12 @@ describe('OrderSummary Component', () => {
     adapter: { name: 'memory' } as any,
     onCheckout: vi.fn(),
     ticketTypes: [
-      { id: 't1', name: 'Standard', pricing: { kind: 'paid', priceInCents: 1000, currency: 'USD' } }
-    ]
+      {
+        id: 't1',
+        name: 'Standard',
+        pricing: { kind: 'paid', priceInCents: 1000, currency: 'USD' },
+      },
+    ],
   } as any;
 
   it('renders correctly', () => {

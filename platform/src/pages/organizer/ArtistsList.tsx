@@ -12,7 +12,7 @@ export default function ArtistsList() {
   const { activeEntity } = useOutletContext<{ activeEntity: Entity }>();
   const [artists, setArtists] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  
+
   // Modal State
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingArtistId, setEditingArtistId] = useState<string | null>(null);
@@ -55,7 +55,9 @@ export default function ArtistsList() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSaving(true);
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
 
     if (editingArtistId) {
@@ -63,7 +65,7 @@ export default function ArtistsList() {
         .from('artists')
         .update({ name: formData.name, bio: formData.bio })
         .eq('id', editingArtistId);
-        
+
       if (error) showToast('Error updating artist', 'error');
       else {
         showToast('Artist updated successfully', 'success');
@@ -75,8 +77,8 @@ export default function ArtistsList() {
         {
           name: formData.name,
           bio: formData.bio,
-          created_by: user.id
-        }
+          created_by: user.id,
+        },
       ]);
 
       if (error) showToast('Error creating artist', 'error');
@@ -91,34 +93,76 @@ export default function ArtistsList() {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '24px' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          marginBottom: '24px',
+        }}
+      >
         <div>
-          <h2 style={{ margin: '0 0 8px 0' }}>{t("organizer.artists.title")}</h2>
+          <h2 style={{ margin: '0 0 8px 0' }}>{t('organizer.artists.title')}</h2>
           <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '0.9rem' }}>
-            {t("organizer.artists.description")}
+            {t('organizer.artists.description')}
           </p>
         </div>
-        <button className="btn-primary" onClick={openCreateModal}>{t("organizer.artists.addArtist")}</button>
+        <button className="btn-primary" onClick={openCreateModal}>
+          {t('organizer.artists.addArtist')}
+        </button>
       </div>
 
-      {loading ? <p>{t("organizer.artists.loading")}</p> : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '24px' }}>
+      {loading ? (
+        <p>{t('organizer.artists.loading')}</p>
+      ) : (
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+            gap: '24px',
+          }}
+        >
           {artists.length === 0 ? (
-            <div className="glass-panel" style={{ gridColumn: '1 / -1', padding: '40px', textAlign: 'center' }}>
-              <p style={{ color: 'var(--text-secondary)' }}>{t("organizer.artists.noArtists")}</p>
+            <div
+              className="glass-panel"
+              style={{ gridColumn: '1 / -1', padding: '40px', textAlign: 'center' }}
+            >
+              <p style={{ color: 'var(--text-secondary)' }}>{t('organizer.artists.noArtists')}</p>
             </div>
           ) : (
-            artists.map(artist => (
+            artists.map((artist) => (
               <div key={artist.id} className="glass-panel" style={{ padding: '20px' }}>
                 <h3 style={{ margin: '0 0 8px 0' }}>{artist.name}</h3>
-                <p style={{ margin: '0 0 16px 0', color: 'var(--text-secondary)', fontSize: '0.9rem' }}>{artist.bio}</p>
+                <p
+                  style={{
+                    margin: '0 0 16px 0',
+                    color: 'var(--text-secondary)',
+                    fontSize: '0.9rem',
+                  }}
+                >
+                  {artist.bio}
+                </p>
                 <div style={{ display: 'flex', gap: '8px' }}>
                   {artist.claimed_by_user_id ? (
-                    <span style={{ fontSize: '0.85rem', color: '#10b981', backgroundColor: 'rgba(16, 185, 129, 0.1)', padding: '4px 8px', borderRadius: '4px' }}>
-                      {t("organizer.artists.verified")}
+                    <span
+                      style={{
+                        fontSize: '0.85rem',
+                        color: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                      }}
+                    >
+                      {t('organizer.artists.verified')}
                     </span>
                   ) : (
-                    <button onClick={() => openEditModal(artist)} className="btn-secondary" style={{ padding: '8px 12px', fontSize: '0.85rem' }}>{t("organizer.artists.editStub")}</button>
+                    <button
+                      onClick={() => openEditModal(artist)}
+                      className="btn-secondary"
+                      style={{ padding: '8px 12px', fontSize: '0.85rem' }}
+                    >
+                      {t('organizer.artists.editStub')}
+                    </button>
                   )}
                 </div>
               </div>
@@ -127,7 +171,7 @@ export default function ArtistsList() {
         </div>
       )}
 
-      <ArtistFormModal 
+      <ArtistFormModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onSubmit={handleSubmit}

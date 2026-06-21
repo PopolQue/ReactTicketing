@@ -6,10 +6,11 @@ import { describe, it, expect, vi } from 'vitest';
 import { LanguageProvider, useLanguage } from './LanguageContext';
 import React from 'react';
 
-
 describe('LanguageContext', () => {
   it('throws error when used outside provider', () => {
-    expect(() => renderHook(() => useLanguage())).toThrow('useLanguage must be used within a LanguageProvider');
+    expect(() => renderHook(() => useLanguage())).toThrow(
+      'useLanguage must be used within a LanguageProvider'
+    );
   });
 
   it('provides default language', () => {

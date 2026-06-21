@@ -14,7 +14,7 @@ export const QRGenerator = {
     canvas.height = canvas.width;
     const ctx = canvas.getContext('2d');
     if (!ctx) {
-      throw new Error("Canvas context not available");
+      throw new Error('Canvas context not available');
     }
 
     ctx.fillStyle = 'white';
@@ -28,7 +28,7 @@ export const QRGenerator = {
         }
       }
     }
-    
+
     return canvas.toDataURL();
-  }
+  },
 };

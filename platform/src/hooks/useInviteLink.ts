@@ -14,10 +14,10 @@ export function useInviteLink(rawToken: string) {
       try {
         const encoder = new TextEncoder();
         const data = encoder.encode(rawToken);
-        const hashBuffer = await crypto.subtle.digest("SHA-256", data);
+        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
         const tokenHash = Array.from(new Uint8Array(hashBuffer))
-          .map(b => b.toString(16).padStart(2, "0"))
-          .join("");
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
 
         const result = await supabaseAdapter.validateInvite(tokenHash);
         setValidation(result);
@@ -38,7 +38,7 @@ export function useInviteLink(rawToken: string) {
     try {
       const result = await supabaseAdapter.claimInvite(rawToken);
       if (!result.success) {
-        throw new Error(result.reason || "Failed to claim invite.");
+        throw new Error(result.reason || 'Failed to claim invite.');
       }
       return result;
     } catch (err: any) {

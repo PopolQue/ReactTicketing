@@ -36,9 +36,12 @@ describe('ScanAccountService', () => {
       (mockAdapter.getScanAccount as any).mockResolvedValue(oldAccount);
 
       await service.resetPin('acc1', '5678');
-      expect(mockAdapter.updateScanAccount).toHaveBeenCalledWith('acc1', expect.objectContaining({
-        credentialVersion: 2
-      }));
+      expect(mockAdapter.updateScanAccount).toHaveBeenCalledWith(
+        'acc1',
+        expect.objectContaining({
+          credentialVersion: 2,
+        })
+      );
     });
   });
 
@@ -55,7 +58,7 @@ describe('ScanAccountService', () => {
   describe('list', () => {
     it('should not return pinHash or pinSalt in output (UT-ACC-08)', async () => {
       (mockAdapter.listScanAccounts as any).mockResolvedValue([
-        { id: 'acc1', username: 'user1', pinHash: 'secret', pinSalt: 'salt' }
+        { id: 'acc1', username: 'user1', pinHash: 'secret', pinSalt: 'salt' },
       ]);
 
       const result = await service.list('event1');
@@ -77,20 +80,31 @@ describe('ScanAccountService', () => {
     });
 
     it('should return false if hash does not start with $2b$', async () => {
-      (mockAdapter.getScanAccountByUsername as any).mockResolvedValue({ id: 'acc1', active: true, pinHash: 'not-bcrypt' });
+      (mockAdapter.getScanAccountByUsername as any).mockResolvedValue({
+        id: 'acc1',
+        active: true,
+        pinHash: 'not-bcrypt',
+      });
       const res = await service.loginLegacyAccount('event1', 'user', '1234');
       expect(res).toBe(false);
     });
 
     it('should return true and reset pin if hash starts with $2b$', async () => {
-      (mockAdapter.getScanAccountByUsername as any).mockResolvedValue({ id: 'acc1', active: true, pinHash: '$2b$something' });
+      (mockAdapter.getScanAccountByUsername as any).mockResolvedValue({
+        id: 'acc1',
+        active: true,
+        pinHash: '$2b$something',
+      });
       (mockAdapter.getScanAccount as any).mockResolvedValue({ id: 'acc1', credentialVersion: 1 });
-      
+
       const res = await service.loginLegacyAccount('event1', 'user', '1234');
       expect(res).toBe(true);
-      expect(mockAdapter.updateScanAccount).toHaveBeenCalledWith('acc1', expect.objectContaining({
-        credentialVersion: 2
-      }));
+      expect(mockAdapter.updateScanAccount).toHaveBeenCalledWith(
+        'acc1',
+        expect.objectContaining({
+          credentialVersion: 2,
+        })
+      );
     });
   });
 

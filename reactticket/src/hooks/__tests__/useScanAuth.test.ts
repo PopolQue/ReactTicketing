@@ -31,20 +31,20 @@ describe('useScanAuth', () => {
       event: { id: 'evt_1', settings: {} },
       adapter: {},
       dispatch: mockDispatch,
-      authSession: null
+      authSession: null,
     } as any);
   });
 
   afterEach(() => {
-      vi.useRealTimers();
+    vi.useRealTimers();
   });
 
   it('performs login successfully', async () => {
     const mockSession = { token: 'valid-token', role: 'scan' };
     mockLoginScanAccount.mockResolvedValue(mockSession);
-    
+
     const { result } = renderHook(() => useScanAuth('evt_1'));
-    
+
     await act(async () => {
       await result.current.login('user1', '1234');
     });
@@ -55,9 +55,9 @@ describe('useScanAuth', () => {
 
   it('handles login failure and increments failure count', async () => {
     mockLoginScanAccount.mockRejectedValue(new Error('Invalid PIN'));
-    
+
     const { result } = renderHook(() => useScanAuth('evt_1'));
-    
+
     await act(async () => {
       try {
         await result.current.login('user1', 'wrong');
@@ -74,16 +74,16 @@ describe('useScanAuth', () => {
   it('locks out after max failures and handles unlock', async () => {
     vi.useFakeTimers();
     mockLoginScanAccount.mockRejectedValue(new Error('Invalid PIN'));
-    
+
     const { result } = renderHook(() => useScanAuth('evt_1'));
-    
+
     // Fail 5 times
     for (let i = 0; i < 5; i++) {
-        await act(async () => {
-            try {
-                await result.current.login('user1', 'wrong');
-            } catch (e) {}
-        });
+      await act(async () => {
+        try {
+          await result.current.login('user1', 'wrong');
+        } catch (e) {}
+      });
     }
 
     expect(result.current.isLocked).toBe(true);
@@ -92,16 +92,16 @@ describe('useScanAuth', () => {
 
     // Trying to login while locked throws
     await act(async () => {
-        try {
-            await result.current.login('user1', '1234');
-        } catch (e: any) {
-            expect(e.message).toMatch(/Locked for/);
-        }
+      try {
+        await result.current.login('user1', '1234');
+      } catch (e: any) {
+        expect(e.message).toMatch(/Locked for/);
+      }
     });
 
     // Fast forward time to unlock
     act(() => {
-        vi.advanceTimersByTime(35000); // More than 30s
+      vi.advanceTimersByTime(35000); // More than 30s
     });
 
     expect(result.current.isLocked).toBe(false);
@@ -110,22 +110,24 @@ describe('useScanAuth', () => {
 
   it('handles storage errors safely', async () => {
     mockLoginScanAccount.mockRejectedValue(new Error('Invalid PIN'));
-    
+
     vi.stubGlobal('sessionStorage', {
       getItem: vi.fn(),
-      setItem: vi.fn(() => { throw new Error('Quota exceeded'); }),
+      setItem: vi.fn(() => {
+        throw new Error('Quota exceeded');
+      }),
       removeItem: vi.fn(),
     });
 
     const { result } = renderHook(() => useScanAuth('evt_1'));
-    
+
     // Fail 5 times
     for (let i = 0; i < 5; i++) {
-        await act(async () => {
-            try {
-                await result.current.login('user1', 'wrong');
-            } catch (e) {}
-        });
+      await act(async () => {
+        try {
+          await result.current.login('user1', 'wrong');
+        } catch (e) {}
+      });
     }
 
     expect(result.current.error).toBe('Storage access blocked');
@@ -140,13 +142,13 @@ describe('useScanAuth', () => {
     });
 
     const { result } = renderHook(() => useScanAuth('evt_1'));
-    
+
     expect(result.current.isLocked).toBe(true);
   });
 
   it('performs logout successfully', () => {
     const { result } = renderHook(() => useScanAuth('evt_1'));
-    
+
     act(() => {
       result.current.logout();
     });

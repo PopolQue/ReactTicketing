@@ -14,12 +14,12 @@ export function useDebouncedSearch<T>(
 
   useEffect(() => {
     if (skipCondition && skipCondition()) {
-      setResults(prev => prev.length === 0 ? prev : []);
+      setResults((prev) => (prev.length === 0 ? prev : []));
       return;
     }
 
     if (!searchQuery) {
-      setResults(prev => prev.length === 0 ? prev : []);
+      setResults((prev) => (prev.length === 0 ? prev : []));
       return;
     }
 

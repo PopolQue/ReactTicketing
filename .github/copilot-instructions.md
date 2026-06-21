@@ -9,42 +9,50 @@ This file gives focused, repo-specific instructions for Copilot sessions working
 Note: this repo is organized into separate packages; most commands must be run inside a package folder.
 
 General patterns:
+
 - Install dependencies (per package):
   - cd <package> && npm install
 
 reactticket-core (core business logic)
-- Build: cd reactticket-core && npm run build    # runs `tsc`
-- Test (all): cd reactticket-core && npm test    # uses `vitest run`
+
+- Build: cd reactticket-core && npm run build # runs `tsc`
+- Test (all): cd reactticket-core && npm test # uses `vitest run`
 - Run a single test file: cd reactticket-core && npx vitest run path/to/file.test.ts
 - Run by test name: cd reactticket-core && npx vitest -t "test name"
 
 reactticket (React UI library)
-- Build: cd reactticket && npm run build        # `vite build`
-- Test (all): cd reactticket && npm test       # `vitest run`
+
+- Build: cd reactticket && npm run build # `vite build`
+- Test (all): cd reactticket && npm test # `vitest run`
 - Single test file: cd reactticket && npx vitest run path/to/file.test.ts
-- Size check: cd reactticket && npm run size   # size-limit configured
+- Size check: cd reactticket && npm run size # size-limit configured
 
 platform (demo / server / SSR host)
+
 - Dev: cd platform && npm run dev
 - Build: cd platform && npm run build
 - Serve production (after build): cd platform && npm run serve
-- Unit tests: cd platform && npm test          # vitest
-- E2E: cd platform && npm run test:e2e        # Playwright
+- Unit tests: cd platform && npm test # vitest
+- E2E: cd platform && npm run test:e2e # Playwright
 - Run specific playwright test: cd platform && npx playwright test tests/path.spec.ts
 
 mobile-scanner (Capacitor/mobile demo)
+
 - Dev/build/preview use vite scripts from package.json
 - Build: cd mobile-scanner && npm run build
 
 CI notes (useful for reproducing):
+
 - CI installs per-package deps and builds libraries before running platform tests. It also runs Supabase locally for migrations and Playwright e2e.
 - To mirror CI: build reactticket-core and reactticket before running platform tests.
 
 Linting
+
 - There is no repo-wide lint script. Platform contains ESLint devDeps.
 - To lint platform: cd platform && npx eslint .
 
 Node + tooling
+
 - Node engine specified >= 20.0.0 in packages.
 - TypeScript ~6.x; Vite, Vitest, Playwright used across packages.
 
@@ -104,5 +112,4 @@ Node + tooling
 
 ---
 
-If you want additions: mention other files or workflows for Copilot to highlight (for example, additional package.json scripts, or a workspace config).  
-
+If you want additions: mention other files or workflows for Copilot to highlight (for example, additional package.json scripts, or a workspace config).

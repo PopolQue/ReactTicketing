@@ -1,8 +1,8 @@
 export type TicketPricingModel =
-  | { kind: "free" }
-  | { kind: "paid"; priceInCents: number; currency: string }
-  | { kind: "donation"; minCents?: number; suggestedCents?: number }
-  | { kind: "tiered"; tiers: PriceTier[] };
+  | { kind: 'free' }
+  | { kind: 'paid'; priceInCents: number; currency: string }
+  | { kind: 'donation'; minCents?: number; suggestedCents?: number }
+  | { kind: 'tiered'; tiers: PriceTier[] };
 
 export interface PriceTier {
   label: string;
@@ -48,7 +48,7 @@ export interface IssuedTicket {
   readonly issuedAt: Date;
   readonly validFrom?: Date;
   readonly validUntil?: Date;
-  readonly status: "pending_delivery" | "delivered" | "used" | "cancelled" | "transferred";
+  readonly status: 'pending_delivery' | 'delivered' | 'used' | 'cancelled' | 'transferred';
   readonly qrPayload?: string;
   readonly transferHistory?: TransferRecord[];
   readonly promoCodeUsed?: string;
@@ -71,7 +71,7 @@ export interface Order {
   readonly subtotalCents: number;
   readonly discountCents: number;
   readonly totalCents: number;
-  readonly status: "pending" | "confirmed" | "refunded";
+  readonly status: 'pending' | 'confirmed' | 'refunded';
   readonly createdAt: Date;
   readonly buyerId?: string;
 }

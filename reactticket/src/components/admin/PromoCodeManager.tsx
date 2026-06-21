@@ -18,19 +18,19 @@ export const PromoCodeManager: React.FC = () => {
     toggleBatchActive,
     toggleBatchArchive,
     exportCSV,
-    ticketTypes
+    ticketTypes,
   } = usePromoBatches();
 
   return (
     <section style={{ marginTop: '20px' }} role="region" aria-label="Promo Code Manager">
       <h3>Promo Code Batches</h3>
-      <PromoBatchForm 
+      <PromoBatchForm
         newBatch={newBatch}
         setNewBatch={setNewBatch}
         generateBatch={generateBatch}
         ticketTypes={ticketTypes}
       />
-      <PromoBatchList 
+      <PromoBatchList
         batches={batches}
         showArchived={showArchived}
         setShowArchived={setShowArchived}

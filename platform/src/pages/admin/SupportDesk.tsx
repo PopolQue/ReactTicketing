@@ -6,9 +6,14 @@ import { useLanguage } from '../../contexts/LanguageContext';
 
 export default function SupportDesk() {
   const { t } = useLanguage();
-  const { tickets, loading: ticketsLoading, updateTicketStatus, refetch: fetchTickets } = useSupportTickets();
+  const {
+    tickets,
+    loading: ticketsLoading,
+    updateTicketStatus,
+    refetch: fetchTickets,
+  } = useSupportTickets();
   const [selectedTicket, setSelectedTicket] = useState<any>(null);
-  
+
   const { messages, refetch: fetchMessages } = useSupportMessages(selectedTicket?.id);
 
   const handleUpdateStatus = async (id: string, status: string) => {
@@ -22,17 +27,17 @@ export default function SupportDesk() {
 
   return (
     <div style={{ display: 'flex', gap: '24px', height: 'calc(100vh - 80px)' }}>
-      <TicketSidebar 
-        tickets={tickets} 
-        selectedTicket={selectedTicket} 
-        setSelectedTicket={setSelectedTicket} 
+      <TicketSidebar
+        tickets={tickets}
+        selectedTicket={selectedTicket}
+        setSelectedTicket={setSelectedTicket}
       />
-      
-      <TicketThreadView 
-        selectedTicket={selectedTicket} 
-        messages={messages} 
-        updateStatus={handleUpdateStatus} 
-        refreshMessages={fetchMessages} 
+
+      <TicketThreadView
+        selectedTicket={selectedTicket}
+        messages={messages}
+        updateStatus={handleUpdateStatus}
+        refreshMessages={fetchMessages}
       />
     </div>
   );

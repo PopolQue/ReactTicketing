@@ -1,18 +1,18 @@
 /// <reference types="vitest" />
-import { defineConfig, loadEnv } from 'vite'
-import react from '@vitejs/plugin-react'
-import path from 'path'
+import { defineConfig, loadEnv } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
-  const env = loadEnv(mode, process.cwd(), '')
+  const env = loadEnv(mode, process.cwd(), '');
 
   return {
     plugins: [react()],
     resolve: {
       alias: {
         'reactticket-core': path.resolve(__dirname, '../reactticket-core/src'),
-        'reactticket': path.resolve(__dirname, '../reactticket/src'),
+        reactticket: path.resolve(__dirname, '../reactticket/src'),
       },
     },
     ssr: {
@@ -28,16 +28,16 @@ export default defineConfig(({ mode }) => {
       include: ['src/**/*.{test,spec}.{ts,tsx}'],
       exclude: ['e2e/**', 'node_modules/**', 'dist/**'],
       coverage: {
-        thresholds: { lines: 70, functions: 70 }
-      }
+        thresholds: { lines: 70, functions: 70 },
+      },
     },
     optimizeDeps: {
       exclude: ['reactticket'],
     },
     server: {
-      allowedHosts: ["crescentlike-florencio-nonrustic.ngrok-free.dev"],
+      allowedHosts: ['crescentlike-florencio-nonrustic.ngrok-free.dev'],
       fs: {
-        allow: ['..']
+        allow: ['..'],
       },
       proxy: {
         '/ingest/static': {
@@ -57,5 +57,5 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
-  }
-})
+  };
+});

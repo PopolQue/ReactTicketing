@@ -16,8 +16,8 @@ declare const process: any;
 interface ReactTicketProps {
   event: EventConfig;
   adapter: StorageAdapter;
-  mode?: "storefront" | "scanner" | "admin" | "tickets" | "full";
-  onCheckout: (order: Order) => Promise<"confirmed" | "cancelled">;
+  mode?: 'storefront' | 'scanner' | 'admin' | 'tickets' | 'full';
+  onCheckout: (order: Order) => Promise<'confirmed' | 'cancelled'>;
   onCheckoutComplete?: (order: Order) => void;
   onTicketIssued?: (ticket: IssuedTicket, assets: any) => void;
   onScanEvent?: (scan: ScanEvent, ticket: IssuedTicket) => void;
@@ -31,13 +31,21 @@ interface ReactTicketProps {
   dictionary?: Dictionary;
 }
 
-const renderMode = (mode: string | undefined, qrParser?: (data: Uint8ClampedArray, width: number, height: number) => { data: string } | null) => {
+const renderMode = (
+  mode: string | undefined,
+  qrParser?: (data: Uint8ClampedArray, width: number, height: number) => { data: string } | null
+) => {
   switch (mode) {
-    case 'storefront': return <TicketTypeList />;
-    case 'admin': return <AdminPanel />;
-    case 'scanner': return <ScannerView qrParser={qrParser} />;
-    case 'tickets': return <TicketOverview />;
-    default: return <TicketTypeList />;
+    case 'storefront':
+      return <TicketTypeList />;
+    case 'admin':
+      return <AdminPanel />;
+    case 'scanner':
+      return <ScannerView qrParser={qrParser} />;
+    case 'tickets':
+      return <TicketOverview />;
+    default:
+      return <TicketTypeList />;
   }
 };
 
@@ -57,9 +65,24 @@ export const ReactTicket = (props: ReactTicketProps) => {
   }
 
   return (
-    <I18nProvider locale={props.locale || props.event?.settings?.locale} dictionary={props.dictionary}>
-      <ReactTicketProvider event={props.event} adapter={props.adapter} onCheckout={props.onCheckout} onCheckoutComplete={props.onCheckoutComplete} onTicketIssued={props.onTicketIssued} authSession={props.authSession}>
-        <div className={`ReactTicket-root ${props.className || ''}`} style={props.style} role="region" aria-label="Ticket Management System">
+    <I18nProvider
+      locale={props.locale || props.event?.settings?.locale}
+      dictionary={props.dictionary}
+    >
+      <ReactTicketProvider
+        event={props.event}
+        adapter={props.adapter}
+        onCheckout={props.onCheckout}
+        onCheckoutComplete={props.onCheckoutComplete}
+        onTicketIssued={props.onTicketIssued}
+        authSession={props.authSession}
+      >
+        <div
+          className={`ReactTicket-root ${props.className || ''}`}
+          style={props.style}
+          role="region"
+          aria-label="Ticket Management System"
+        >
           {renderMode(props.mode, props.qrParser)}
         </div>
       </ReactTicketProvider>

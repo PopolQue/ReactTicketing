@@ -54,120 +54,157 @@ describe('AuthService', () => {
 
   describe('loginScanAccount', () => {
     it('should throw error for unknown user', async () => {
-        (mockAdapter.getScanAccountByUsername as any).mockResolvedValue(null);
-        await expect(authService.loginScanAccount('event1', 'user', '1234')).rejects.toThrow('Invalid credentials');
+      (mockAdapter.getScanAccountByUsername as any).mockResolvedValue(null);
+      await expect(authService.loginScanAccount('event1', 'user', '1234')).rejects.toThrow(
+        'Invalid credentials'
+      );
     });
 
     it('should rehash legacy bcrypt passwords to PBKDF2 on first successful login (UT-ACC-03)', async () => {
-        const mockAccount = {
-            id: 'acc1',
-            username: 'legacy',
-            pinHash: '$2b$10$abcdefghijklmnopqrstuv',
-            pinSalt: 'c2FsdA==',
-            active: true,
-            credentialVersion: 1
-        };
-        (mockAdapter.getScanAccountByUsername as any).mockResolvedValue(mockAccount);
-        mockAdapter.updateScanAccount = vi.fn().mockResolvedValue(undefined);
+      const mockAccount = {
+        id: 'acc1',
+        username: 'legacy',
+        pinHash: '$2b$10$abcdefghijklmnopqrstuv',
+        pinSalt: 'c2FsdA==',
+        active: true,
+        credentialVersion: 1,
+      };
+      (mockAdapter.getScanAccountByUsername as any).mockResolvedValue(mockAccount);
+      mockAdapter.updateScanAccount = vi.fn().mockResolvedValue(undefined);
 
-        vi.stubGlobal('crypto', {
-            subtle: {
-              importKey: vi.fn().mockResolvedValue({}),
-              sign: vi.fn().mockResolvedValue(new Uint8Array(32)),
-              deriveBits: vi.fn().mockResolvedValue(new Uint8Array(32)),
-            },
-            getRandomValues: vi.fn().mockReturnValue(new Uint8Array(16))
-        });
+      vi.stubGlobal('crypto', {
+        subtle: {
+          importKey: vi.fn().mockResolvedValue({}),
+          sign: vi.fn().mockResolvedValue(new Uint8Array(32)),
+          deriveBits: vi.fn().mockResolvedValue(new Uint8Array(32)),
+        },
+        getRandomValues: vi.fn().mockReturnValue(new Uint8Array(16)),
+      });
 
-        await authService.loginScanAccount('event1', 'legacy', '1234');
-        
-        expect(mockAdapter.updateScanAccount).toHaveBeenCalledWith('acc1', expect.objectContaining({
-            credentialVersion: 2,
-            pinHash: expect.any(String)
-        }));
-        
-        vi.unstubAllGlobals();
+      await authService.loginScanAccount('event1', 'legacy', '1234');
+
+      expect(mockAdapter.updateScanAccount).toHaveBeenCalledWith(
+        'acc1',
+        expect.objectContaining({
+          credentialVersion: 2,
+          pinHash: expect.any(String),
+        })
+      );
+
+      vi.unstubAllGlobals();
     });
 
     it('should throw error for incorrect PIN', async () => {
-        const mockAccount = {
-            id: 'acc1',
-            username: 'user1',
-            pinHash: 'wrong-hash',
-            pinSalt: 'c2FsdA==',
-            active: true,
-            credentialVersion: 1
-        };
-        (mockAdapter.getScanAccountByUsername as any).mockResolvedValue(mockAccount);
-        
-        // Mock hashPin to return something else
-        vi.spyOn(authService, 'hashPin').mockResolvedValue('computed-hash');
+      const mockAccount = {
+        id: 'acc1',
+        username: 'user1',
+        pinHash: 'wrong-hash',
+        pinSalt: 'c2FsdA==',
+        active: true,
+        credentialVersion: 1,
+      };
+      (mockAdapter.getScanAccountByUsername as any).mockResolvedValue(mockAccount);
 
-        await expect(authService.loginScanAccount('event1', 'user1', '1234')).rejects.toThrow('Invalid credentials');
+      // Mock hashPin to return something else
+      vi.spyOn(authService, 'hashPin').mockResolvedValue('computed-hash');
+
+      await expect(authService.loginScanAccount('event1', 'user1', '1234')).rejects.toThrow(
+        'Invalid credentials'
+      );
     });
   });
 
   describe('assertScanSession', () => {
     it('should throw if token signature is invalid', async () => {
       vi.spyOn(cryptoUtils, 'verifyToken').mockResolvedValue(false);
-      await expect(authService.assertScanSession('bad.token.signature', 'event1')).rejects.toThrow('Invalid token signature');
+      await expect(authService.assertScanSession('bad.token.signature', 'event1')).rejects.toThrow(
+        'Invalid token signature'
+      );
     });
 
     it('should throw if token is expired', async () => {
       const payload = {
-        sub: 'acc1', usr: 'user1', evt: 'event1', ver: 1,
+        sub: 'acc1',
+        usr: 'user1',
+        evt: 'event1',
+        ver: 1,
         iat: Date.now() - 10000,
         exp: Date.now() - 5000, // Expired
-        role: 'scan'
+        role: 'scan',
       };
       vi.spyOn(authService as any, 'keyPromise', 'get').mockReturnValue(Promise.resolve({}));
-      
+
       vi.spyOn(cryptoUtils, 'verifyToken').mockResolvedValue(true);
 
-      const header = { alg: "HS256", typ: "JWT" };
-      const token = `header.${btoa(JSON.stringify(payload)).replace(/=/g, "")}.signature`;
+      const header = { alg: 'HS256', typ: 'JWT' };
+      const token = `header.${btoa(JSON.stringify(payload)).replace(/=/g, '')}.signature`;
 
       await expect(authService.assertScanSession(token, 'event1')).rejects.toThrow('Token expired');
     });
 
     it('should throw if event mismatch', async () => {
       const payload = {
-        sub: 'acc1', usr: 'user1', evt: 'wrong-event', ver: 1,
-        iat: Date.now() - 10000, exp: Date.now() + 5000, role: 'scan'
+        sub: 'acc1',
+        usr: 'user1',
+        evt: 'wrong-event',
+        ver: 1,
+        iat: Date.now() - 10000,
+        exp: Date.now() + 5000,
+        role: 'scan',
       };
       vi.spyOn(authService as any, 'keyPromise', 'get').mockReturnValue(Promise.resolve({}));
       vi.spyOn(cryptoUtils, 'verifyToken').mockResolvedValue(true);
-      const token = `header.${btoa(JSON.stringify(payload)).replace(/=/g, "")}.signature`;
-      await expect(authService.assertScanSession(token, 'event1')).rejects.toThrow('Token event mismatch');
+      const token = `header.${btoa(JSON.stringify(payload)).replace(/=/g, '')}.signature`;
+      await expect(authService.assertScanSession(token, 'event1')).rejects.toThrow(
+        'Token event mismatch'
+      );
     });
 
     it('should throw if account is invalid or stale', async () => {
       const payload = {
-        sub: 'acc1', usr: 'user1', evt: 'event1', ver: 1,
-        iat: Date.now() - 10000, exp: Date.now() + 5000, role: 'scan'
+        sub: 'acc1',
+        usr: 'user1',
+        evt: 'event1',
+        ver: 1,
+        iat: Date.now() - 10000,
+        exp: Date.now() + 5000,
+        role: 'scan',
       };
       vi.spyOn(authService as any, 'keyPromise', 'get').mockReturnValue(Promise.resolve({}));
       vi.spyOn(cryptoUtils, 'verifyToken').mockResolvedValue(true);
-      const token = `header.${btoa(JSON.stringify(payload)).replace(/=/g, "")}.signature`;
+      const token = `header.${btoa(JSON.stringify(payload)).replace(/=/g, '')}.signature`;
 
       (mockAdapter.getScanAccount as any).mockResolvedValue({ active: false });
-      await expect(authService.assertScanSession(token, 'event1')).rejects.toThrow('Account invalid or credential stale');
+      await expect(authService.assertScanSession(token, 'event1')).rejects.toThrow(
+        'Account invalid or credential stale'
+      );
 
       (mockAdapter.getScanAccount as any).mockResolvedValue({ active: true, credentialVersion: 2 });
-      await expect(authService.assertScanSession(token, 'event1')).rejects.toThrow('Account invalid or credential stale');
+      await expect(authService.assertScanSession(token, 'event1')).rejects.toThrow(
+        'Account invalid or credential stale'
+      );
     });
 
     it('should return session for valid token', async () => {
       const payload = {
-        sub: 'acc1', usr: 'user1', evt: 'event1', ver: 1,
-        iat: Date.now() - 10000, exp: Date.now() + 5000, role: 'scan'
+        sub: 'acc1',
+        usr: 'user1',
+        evt: 'event1',
+        ver: 1,
+        iat: Date.now() - 10000,
+        exp: Date.now() + 5000,
+        role: 'scan',
       };
       vi.spyOn(authService as any, 'keyPromise', 'get').mockReturnValue(Promise.resolve({}));
       vi.spyOn(cryptoUtils, 'verifyToken').mockResolvedValue(true);
-      const token = `header.${btoa(JSON.stringify(payload)).replace(/=/g, "")}.signature`;
+      const token = `header.${btoa(JSON.stringify(payload)).replace(/=/g, '')}.signature`;
 
-      (mockAdapter.getScanAccount as any).mockResolvedValue({ active: true, credentialVersion: 1, assignedLocation: 'door-1' });
-      
+      (mockAdapter.getScanAccount as any).mockResolvedValue({
+        active: true,
+        credentialVersion: 1,
+        assignedLocation: 'door-1',
+      });
+
       const session = await authService.assertScanSession(token, 'event1');
       expect(session.accountId).toBe('acc1');
       expect(session.assignedLocation).toBe('door-1');

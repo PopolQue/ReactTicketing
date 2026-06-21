@@ -13,17 +13,23 @@ export const PromoCodeInput = () => {
 
   return (
     <div style={{ marginTop: '20px', display: 'flex', gap: '10px' }}>
-      <input 
-        placeholder={t('store.promo.label')} 
+      <input
+        placeholder={t('store.promo.label')}
         aria-label={t('store.promo.label')}
-        value={code} 
-        onChange={e => setCode(e.target.value)}
+        value={code}
+        onChange={(e) => setCode(e.target.value)}
         style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid #e2e8f0' }}
       />
-      <button 
+      <button
         onClick={handleApply}
         aria-label={t('store.promo.apply')}
-        style={{ padding: '10px 20px', borderRadius: '8px', border: 'none', background: '#e2e8f0', cursor: 'pointer' }}
+        style={{
+          padding: '10px 20px',
+          borderRadius: '8px',
+          border: 'none',
+          background: '#e2e8f0',
+          cursor: 'pointer',
+        }}
       >
         {t('store.promo.apply')}
       </button>

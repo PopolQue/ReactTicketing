@@ -12,7 +12,7 @@ export const TicketTypeList = () => {
   const { ticketTypes, adapter, event, dispatch } = useReactTicket();
   const { t } = useI18n();
 
-  const visibleTypes = ticketTypes.filter(t => t.visible);
+  const visibleTypes = ticketTypes.filter((t) => t.visible);
 
   useEffect(() => {
     const loadTypes = async () => {
@@ -26,7 +26,7 @@ export const TicketTypeList = () => {
     <div style={{ maxWidth: '600px', margin: '0 auto', paddingBottom: '80px' }}>
       <h2>{t('store.tickets.title')}</h2>
       <div style={{ marginBottom: '20px' }}>
-        {visibleTypes.map(type => (
+        {visibleTypes.map((type) => (
           <TicketTypeCard key={type.id} type={type} />
         ))}
       </div>

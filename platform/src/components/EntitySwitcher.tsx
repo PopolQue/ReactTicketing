@@ -1,4 +1,4 @@
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from '../contexts/LanguageContext';
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -12,7 +12,7 @@ export type Entity = {
 };
 
 export default React.memo(function EntitySwitcher({
-  onEntityChange
+  onEntityChange,
 }: {
   onEntityChange?: (e: Entity | null) => void;
 }) {
@@ -26,13 +26,15 @@ export default React.memo(function EntitySwitcher({
 
   useEffect(() => {
     if (!isLoaded.current) {
-        fetchEntities();
-        isLoaded.current = true;
+      fetchEntities();
+      isLoaded.current = true;
     }
   }, []);
 
   const fetchEntities = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       setLoading(false);
       return;
@@ -40,37 +42,54 @@ export default React.memo(function EntitySwitcher({
     const fetchedEntities: Entity[] = [];
 
     // Fetch Fan Profile (User itself)
-    const { data: profile, error: profileError } = await supabase.from('user_profiles').select('id, username').eq('id', user.id).single();
+    const { data: profile, error: profileError } = await supabase
+      .from('user_profiles')
+      .select('id, username')
+      .eq('id', user.id)
+      .single();
     console.log('Fan profile fetch:', { profile, profileError });
     if (profile) fetchedEntities.push({ id: profile.id, name: profile.username, type: 'fan' });
 
     // Fetch Organizers
-    const { data: orgs } = await supabase.from('organizers').select('id, name').eq('claimed_by_user_id', user.id);
-    if (orgs) orgs.forEach(o => fetchedEntities.push({ ...o, type: 'organizer' }));
+    const { data: orgs } = await supabase
+      .from('organizers')
+      .select('id, name')
+      .eq('claimed_by_user_id', user.id);
+    if (orgs) orgs.forEach((o) => fetchedEntities.push({ ...o, type: 'organizer' }));
 
     // Fetch Artists
-    const { data: artists } = await supabase.from('artists').select('id, name').eq('claimed_by_user_id', user.id);
-    if (artists) artists.forEach(a => fetchedEntities.push({ ...a, type: 'artist' }));
+    const { data: artists } = await supabase
+      .from('artists')
+      .select('id, name')
+      .eq('claimed_by_user_id', user.id);
+    if (artists) artists.forEach((a) => fetchedEntities.push({ ...a, type: 'artist' }));
 
     // Fetch Venues
-    const { data: venues } = await supabase.from('venues').select('id, name').eq('claimed_by_user_id', user.id);
-    if (venues) venues.forEach(v => fetchedEntities.push({ ...v, type: 'venue' }));
+    const { data: venues } = await supabase
+      .from('venues')
+      .select('id, name')
+      .eq('claimed_by_user_id', user.id);
+    if (venues) venues.forEach((v) => fetchedEntities.push({ ...v, type: 'venue' }));
 
     // Fetch Writers
-    const { data: writers } = await supabase.from('writer_profiles').select('id, pen_name').eq('id', user.id);
-    if (writers) writers.forEach(w => fetchedEntities.push({ id: w.id, name: w.pen_name, type: 'writer' }));
-    
+    const { data: writers } = await supabase
+      .from('writer_profiles')
+      .select('id, pen_name')
+      .eq('id', user.id);
+    if (writers)
+      writers.forEach((w) => fetchedEntities.push({ id: w.id, name: w.pen_name, type: 'writer' }));
+
     setEntities(fetchedEntities);
     // ...
     const storedId = localStorage.getItem('active_entity_id');
-    let selectedEntity = fetchedEntities.find(e => e.id === storedId);
+    let selectedEntity = fetchedEntities.find((e) => e.id === storedId);
 
     // If no valid stored entity, default to the first one available
     if (!selectedEntity && fetchedEntities.length > 0) {
       selectedEntity = fetchedEntities[0];
       localStorage.setItem('active_entity_id', selectedEntity.id);
     }
-    
+
     if (selectedEntity) {
       setActiveEntity(selectedEntity);
       localStorage.setItem('active_entity', JSON.stringify(selectedEntity));
@@ -89,51 +108,90 @@ export default React.memo(function EntitySwitcher({
     localStorage.setItem('active_entity_id', entity.id);
     localStorage.setItem('active_entity', JSON.stringify(entity));
     window.dispatchEvent(new CustomEvent('activeEntityChanged', { detail: entity }));
-    
+
     // Update parent only after local state is updated to ensure stability
     if (onEntityChange) onEntityChange(entity);
-    
+
     // REMOVED: Automatic navigation logic
   };
 
   const getIcon = (type: Entity['type']) => {
-    switch(type) {
-      case 'organizer': return <Building2 size={16} />;
-      case 'artist': return <User size={16} />;
-      case 'venue': return <MapPin size={16} />;
-      case 'writer': return <PenTool size={16} />;
-      case 'fan': return <Heart size={16} />;
+    switch (type) {
+      case 'organizer':
+        return <Building2 size={16} />;
+      case 'artist':
+        return <User size={16} />;
+      case 'venue':
+        return <MapPin size={16} />;
+      case 'writer':
+        return <PenTool size={16} />;
+      case 'fan':
+        return <Heart size={16} />;
     }
   };
 
-  if (loading) return <span style={{ color: 'var(--text-secondary)' }}>{t("loadingProfiles")}</span>;
-  if (entities.length === 0) return <span style={{ color: 'var(--text-secondary)' }}>{t("noClaimedProfiles")}</span>;
+  if (loading)
+    return <span style={{ color: 'var(--text-secondary)' }}>{t('loadingProfiles')}</span>;
+  if (entities.length === 0)
+    return <span style={{ color: 'var(--text-secondary)' }}>{t('noClaimedProfiles')}</span>;
 
   // ... inside EntitySwitcher ...
   return (
-    <DropdownMenu 
+    <DropdownMenu
       trigger={
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '6px 12px', background: 'rgba(255,255,255,0.05)', borderRadius: '8px', border: '1px solid var(--border)' }}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            padding: '6px 12px',
+            background: 'rgba(255,255,255,0.05)',
+            borderRadius: '8px',
+            border: '1px solid var(--border)',
+          }}
+        >
           {activeEntity && getIcon(activeEntity.type)}
-          <span>{activeEntity?.name || t("selectProfile")}</span>
+          <span>{activeEntity?.name || t('selectProfile')}</span>
           <ChevronDown size={16} />
         </div>
       }
     >
-      {['fan', 'organizer', 'artist', 'venue', 'writer'].map(type => {
-        const typeEntities = entities.filter(e => e.type === type);
+      {['fan', 'organizer', 'artist', 'venue', 'writer'].map((type) => {
+        const typeEntities = entities.filter((e) => e.type === type);
         if (typeEntities.length === 0) return null;
-        
+
         return (
           <div key={type} style={{ marginBottom: '16px' }}>
-            <h4 style={{ textTransform: 'uppercase', fontSize: '0.7rem', letterSpacing: '1px', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t(type === 'fan' ? 'fan' : type + "s")}</h4>
-            {typeEntities.map(e => (
-              <button 
-                key={e.id} 
+            <h4
+              style={{
+                textTransform: 'uppercase',
+                fontSize: '0.7rem',
+                letterSpacing: '1px',
+                marginBottom: '8px',
+                color: 'var(--text-secondary)',
+              }}
+            >
+              {t(type === 'fan' ? 'fan' : type + 's')}
+            </h4>
+            {typeEntities.map((e) => (
+              <button
+                key={e.id}
                 onClick={() => {
                   handleSelect(e);
                 }}
-                style={{ display: 'flex', alignItems: 'center', gap: '8px', width: '100%', background: 'none', border: 'none', padding: '8px', cursor: 'pointer', textAlign: 'left', borderRadius: '4px', color: activeEntity?.id === e.id ? 'var(--accent)' : 'var(--text-primary)' }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  background: 'none',
+                  border: 'none',
+                  padding: '8px',
+                  cursor: 'pointer',
+                  textAlign: 'left',
+                  borderRadius: '4px',
+                  color: activeEntity?.id === e.id ? 'var(--accent)' : 'var(--text-primary)',
+                }}
               >
                 {getIcon(e.type)}
                 {e.name}

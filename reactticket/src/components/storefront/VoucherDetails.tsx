@@ -15,7 +15,7 @@ export const VoucherDetails: React.FC = () => {
     return null;
   }
 
-  const firstPaidType = ticketTypes.find(t => t.pricing.kind === 'paid') as any;
+  const firstPaidType = ticketTypes.find((t) => t.pricing.kind === 'paid') as any;
   const currency = firstPaidType ? firstPaidType.pricing.currency : 'USD';
 
   const renderDiscount = () => {
@@ -39,7 +39,9 @@ export const VoucherDetails: React.FC = () => {
         <strong>{promoDetails.code}</strong> - <span>{renderDiscount()}</span>
       </p>
       <p>Discount: {formatCurrency(totals.discountCents, currency, locale)}</p>
-      <button onClick={removeVoucher} aria-label="Remove voucher">Remove</button>
+      <button onClick={removeVoucher} aria-label="Remove voucher">
+        Remove
+      </button>
     </div>
   );
 };

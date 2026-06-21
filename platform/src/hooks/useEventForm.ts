@@ -9,7 +9,7 @@ export function useEventForm(activeEntity: Entity | null) {
   const posthog = usePostHog();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  
+
   const [formData, setFormData] = useState({
     title: '',
     start_date: '',
@@ -19,20 +19,23 @@ export function useEventForm(activeEntity: Entity | null) {
     description: '',
     category: 'other',
     is_external: false,
-    external_ticket_url: ''
+    external_ticket_url: '',
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const value = e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const value =
+      e.target.type === 'checkbox' ? (e.target as HTMLInputElement).checked : e.target.value;
     setFormData({ ...formData, [e.target.name]: value });
   };
 
   const handleVenueChange = (id: string, data: any) => {
-    setFormData(prev => ({ 
-      ...prev, 
+    setFormData((prev) => ({
+      ...prev,
       venue_id: id,
       city: data?.city || prev.city,
-      country: data?.country || prev.country
+      country: data?.country || prev.country,
     }));
   };
 
@@ -43,7 +46,9 @@ export function useEventForm(activeEntity: Entity | null) {
 
     try {
       if (!activeEntity) {
-        throw new Error("Authentication Required: You must have an active Organizer profile to create an event.");
+        throw new Error(
+          'Authentication Required: You must have an active Organizer profile to create an event.'
+        );
       }
 
       const { data, error: insertError } = await supabase
@@ -63,8 +68,8 @@ export function useEventForm(activeEntity: Entity | null) {
             category: formData.category,
             published: false,
             is_external: formData.is_external,
-            external_ticket_url: formData.is_external ? formData.external_ticket_url : null
-          }
+            external_ticket_url: formData.is_external ? formData.external_ticket_url : null,
+          },
         ])
         .select();
 
@@ -85,8 +90,8 @@ export function useEventForm(activeEntity: Entity | null) {
         body: {
           eventId: data[0].id,
           organizerId: activeEntity.id,
-          eventName: formData.title
-        }
+          eventName: formData.title,
+        },
       });
 
       navigate('/organizer/events');

@@ -137,6 +137,7 @@ export const posthogMiddleware: Route.MiddlewareFunction = async ({ request, con
 ```
 
 **Key Points:**
+
 - Creates a new PostHog Node client for each request
 - Extracts `sessionId` and `distinctId` from request headers (automatically set by the client-side SDK)
 - Sets the PostHog client on the request context for use in route handlers
@@ -157,6 +158,7 @@ posthog?.capture('burrito_considered', {
 Errors are captured in two ways:
 
 1. **Error boundary** - The `ErrorBoundary` in `root.tsx` automatically captures unhandled React Router errors:
+
 ```typescript
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
   const posthog = usePostHog();
@@ -166,6 +168,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 ```
 
 2. **Manual error capture** in components (profile.tsx):
+
 ```typescript
 posthog.captureException(err);
 ```
@@ -182,6 +185,7 @@ if (posthog) {
 ```
 
 **Key Points:**
+
 - The PostHog client is available via `context.posthog` (set by the middleware)
 - Events are automatically associated with the correct user/session via the middleware's `withContext()` call
 - The `distinctId` and `sessionId` are extracted from request headers and used to maintain context between client and server
@@ -250,8 +254,6 @@ export default function Header() {
     </header>
   );
 }
-
-
 ```
 
 ---
@@ -311,7 +313,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
         setUser(localUser);
         localStorage.setItem('currentUser', username);
-        
+
         return true;
       }
       return false;
@@ -340,7 +342,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout, incrementBurritoConsiderations, setUser: setUserState }}>
+    <AuthContext.Provider
+      value={{ user, login, logout, incrementBurritoConsiderations, setUser: setUserState }}
+    >
       {children}
     </AuthContext.Provider>
   );
@@ -353,8 +357,6 @@ export function useAuth() {
   }
   return context;
 }
-
-
 ```
 
 ---
@@ -362,19 +364,18 @@ export function useAuth() {
 ## app/entry.client.tsx
 
 ```tsx
-import { startTransition, StrictMode } from "react";
-import { hydrateRoot } from "react-dom/client";
-import { HydratedRouter } from "react-router/dom";
+import { startTransition, StrictMode } from 'react';
+import { hydrateRoot } from 'react-dom/client';
+import { HydratedRouter } from 'react-router/dom';
 
 import posthog from 'posthog-js';
-import { PostHogProvider } from '@posthog/react'
+import { PostHogProvider } from '@posthog/react';
 
 posthog.init(import.meta.env.VITE_PUBLIC_POSTHOG_PROJECT_TOKEN, {
   api_host: import.meta.env.VITE_PUBLIC_POSTHOG_HOST,
   defaults: '2026-01-30',
-  __add_tracing_headers: [ window.location.host, 'localhost' ],
+  __add_tracing_headers: [window.location.host, 'localhost'],
 });
-
 
 startTransition(() => {
   hydrateRoot(
@@ -383,10 +384,9 @@ startTransition(() => {
       <StrictMode>
         <HydratedRouter />
       </StrictMode>
-    </PostHogProvider>,
+    </PostHogProvider>
   );
 });
-
 ```
 
 ---
@@ -394,14 +394,14 @@ startTransition(() => {
 ## app/entry.server.tsx
 
 ```tsx
-import { PassThrough } from "node:stream";
+import { PassThrough } from 'node:stream';
 
-import type { EntryContext, RouterContextProvider } from "react-router";
-import { createReadableStreamFromReadable } from "@react-router/node";
-import { ServerRouter } from "react-router";
-import { isbot } from "isbot";
-import type { RenderToPipeableStreamOptions } from "react-dom/server";
-import { renderToPipeableStream } from "react-dom/server";
+import type { EntryContext, RouterContextProvider } from 'react-router';
+import { createReadableStreamFromReadable } from '@react-router/node';
+import { ServerRouter } from 'react-router';
+import { isbot } from 'isbot';
+import type { RenderToPipeableStreamOptions } from 'react-dom/server';
+import { renderToPipeableStream } from 'react-dom/server';
 
 export const streamTimeout = 5_000;
 
@@ -410,10 +410,10 @@ export default function handleRequest(
   responseStatusCode: number,
   responseHeaders: Headers,
   routerContext: EntryContext,
-  loadContext: RouterContextProvider,
+  loadContext: RouterContextProvider
 ) {
   // https://httpwg.org/specs/rfc9110.html#HEAD
-  if (request.method.toUpperCase() === "HEAD") {
+  if (request.method.toUpperCase() === 'HEAD') {
     return new Response(null, {
       status: responseStatusCode,
       headers: responseHeaders,
@@ -422,20 +422,18 @@ export default function handleRequest(
 
   return new Promise((resolve, reject) => {
     let shellRendered = false;
-    let userAgent = request.headers.get("user-agent");
+    let userAgent = request.headers.get('user-agent');
 
     // Ensure requests from bots and SPA Mode renders wait for all content to load before responding
     // https://react.dev/reference/react-dom/server/renderToPipeableStream#waiting-for-all-content-to-load-for-crawlers-and-static-generation
     let readyOption: keyof RenderToPipeableStreamOptions =
-      (userAgent && isbot(userAgent)) || routerContext.isSpaMode
-        ? "onAllReady"
-        : "onShellReady";
+      (userAgent && isbot(userAgent)) || routerContext.isSpaMode ? 'onAllReady' : 'onShellReady';
 
     // Abort the rendering stream after the `streamTimeout` so it has time to
     // flush down the rejected boundaries
     let timeoutId: ReturnType<typeof setTimeout> | undefined = setTimeout(
       () => abort(),
-      streamTimeout + 1000,
+      streamTimeout + 1000
     );
 
     const { pipe, abort } = renderToPipeableStream(
@@ -453,7 +451,7 @@ export default function handleRequest(
           });
           const stream = createReadableStreamFromReadable(body);
 
-          responseHeaders.set("Content-Type", "text/html");
+          responseHeaders.set('Content-Type', 'text/html');
 
           pipe(body);
 
@@ -461,7 +459,7 @@ export default function handleRequest(
             new Response(stream, {
               headers: responseHeaders,
               status: responseStatusCode,
-            }),
+            })
           );
         },
         onShellError(error: unknown) {
@@ -476,11 +474,10 @@ export default function handleRequest(
             console.error(error);
           }
         },
-      },
+      }
     );
   });
 }
-
 ```
 
 ---
@@ -488,11 +485,11 @@ export default function handleRequest(
 ## app/lib/db.ts
 
 ```ts
-import sqlite3 from "sqlite3";
-import { join } from "node:path";
-import { promisify } from "node:util";
+import sqlite3 from 'sqlite3';
+import { join } from 'node:path';
+import { promisify } from 'node:util';
 
-const dbPath = join(process.cwd(), "burrito-considerations.db");
+const dbPath = join(process.cwd(), 'burrito-considerations.db');
 
 const db = new sqlite3.Database(dbPath);
 
@@ -510,22 +507,25 @@ const dbGet = promisify(db.get.bind(db));
 const dbRun = promisify(db.run.bind(db));
 
 export function getBurritoConsiderations(username: string): Promise<number> {
-  return dbGet("SELECT count FROM burrito_considerations WHERE username = ?", [username])
-    .then((row: any) => row?.count ?? 0);
+  return dbGet('SELECT count FROM burrito_considerations WHERE username = ?', [username]).then(
+    (row: any) => row?.count ?? 0
+  );
 }
 
 export function incrementBurritoConsiderations(username: string): Promise<number> {
-  return dbRun(`
+  return dbRun(
+    `
     INSERT INTO burrito_considerations (username, count)
     VALUES (?, 1)
     ON CONFLICT(username) DO UPDATE SET count = count + 1
-  `, [username])
+  `,
+    [username]
+  )
     .then(() => {
-      return dbGet("SELECT count FROM burrito_considerations WHERE username = ?", [username]);
+      return dbGet('SELECT count FROM burrito_considerations WHERE username = ?', [username]);
     })
     .then((row: any) => row.count);
 }
-
 ```
 
 ---
@@ -533,9 +533,9 @@ export function incrementBurritoConsiderations(username: string): Promise<number
 ## app/lib/posthog-middleware.ts
 
 ```ts
-import { PostHog } from "posthog-node";
-import type { RouterContextProvider } from "react-router";
-import type { Route } from "../+types/root";
+import { PostHog } from 'posthog-node';
+import type { RouterContextProvider } from 'react-router';
+import type { Route } from '../+types/root';
 
 export interface PostHogContext extends RouterContextProvider {
   posthog?: PostHog;
@@ -562,8 +562,6 @@ export const posthogMiddleware: Route.MiddlewareFunction = async ({ request, con
 
   return response;
 };
-
-
 ```
 
 ---
@@ -579,29 +577,27 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-} from "react-router";
+} from 'react-router';
 
-import type { Route } from "./+types/root";
-import "./app.css";
-import "./globals.css";
-import Header from "./components/Header";
-import { AuthProvider } from "./contexts/AuthContext";
-import { posthogMiddleware } from "./lib/posthog-middleware";
+import type { Route } from './+types/root';
+import './app.css';
+import './globals.css';
+import Header from './components/Header';
+import { AuthProvider } from './contexts/AuthContext';
+import { posthogMiddleware } from './lib/posthog-middleware';
 
-export const middleware: Route.MiddlewareFunction[] = [
-  posthogMiddleware,
-];
+export const middleware: Route.MiddlewareFunction[] = [posthogMiddleware];
 
 export const links: Route.LinksFunction = () => [
-  { rel: "preconnect", href: "https://fonts.googleapis.com" },
+  { rel: 'preconnect', href: 'https://fonts.googleapis.com' },
   {
-    rel: "preconnect",
-    href: "https://fonts.gstatic.com",
-    crossOrigin: "anonymous",
+    rel: 'preconnect',
+    href: 'https://fonts.gstatic.com',
+    crossOrigin: 'anonymous',
   },
   {
-    rel: "stylesheet",
-    href: "https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap",
+    rel: 'stylesheet',
+    href: 'https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap',
   },
 ];
 
@@ -635,19 +631,17 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
-  let message = "Oops!";
-  let details = "An unexpected error occurred.";
+  let message = 'Oops!';
+  let details = 'An unexpected error occurred.';
   let stack: string | undefined;
 
   const posthog = usePostHog();
   posthog.captureException(error);
 
   if (isRouteErrorResponse(error)) {
-    message = error.status === 404 ? "404" : "Error";
+    message = error.status === 404 ? '404' : 'Error';
     details =
-      error.status === 404
-        ? "The requested page could not be found."
-        : error.statusText || details;
+      error.status === 404 ? 'The requested page could not be found.' : error.statusText || details;
   } else if (import.meta.env.DEV && error && error instanceof Error) {
     details = error.message;
     stack = error.stack;
@@ -665,7 +659,6 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
     </main>
   );
 }
-
 ```
 
 ---
@@ -673,17 +666,16 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
 ## app/routes.ts
 
 ```ts
-import { type RouteConfig, index, route } from "@react-router/dev/routes";
+import { type RouteConfig, index, route } from '@react-router/dev/routes';
 
 export default [
-  index("routes/home.tsx"),
-  route("burrito", "routes/burrito.tsx"),
-  route("profile", "routes/profile.tsx"),
-  route("error", "routes/error.tsx"),
-  route("api/auth/login", "routes/api.auth.login.ts"),
-  route("api/burrito/consider", "routes/api.burrito.consider.ts"),
+  index('routes/home.tsx'),
+  route('burrito', 'routes/burrito.tsx'),
+  route('profile', 'routes/profile.tsx'),
+  route('error', 'routes/error.tsx'),
+  route('api/auth/login', 'routes/api.auth.login.ts'),
+  route('api/burrito/consider', 'routes/api.burrito.consider.ts'),
 ] satisfies RouteConfig;
-
 ```
 
 ---
@@ -691,9 +683,9 @@ export default [
 ## app/routes/api.auth.login.ts
 
 ```ts
-import type { Route } from "./+types/api.auth.login";
-import { getBurritoConsiderations } from "../lib/db";
-import type { PostHogContext } from "../lib/posthog-middleware";
+import type { Route } from './+types/api.auth.login';
+import { getBurritoConsiderations } from '../lib/db';
+import type { PostHogContext } from '../lib/posthog-middleware';
 
 const users = new Map<string, { username: string }>();
 
@@ -708,7 +700,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   }
 
   let user = users.get(username);
-  
+
   if (!user) {
     user = { username };
     users.set(username, user);
@@ -721,12 +713,11 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   const burritoConsiderations = await getBurritoConsiderations(username);
 
-  return Response.json({ 
-    success: true, 
-    user: { ...user, burritoConsiderations } 
+  return Response.json({
+    success: true,
+    user: { ...user, burritoConsiderations },
   });
 }
-
 ```
 
 ---
@@ -734,10 +725,10 @@ export async function action({ request, context }: Route.ActionArgs) {
 ## app/routes/api.burrito.consider.ts
 
 ```ts
-import type { Route } from "./+types/api.burrito.consider";
-import { users } from "./api.auth.login";
-import { incrementBurritoConsiderations } from "../lib/db";
-import type { PostHogContext } from "../lib/posthog-middleware";
+import type { Route } from './+types/api.burrito.consider';
+import { users } from './api.auth.login';
+import { incrementBurritoConsiderations } from '../lib/db';
+import type { PostHogContext } from '../lib/posthog-middleware';
 
 export async function action({ request, context }: Route.ActionArgs) {
   const body = await request.json();
@@ -748,7 +739,7 @@ export async function action({ request, context }: Route.ActionArgs) {
   }
 
   const user = users.get(username);
-  
+
   if (!user) {
     return Response.json({ error: 'User not found' }, { status: 404 });
   }
@@ -757,14 +748,12 @@ export async function action({ request, context }: Route.ActionArgs) {
 
   const posthog = (context as PostHogContext).posthog;
   posthog?.capture({ event: 'burrito_considered' });
-  
-  return Response.json({ 
-    success: true, 
-    user: { ...user, burritoConsiderations } 
+
+  return Response.json({
+    success: true,
+    user: { ...user, burritoConsiderations },
   });
 }
-
-
 ```
 
 ---
@@ -774,13 +763,13 @@ export async function action({ request, context }: Route.ActionArgs) {
 ```tsx
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import type { Route } from "./+types/burrito";
+import type { Route } from './+types/burrito';
 import { useAuth } from '../contexts/AuthContext';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Burrito Consideration - Burrito Consideration App" },
-    { name: "description", content: "Consider the potential of burritos" },
+    { title: 'Burrito Consideration - Burrito Consideration App' },
+    { name: 'description', content: 'Consider the potential of burritos' },
   ];
 }
 
@@ -826,10 +815,7 @@ export default function BurritoPage() {
       <p>Take a moment to truly consider the potential of burritos.</p>
 
       <div style={{ textAlign: 'center' }}>
-        <button
-          onClick={handleConsideration}
-          className="btn-burrito"
-        >
+        <button onClick={handleConsideration} className="btn-burrito">
           I have considered the burrito potential
         </button>
 
@@ -847,8 +833,6 @@ export default function BurritoPage() {
     </div>
   );
 }
-
-
 ```
 
 ---
@@ -856,12 +840,12 @@ export default function BurritoPage() {
 ## app/routes/error.tsx
 
 ```tsx
-import type { Route } from "./+types/error";
+import type { Route } from './+types/error';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Error Test - Burrito Consideration App" },
-    { name: "description", content: "Test error boundary" },
+    { title: 'Error Test - Burrito Consideration App' },
+    { name: 'description', content: 'Test error boundary' },
   ];
 }
 
@@ -869,8 +853,6 @@ export default function ErrorPage() {
   // This will throw an error during render, which will be caught by ErrorBoundary
   throw new Error('Test error for ErrorBoundary - this is a render-time error');
 }
-
-
 ```
 
 ---
@@ -879,14 +861,14 @@ export default function ErrorPage() {
 
 ```tsx
 import { useState } from 'react';
-import type { Route } from "./+types/home";
+import type { Route } from './+types/home';
 import { useAuth } from '../contexts/AuthContext';
 import { usePostHog } from '@posthog/react';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "Burrito Consideration App" },
-    { name: "description", content: "Consider the potential of burritos" },
+    { title: 'Burrito Consideration App' },
+    { name: 'description', content: 'Consider the potential of burritos' },
   ];
 }
 
@@ -906,10 +888,10 @@ export default function Home() {
       if (success) {
         // Identifying the user once on login/sign up is enough.
         posthog?.identify(username);
-        
+
         // Capture login event
         posthog?.capture('user_logged_in');
-        
+
         setUsername('');
         setPassword('');
       } else {
@@ -964,16 +946,15 @@ export default function Home() {
 
         {error && <p className="error">{error}</p>}
 
-        <button type="submit" className="btn-primary">Sign In</button>
+        <button type="submit" className="btn-primary">
+          Sign In
+        </button>
       </form>
 
-      <p className="note">
-        Note: This is a demo app. Use any username and password to sign in.
-      </p>
+      <p className="note">Note: This is a demo app. Use any username and password to sign in.</p>
     </div>
   );
 }
-
 ```
 
 ---
@@ -983,15 +964,15 @@ export default function Home() {
 ```tsx
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router';
-import type { Route } from "./+types/profile";
+import type { Route } from './+types/profile';
 import { useAuth } from '../contexts/AuthContext';
 import posthog from 'posthog-js';
 import { usePostHog } from '@posthog/react';
 
 export function meta({}: Route.MetaArgs) {
   return [
-    { title: "User Profile - Burrito Consideration App" },
-    { name: "description", content: "View your profile and burrito consideration stats" },
+    { title: 'User Profile - Burrito Consideration App' },
+    { name: 'description', content: 'View your profile and burrito consideration stats' },
   ];
 }
 
@@ -999,7 +980,6 @@ export default function ProfilePage() {
   const { user } = useAuth();
   const navigate = useNavigate();
   const posthog = usePostHog();
-  
 
   useEffect(() => {
     if (!user) {
@@ -1026,12 +1006,20 @@ export default function ProfilePage() {
 
       <div className="stats">
         <h2>Your Information</h2>
-        <p><strong>Username:</strong> {user.username}</p>
-        <p><strong>Burrito Considerations:</strong> {user.burritoConsiderations}</p>
+        <p>
+          <strong>Username:</strong> {user.username}
+        </p>
+        <p>
+          <strong>Burrito Considerations:</strong> {user.burritoConsiderations}
+        </p>
       </div>
 
       <div style={{ marginTop: '2rem' }}>
-        <button onClick={triggerTestError} className="btn-primary" style={{ backgroundColor: '#dc3545' }}>
+        <button
+          onClick={triggerTestError}
+          className="btn-primary"
+          style={{ backgroundColor: '#dc3545' }}
+        >
           Trigger Test Error (for PostHog)
         </button>
       </div>
@@ -1039,7 +1027,10 @@ export default function ProfilePage() {
       <div style={{ marginTop: '2rem' }}>
         <h3>Your Burrito Journey</h3>
         {user.burritoConsiderations === 0 ? (
-          <p>You haven&apos;t considered any burritos yet. Visit the Burrito Consideration page to start!</p>
+          <p>
+            You haven&apos;t considered any burritos yet. Visit the Burrito Consideration page to
+            start!
+          </p>
         ) : user.burritoConsiderations === 1 ? (
           <p>You&apos;ve considered the burrito potential once. Keep going!</p>
         ) : user.burritoConsiderations < 5 ? (
@@ -1053,8 +1044,6 @@ export default function ProfilePage() {
     </div>
   );
 }
-
-
 ```
 
 ---
@@ -1062,8 +1051,8 @@ export default function ProfilePage() {
 ## app/welcome/welcome.tsx
 
 ```tsx
-import logoDark from "./logo-dark.svg";
-import logoLight from "./logo-light.svg";
+import logoDark from './logo-dark.svg';
+import logoLight from './logo-light.svg';
 
 export function Welcome() {
   return (
@@ -1071,16 +1060,8 @@ export function Welcome() {
       <div className="flex-1 flex flex-col items-center gap-16 min-h-0">
         <header className="flex flex-col items-center gap-9">
           <div className="w-[500px] max-w-[100vw] p-4">
-            <img
-              src={logoLight}
-              alt="React Router"
-              className="block w-full dark:hidden"
-            />
-            <img
-              src={logoDark}
-              alt="React Router"
-              className="hidden w-full dark:block"
-            />
+            <img src={logoLight} alt="React Router" className="block w-full dark:hidden" />
+            <img src={logoDark} alt="React Router" className="hidden w-full dark:block" />
           </div>
         </header>
         <div className="max-w-[300px] w-full space-y-6 px-4">
@@ -1112,8 +1093,8 @@ export function Welcome() {
 
 const resources = [
   {
-    href: "https://reactrouter.com/docs",
-    text: "React Router Docs",
+    href: 'https://reactrouter.com/docs',
+    text: 'React Router Docs',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -1132,8 +1113,8 @@ const resources = [
     ),
   },
   {
-    href: "https://rmx.as/discord",
-    text: "Join Discord",
+    href: 'https://rmx.as/discord',
+    text: 'Join Discord',
     icon: (
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -1151,7 +1132,6 @@ const resources = [
     ),
   },
 ];
-
 ```
 
 ---
@@ -1159,7 +1139,7 @@ const resources = [
 ## react-router.config.ts
 
 ```ts
-import type { Config } from "@react-router/dev/config";
+import type { Config } from '@react-router/dev/config';
 
 export default {
   // Config options...
@@ -1169,7 +1149,6 @@ export default {
     v8_middleware: true,
   },
 } satisfies Config;
-
 ```
 
 ---
@@ -1177,10 +1156,10 @@ export default {
 ## vite.config.ts
 
 ```ts
-import { reactRouter } from "@react-router/dev/vite";
-import tailwindcss from "@tailwindcss/vite";
-import { defineConfig, loadEnv } from "vite";
-import tsconfigPaths from "vite-tsconfig-paths";
+import { reactRouter } from '@react-router/dev/vite';
+import tailwindcss from '@tailwindcss/vite';
+import { defineConfig, loadEnv } from 'vite';
+import tsconfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
@@ -1211,8 +1190,6 @@ export default defineConfig(({ mode }) => {
     },
   };
 });
-
 ```
 
 ---
-

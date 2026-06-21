@@ -21,12 +21,12 @@ export const FriendRequest = ({ onSend }: { onSend: (friendId: string) => Promis
 
   return (
     <form onSubmit={handleSubmit} style={{ display: 'flex', gap: '8px', marginBottom: '20px' }}>
-      <input 
-        className="input-field" 
-        value={friendId} 
-        onChange={(e) => setFriendId(e.target.value)} 
-        placeholder="Enter User ID" 
-        required 
+      <input
+        className="input-field"
+        value={friendId}
+        onChange={(e) => setFriendId(e.target.value)}
+        placeholder="Enter User ID"
+        required
       />
       <button type="submit" className="btn-primary" disabled={loading}>
         {loading ? 'Sending...' : 'Add Friend'}

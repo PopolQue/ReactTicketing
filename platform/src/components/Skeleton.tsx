@@ -1,15 +1,25 @@
 import React from 'react';
 
-export default function Skeleton({ width = '100%', height = '20px', borderRadius = '8px', style = {} }: { width?: string, height?: string, borderRadius?: string, style?: React.CSSProperties }) {
+export default function Skeleton({
+  width = '100%',
+  height = '20px',
+  borderRadius = '8px',
+  style = {},
+}: {
+  width?: string;
+  height?: string;
+  borderRadius?: string;
+  style?: React.CSSProperties;
+}) {
   return (
-    <div 
+    <div
       style={{
         width,
         height,
         borderRadius,
         backgroundColor: 'rgba(255, 255, 255, 0.1)',
         animation: 'pulse 1.5s infinite ease-in-out',
-        ...style
+        ...style,
       }}
     >
       <style>{`

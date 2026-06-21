@@ -15,20 +15,20 @@ vi.spyOn(QRGenerator, 'generate').mockReturnValue('data:image/png;base64,mocked'
 const mockDeliverTicket = vi.fn().mockResolvedValue(true);
 const mockTransferTicket = vi.fn().mockResolvedValue(true);
 vi.mock('reactticket-core/services/AuthService', () => ({
-    AuthService: class { }
+  AuthService: class {},
 }));
 vi.mock('reactticket-core/services/TicketService', () => ({
-    TicketService: class {
-        deliverTicket = mockDeliverTicket;
-        transferTicket = mockTransferTicket;
-    }
+  TicketService: class {
+    deliverTicket = mockDeliverTicket;
+    transferTicket = mockTransferTicket;
+  },
 }));
 
 describe('TicketOverview Component', () => {
   const mockAdapter = {
     getIssuedTickets: vi.fn(),
     getTicketTypes: vi.fn(),
-    countIssuedTickets: vi.fn()
+    countIssuedTickets: vi.fn(),
   };
 
   const mockEvent = { id: 'evt_1', settings: {} };
@@ -46,9 +46,13 @@ describe('TicketOverview Component', () => {
   it('handles ticket transfer successfully', async () => {
     const mockTickets = [{ id: 't1', status: 'pending_delivery', personalization: {} }];
     mockAdapter.getIssuedTickets.mockResolvedValue(mockTickets);
-    
+
     render(
-      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+      <ReactTicketProvider
+        event={mockEvent as any}
+        adapter={mockAdapter as any}
+        onCheckout={vi.fn()}
+      >
         <TicketOverview />
       </ReactTicketProvider>
     );
@@ -62,25 +66,33 @@ describe('TicketOverview Component', () => {
 
     const nameInput = screen.getByLabelText('Recipient Name');
     fireEvent.change(nameInput, { target: { value: 'New Name' } });
-    fireEvent.change(screen.getByLabelText('Recipient Surname'), { target: { value: 'New Surname' } });
-    fireEvent.change(screen.getByLabelText('Recipient Email'), { target: { value: 'new@email.com' } });
+    fireEvent.change(screen.getByLabelText('Recipient Surname'), {
+      target: { value: 'New Surname' },
+    });
+    fireEvent.change(screen.getByLabelText('Recipient Email'), {
+      target: { value: 'new@email.com' },
+    });
     fireEvent.change(screen.getByLabelText('Recipient Country'), { target: { value: 'US' } });
     fireEvent.change(screen.getByLabelText('Recipient City'), { target: { value: 'NYC' } });
-    
+
     const confirmButton = screen.getByText('Confirm');
     fireEvent.click(confirmButton);
-    
+
     await waitFor(() => {
-        expect(mockTransferTicket).toHaveBeenCalled();
+      expect(mockTransferTicket).toHaveBeenCalled();
     });
   });
 
   it('handles ticket transfer validation error', async () => {
     const mockTickets = [{ id: 't1', status: 'pending_delivery', personalization: {} }];
     mockAdapter.getIssuedTickets.mockResolvedValue(mockTickets);
-    
+
     render(
-      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+      <ReactTicketProvider
+        event={mockEvent as any}
+        adapter={mockAdapter as any}
+        onCheckout={vi.fn()}
+      >
         <TicketOverview />
       </ReactTicketProvider>
     );
@@ -94,7 +106,7 @@ describe('TicketOverview Component', () => {
 
     const confirmButton = screen.getByText('Confirm');
     fireEvent.click(confirmButton);
-    
+
     expect(global.alert).toHaveBeenCalledWith('Please fill in all mandatory fields');
   });
 
@@ -102,9 +114,13 @@ describe('TicketOverview Component', () => {
     mockTransferTicket.mockRejectedValueOnce(new Error('Transfer failed API'));
     const mockTickets = [{ id: 't1', status: 'pending_delivery', personalization: {} }];
     mockAdapter.getIssuedTickets.mockResolvedValue(mockTickets);
-    
+
     render(
-      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+      <ReactTicketProvider
+        event={mockEvent as any}
+        adapter={mockAdapter as any}
+        onCheckout={vi.fn()}
+      >
         <TicketOverview />
       </ReactTicketProvider>
     );
@@ -117,25 +133,33 @@ describe('TicketOverview Component', () => {
     fireEvent.click(transferButton);
 
     fireEvent.change(screen.getByLabelText('Recipient Name'), { target: { value: 'New Name' } });
-    fireEvent.change(screen.getByLabelText('Recipient Surname'), { target: { value: 'New Surname' } });
-    fireEvent.change(screen.getByLabelText('Recipient Email'), { target: { value: 'new@email.com' } });
+    fireEvent.change(screen.getByLabelText('Recipient Surname'), {
+      target: { value: 'New Surname' },
+    });
+    fireEvent.change(screen.getByLabelText('Recipient Email'), {
+      target: { value: 'new@email.com' },
+    });
     fireEvent.change(screen.getByLabelText('Recipient Country'), { target: { value: 'US' } });
     fireEvent.change(screen.getByLabelText('Recipient City'), { target: { value: 'NYC' } });
-    
+
     const confirmButton = screen.getByText('Confirm');
     fireEvent.click(confirmButton);
-    
+
     await waitFor(() => {
-        expect(global.alert).toHaveBeenCalledWith('Transfer failed: Transfer failed API');
+      expect(global.alert).toHaveBeenCalledWith('Transfer failed: Transfer failed API');
     });
   });
 
   it('cancels transfer modal', async () => {
     const mockTickets = [{ id: 't1', status: 'pending_delivery', personalization: {} }];
     mockAdapter.getIssuedTickets.mockResolvedValue(mockTickets);
-    
+
     render(
-      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+      <ReactTicketProvider
+        event={mockEvent as any}
+        adapter={mockAdapter as any}
+        onCheckout={vi.fn()}
+      >
         <TicketOverview />
       </ReactTicketProvider>
     );
@@ -149,16 +173,20 @@ describe('TicketOverview Component', () => {
 
     const cancelButton = screen.getByText('Cancel');
     fireEvent.click(cancelButton);
-    
+
     expect(screen.queryByText('Transfer Ticket')).toBeNull();
   });
 
   it('handles ticket delivery successfully', async () => {
     const mockTickets = [{ id: 't1', status: 'pending_delivery', personalization: {} }];
     mockAdapter.getIssuedTickets.mockResolvedValue(mockTickets);
-    
+
     render(
-      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+      <ReactTicketProvider
+        event={mockEvent as any}
+        adapter={mockAdapter as any}
+        onCheckout={vi.fn()}
+      >
         <TicketOverview />
       </ReactTicketProvider>
     );
@@ -169,9 +197,9 @@ describe('TicketOverview Component', () => {
 
     const deliverButton = screen.getByLabelText('Deliver QR for ticket t1');
     fireEvent.click(deliverButton);
-    
+
     await waitFor(() => {
-        expect(mockDeliverTicket).toHaveBeenCalledWith('t1');
+      expect(mockDeliverTicket).toHaveBeenCalledWith('t1');
     });
   });
 
@@ -179,9 +207,13 @@ describe('TicketOverview Component', () => {
     mockDeliverTicket.mockRejectedValueOnce(new Error('Delivery error'));
     const mockTickets = [{ id: 't1', status: 'pending_delivery', personalization: {} }];
     mockAdapter.getIssuedTickets.mockResolvedValue(mockTickets);
-    
+
     render(
-      <ReactTicketProvider event={mockEvent as any} adapter={mockAdapter as any} onCheckout={vi.fn()}>
+      <ReactTicketProvider
+        event={mockEvent as any}
+        adapter={mockAdapter as any}
+        onCheckout={vi.fn()}
+      >
         <TicketOverview />
       </ReactTicketProvider>
     );
@@ -192,9 +224,9 @@ describe('TicketOverview Component', () => {
 
     const deliverButton = screen.getByLabelText('Deliver QR for ticket t1');
     fireEvent.click(deliverButton);
-    
+
     await waitFor(() => {
-        expect(global.alert).toHaveBeenCalledWith('Delivery failed: Delivery error');
+      expect(global.alert).toHaveBeenCalledWith('Delivery failed: Delivery error');
     });
   });
 });

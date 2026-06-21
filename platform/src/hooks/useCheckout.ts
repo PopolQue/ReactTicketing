@@ -2,7 +2,17 @@ import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { useToast } from '../components/Toast';
 
-export function useCheckout({ eventId, tiers, cart, guestEmail }: { eventId: string, tiers: any[], cart: { [tierId: string]: number }, guestEmail?: string }) {
+export function useCheckout({
+  eventId,
+  tiers,
+  cart,
+  guestEmail,
+}: {
+  eventId: string;
+  tiers: any[];
+  cart: { [tierId: string]: number };
+  guestEmail?: string;
+}) {
   const [user, setUser] = useState<any>(null);
   const [checkoutFields, setCheckoutFields] = useState<any[]>([]);
   const [ticketForms, setTicketForms] = useState<any[]>([]);
@@ -14,25 +24,25 @@ export function useCheckout({ eventId, tiers, cart, guestEmail }: { eventId: str
       const result = await supabase.auth.getUser();
       const currentUser = result?.data?.user || null;
       setUser(currentUser);
-      
+
       const { data: checkoutData } = await supabase
         .from('event_checkout_fields')
         .select('*')
         .eq('event_id', eventId)
         .order('created_at', { ascending: true });
-      
+
       setCheckoutFields(checkoutData || []);
 
       // Build flattened ticket instances based on cart
       const instances: any[] = [];
-      Object.keys(cart).forEach(tierId => {
+      Object.keys(cart).forEach((tierId) => {
         const qty = cart[tierId];
-        const tierObj = tiers.find(t => t.id === tierId);
+        const tierObj = tiers.find((t) => t.id === tierId);
         for (let i = 0; i < qty; i++) {
           instances.push({
             id: crypto.randomUUID(), // Unique ID for form tracking
             tier: tierObj,
-            answers: {}
+            answers: {},
           });
         }
       });
@@ -43,12 +53,14 @@ export function useCheckout({ eventId, tiers, cart, guestEmail }: { eventId: str
   }, [eventId, cart, tiers]);
 
   const handleAnswerChange = (ticketId: string, fieldId: string, value: string) => {
-    setTicketForms(prev => prev.map(t => {
-      if (t.id === ticketId) {
-        return { ...t, answers: { ...t.answers, [fieldId]: value } };
-      }
-      return t;
-    }));
+    setTicketForms((prev) =>
+      prev.map((t) => {
+        if (t.id === ticketId) {
+          return { ...t, answers: { ...t.answers, [fieldId]: value } };
+        }
+        return t;
+      })
+    );
   };
 
   const subtotalCents = ticketForms.reduce((acc, t) => acc + (t.tier.pricing?.amount || 0), 0);
@@ -57,11 +69,11 @@ export function useCheckout({ eventId, tiers, cart, guestEmail }: { eventId: str
     finalTotalCents,
     onSuccess,
     onError,
-    onBeforeComplete
+    onBeforeComplete,
   }: {
-    finalTotalCents: number,
-    onSuccess: () => void,
-    onError: (err: any) => void,
+    finalTotalCents: number;
+    onSuccess: () => void;
+    onError: (err: any) => void;
     onBeforeComplete?: () => Promise<void>;
   }) => {
     const result = await supabase.auth.getUser();
@@ -72,7 +84,7 @@ export function useCheckout({ eventId, tiers, cart, guestEmail }: { eventId: str
     const ownerId = user?.id || null; // Null for guest users
 
     if (!user && !buyerEmail) {
-      onError(new Error("Authentication or guest email is required."));
+      onError(new Error('Authentication or guest email is required.'));
       return;
     }
 
@@ -81,9 +93,13 @@ export function useCheckout({ eventId, tiers, cart, guestEmail }: { eventId: str
       const discountCents = subtotalCents - finalTotalCents;
 
       // Map cart to items for the order
-      const orderItems = Object.keys(cart).map(tierId => {
-        const tier = tiers.find(t => t.id === tierId);
-        return { ticket_type_id: tierId, quantity: cart[tierId], price_cents: tier?.pricing?.amount || 0 };
+      const orderItems = Object.keys(cart).map((tierId) => {
+        const tier = tiers.find((t) => t.id === tierId);
+        return {
+          ticket_type_id: tierId,
+          quantity: cart[tierId],
+          price_cents: tier?.pricing?.amount || 0,
+        };
       });
 
       const orderData = {
@@ -94,19 +110,19 @@ export function useCheckout({ eventId, tiers, cart, guestEmail }: { eventId: str
         subtotal_cents: subtotalCents,
         discount_cents: discountCents,
         total_cents: finalTotalCents,
-        status: 'completed'
+        status: 'completed',
       };
 
       // Insert individual tickets with their personalizations
-      const ticketsToInsert = ticketForms.map(t => {
+      const ticketsToInsert = ticketForms.map((t) => {
         // Build final personalization JSON
         const personalization: any = {};
-        checkoutFields.forEach(f => {
+        checkoutFields.forEach((f) => {
           personalization[f.label] = t.answers[f.id] || '';
         });
         // Always include user email as a fallback if not asked
         if (!personalization['Email']) personalization['Email'] = buyerEmail;
-        
+
         // Generate a unique ticket code
         const ticketCode = crypto.randomUUID();
 
@@ -124,13 +140,13 @@ export function useCheckout({ eventId, tiers, cart, guestEmail }: { eventId: str
           status: 'valid',
           price_paid_cents: ticketPricePaid,
           owner_id: ownerId, // Null for guest users
-          ticket_code: ticketCode // Include the new ticket code
+          ticket_code: ticketCode, // Include the new ticket code
         };
       });
 
       const { error: rpcError } = await supabase.rpc('create_checkout_transaction', {
         p_order: orderData,
-        p_tickets: ticketsToInsert
+        p_tickets: ticketsToInsert,
       });
 
       if (rpcError) throw rpcError;
@@ -169,6 +185,6 @@ export function useCheckout({ eventId, tiers, cart, guestEmail }: { eventId: str
     subtotalCents,
     handleAnswerChange,
     validateForms,
-    executePurchase
+    executePurchase,
   };
 }

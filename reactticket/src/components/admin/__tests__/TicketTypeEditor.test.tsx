@@ -14,7 +14,14 @@ describe('TicketTypeEditor Component', () => {
   it('renders correctly', async () => {
     (useTicketTypeEditor as any).mockReturnValue({
       ticketTypes: [
-        { id: 'tt1', name: 'Standard', pricing: { kind: 'paid', priceInCents: 1000, currency: 'EUR' }, capacity: 100, archived: false, visible: true },
+        {
+          id: 'tt1',
+          name: 'Standard',
+          pricing: { kind: 'paid', priceInCents: 1000, currency: 'EUR' },
+          capacity: 100,
+          archived: false,
+          visible: true,
+        },
       ],
       newType: { name: '', price: 0 },
       setNewType: vi.fn(),
@@ -29,15 +36,19 @@ describe('TicketTypeEditor Component', () => {
       startEdit: vi.fn(),
       saveTicketType: vi.fn(),
       addTicketType: vi.fn(),
-      formatDateTimeForTimezone: vi.fn()
+      formatDateTimeForTimezone: vi.fn(),
     });
 
     render(
-      <ReactTicketProvider event={{ id: 'evt_1' } as any} adapter={{ name: 'memory' } as any} onCheckout={vi.fn()}>
+      <ReactTicketProvider
+        event={{ id: 'evt_1' } as any}
+        adapter={{ name: 'memory' } as any}
+        onCheckout={vi.fn()}
+      >
         <TicketTypeEditor />
       </ReactTicketProvider>
     );
-    
+
     expect(screen.getByText('Ticket Types Configuration')).toBeDefined();
     expect(screen.getByText('Standard')).toBeDefined();
   });

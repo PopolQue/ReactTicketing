@@ -33,7 +33,9 @@ export default function EventMap({
   const { t } = useLanguage();
   const [mapLoaded, setMapLoaded] = useState(false);
   const [geocoding, setGeocoding] = useState(false);
-  const [mapTheme, setMapTheme] = useState<'dark-mono' | 'light-mono' | 'cyberpunk' | 'colored'>('dark-mono');
+  const [mapTheme, setMapTheme] = useState<'dark-mono' | 'light-mono' | 'cyberpunk' | 'colored'>(
+    'dark-mono'
+  );
   const [buildingPolygons, setBuildingPolygons] = useState<any[]>([]);
 
   const mapContainerRef = useRef<HTMLDivElement>(null);
@@ -107,7 +109,7 @@ export default function EventMap({
       const fetchedCoords = new Set<string>();
 
       // Simple delay function for throttling
-      const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+      const delay = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
       for (const event of events) {
         if (event.latitude && event.longitude) {
@@ -119,8 +121,10 @@ export default function EventMap({
           for (let attempt = 0; attempt < 3; attempt++) {
             try {
               const query = `[out:json];(way(around:50, ${event.latitude}, ${event.longitude})[building];relation(around:50, ${event.latitude}, ${event.longitude})[building];);out geom;`;
-              const response = await fetch(`https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`);
-              
+              const response = await fetch(
+                `https://overpass-api.de/api/interpreter?data=${encodeURIComponent(query)}`
+              );
+
               if (response.ok) {
                 const data = await response.json();
                 if (data && data.elements && data.elements.length > 0) {
@@ -199,7 +203,8 @@ export default function EventMap({
       // Add CartoDB Dark Matter tile layer (natively features black buildings, light roads, dark blue/gray water)
       L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
         maxZoom: 20,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        attribution:
+          '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
       }).addTo(mapRef.current);
 
       // Layer groups
@@ -224,7 +229,9 @@ export default function EventMap({
   useEffect(() => {
     if (mapLoaded && mapRef.current) {
       const currentCenter = mapRef.current.getCenter();
-      const dist = Math.abs(currentCenter.lat - searchCenter.lat) + Math.abs(currentCenter.lng - searchCenter.lng);
+      const dist =
+        Math.abs(currentCenter.lat - searchCenter.lat) +
+        Math.abs(currentCenter.lng - searchCenter.lng);
       // Only set view if coordinates changed significantly to avoid feedback loops
       if (dist > 0.0001) {
         mapRef.current.setView([searchCenter.lat, searchCenter.lng], 11);
@@ -267,7 +274,8 @@ export default function EventMap({
 
   // 6. Update Event Markers & Highlight Building footprints
   useEffect(() => {
-    if (!mapLoaded || !mapRef.current || !markerGroupRef.current || !buildingsGroupRef.current) return;
+    if (!mapLoaded || !mapRef.current || !markerGroupRef.current || !buildingsGroupRef.current)
+      return;
     const L = (window as any).L;
 
     // Clear old markers and polygons
@@ -295,7 +303,13 @@ export default function EventMap({
 
     // Add new markers
     events.forEach((event) => {
-      if (event.latitude === null || event.latitude === undefined || event.longitude === null || event.longitude === undefined) return;
+      if (
+        event.latitude === null ||
+        event.latitude === undefined ||
+        event.longitude === null ||
+        event.longitude === undefined
+      )
+        return;
       const marker = L.marker([event.latitude, event.longitude], { icon: eventIcon });
 
       const dateStr = new Date(event.start_date).toLocaleDateString([], {
@@ -324,15 +338,44 @@ export default function EventMap({
   }, [mapLoaded, events, buildingPolygons]);
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: '1fr 350px', gap: '24px', height: '600px', width: '100%' }}>
+    <div
+      style={{
+        display: 'grid',
+        gridTemplateColumns: '1fr 350px',
+        gap: '24px',
+        height: '600px',
+        width: '100%',
+      }}
+    >
       {/* Map Container */}
-      <div style={{ position: 'relative', borderRadius: '16px', overflow: 'hidden', border: '1px solid var(--border)' }}>
+      <div
+        style={{
+          position: 'relative',
+          borderRadius: '16px',
+          overflow: 'hidden',
+          border: '1px solid var(--border)',
+        }}
+      >
         {!mapLoaded && (
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', backgroundColor: 'rgba(0,0,0,0.8)', zIndex: 10 }}>
+          <div
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              zIndex: 10,
+            }}
+          >
             <p style={{ color: 'var(--text-secondary)' }}>Loading interactive map...</p>
           </div>
         )}
-        <div ref={mapContainerRef} className="dark-leaflet-map" style={{ width: '100%', height: '100%' }} />
+        <div
+          ref={mapContainerRef}
+          className="dark-leaflet-map"
+          style={{ width: '100%', height: '100%' }}
+        />
 
         {/* Dynamic Styles for Leaflet & Dark Theme */}
         <style>{`
@@ -374,14 +417,38 @@ export default function EventMap({
       </div>
 
       {/* Control / Sidebar Panel */}
-      <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '20px', overflowY: 'auto' }}>
-        <h3 style={{ margin: 0, fontSize: '1.25rem', borderBottom: '1px solid var(--border)', paddingBottom: '12px' }}>
+      <div
+        className="glass-panel"
+        style={{
+          padding: '24px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px',
+          overflowY: 'auto',
+        }}
+      >
+        <h3
+          style={{
+            margin: 0,
+            fontSize: '1.25rem',
+            borderBottom: '1px solid var(--border)',
+            paddingBottom: '12px',
+          }}
+        >
           Geographic Discovery
         </h3>
 
         {/* Map Theme Options */}
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', fontSize: '0.8rem', color: 'var(--text-secondary)', fontWeight: 600 }}>
+          <label
+            style={{
+              display: 'block',
+              marginBottom: '8px',
+              fontSize: '0.8rem',
+              color: 'var(--text-secondary)',
+              fontWeight: 600,
+            }}
+          >
             Map Style Options
           </label>
           <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '8px' }}>
@@ -389,7 +456,14 @@ export default function EventMap({
               type="button"
               onClick={() => setMapTheme('dark-mono')}
               className={mapTheme === 'dark-mono' ? 'btn-primary' : 'btn-secondary'}
-              style={{ padding: '6px 10px', fontSize: '0.75rem', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 600 }}
+              style={{
+                padding: '6px 10px',
+                fontSize: '0.75rem',
+                borderRadius: '8px',
+                border: '1px solid var(--border)',
+                cursor: 'pointer',
+                fontWeight: 600,
+              }}
             >
               Dark Mono
             </button>
@@ -397,7 +471,14 @@ export default function EventMap({
               type="button"
               onClick={() => setMapTheme('light-mono')}
               className={mapTheme === 'light-mono' ? 'btn-primary' : 'btn-secondary'}
-              style={{ padding: '6px 10px', fontSize: '0.75rem', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 600 }}
+              style={{
+                padding: '6px 10px',
+                fontSize: '0.75rem',
+                borderRadius: '8px',
+                border: '1px solid var(--border)',
+                cursor: 'pointer',
+                fontWeight: 600,
+              }}
             >
               Light Mono
             </button>
@@ -405,7 +486,14 @@ export default function EventMap({
               type="button"
               onClick={() => setMapTheme('cyberpunk')}
               className={mapTheme === 'cyberpunk' ? 'btn-primary' : 'btn-secondary'}
-              style={{ padding: '6px 10px', fontSize: '0.75rem', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 600 }}
+              style={{
+                padding: '6px 10px',
+                fontSize: '0.75rem',
+                borderRadius: '8px',
+                border: '1px solid var(--border)',
+                cursor: 'pointer',
+                fontWeight: 600,
+              }}
             >
               Cyberpunk
             </button>
@@ -413,7 +501,14 @@ export default function EventMap({
               type="button"
               onClick={() => setMapTheme('colored')}
               className={mapTheme === 'colored' ? 'btn-primary' : 'btn-secondary'}
-              style={{ padding: '6px 10px', fontSize: '0.75rem', borderRadius: '8px', border: '1px solid var(--border)', cursor: 'pointer', fontWeight: 600 }}
+              style={{
+                padding: '6px 10px',
+                fontSize: '0.75rem',
+                borderRadius: '8px',
+                border: '1px solid var(--border)',
+                cursor: 'pointer',
+                fontWeight: 600,
+              }}
             >
               Colored
             </button>
@@ -430,7 +525,12 @@ export default function EventMap({
             onChange={(e) => setLocationQuery(e.target.value)}
             style={{ flexGrow: 1 }}
           />
-          <button type="submit" className="btn-secondary" style={{ padding: '0 16px' }} disabled={geocoding}>
+          <button
+            type="submit"
+            className="btn-secondary"
+            style={{ padding: '0 16px' }}
+            disabled={geocoding}
+          >
             {geocoding ? '...' : 'Go'}
           </button>
         </form>
@@ -438,7 +538,9 @@ export default function EventMap({
         {/* Radius Filter */}
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Search Radius</span>
+            <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
+              Search Radius
+            </span>
             <span style={{ fontWeight: 600, color: 'var(--accent)' }}>{radiusKm} km</span>
           </div>
           <input
@@ -455,7 +557,14 @@ export default function EventMap({
         {/* Date Filters */}
         <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
           <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: '4px',
+                fontSize: '0.85rem',
+                color: 'var(--text-secondary)',
+              }}
+            >
               From Date
             </label>
             <input
@@ -467,7 +576,14 @@ export default function EventMap({
             />
           </div>
           <div>
-            <label style={{ display: 'block', marginBottom: '4px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+            <label
+              style={{
+                display: 'block',
+                marginBottom: '4px',
+                fontSize: '0.85rem',
+                color: 'var(--text-secondary)',
+              }}
+            >
               To Date
             </label>
             <input
@@ -481,15 +597,42 @@ export default function EventMap({
         </div>
 
         {/* Results Info */}
-        <div style={{ borderTop: '1px solid var(--border)', paddingTop: '16px', flexGrow: 1, display: 'flex', flexDirection: 'column', gap: '12px' }}>
+        <div
+          style={{
+            borderTop: '1px solid var(--border)',
+            paddingTop: '16px',
+            flexGrow: 1,
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '12px',
+          }}
+        >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>Events Found</span>
-            <span className="badge" style={{ backgroundColor: 'var(--accent)', color: 'white', padding: '4px 10px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 700 }}>
+            <span
+              className="badge"
+              style={{
+                backgroundColor: 'var(--accent)',
+                color: 'white',
+                padding: '4px 10px',
+                borderRadius: '12px',
+                fontSize: '0.85rem',
+                fontWeight: 700,
+              }}
+            >
               {events.length}
             </span>
           </div>
 
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', maxHeight: '180px', overflowY: 'auto' }}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              maxHeight: '180px',
+              overflowY: 'auto',
+            }}
+          >
             {events.map((event) => (
               <div
                 key={event.id}
@@ -512,10 +655,15 @@ export default function EventMap({
               >
                 <div>
                   <span style={{ fontWeight: 600, display: 'block' }}>{event.name}</span>
-                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>{event.venue}</span>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
+                    {event.venue}
+                  </span>
                 </div>
                 <span style={{ color: 'var(--text-secondary)', fontSize: '0.75rem' }}>
-                  {new Date(event.start_date).toLocaleDateString([], { month: 'short', day: 'numeric' })}
+                  {new Date(event.start_date).toLocaleDateString([], {
+                    month: 'short',
+                    day: 'numeric',
+                  })}
                 </span>
               </div>
             ))}

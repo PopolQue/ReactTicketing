@@ -8,7 +8,7 @@ describe('AddToWalletButton', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.spyOn(useReactTicketModule, 'useReactTicket').mockReturnValue({
-      adapter: {}
+      adapter: {},
     } as any);
 
     // Mock global fetch
@@ -16,17 +16,17 @@ describe('AddToWalletButton', () => {
   });
 
   afterEach(() => {
-      cleanup();
+    cleanup();
   });
 
   it('renders button and handles successful generation', async () => {
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: true,
-      json: () => Promise.resolve({ passUrl: 'test-url' })
+      json: () => Promise.resolve({ passUrl: 'test-url' }),
     });
 
     render(<AddToWalletButton ticketId="ticket_123" />);
-    
+
     const button = screen.getByText('Add to Wallet');
     expect(button).toBeTruthy();
 
@@ -37,22 +37,22 @@ describe('AddToWalletButton', () => {
     expect(global.fetch).toHaveBeenCalledWith('/api/generate-wallet-pass', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ticketId: 'ticket_123' })
+      body: JSON.stringify({ ticketId: 'ticket_123' }),
     });
   });
 
   it('handles generation error', async () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    
+
     (global.fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
       ok: false,
-      json: () => Promise.resolve({ message: 'Internal Server Error' })
+      json: () => Promise.resolve({ message: 'Internal Server Error' }),
     });
 
     render(<AddToWalletButton ticketId="ticket_123" />);
-    
+
     const button = screen.getByText('Add to Wallet');
-    
+
     await act(async () => {
       fireEvent.click(button);
     });
@@ -63,13 +63,13 @@ describe('AddToWalletButton', () => {
 
   it('handles fetch exception', async () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    
+
     (global.fetch as ReturnType<typeof vi.fn>).mockRejectedValue(new Error('Network error'));
 
     render(<AddToWalletButton ticketId="ticket_123" />);
-    
+
     const button = screen.getByText('Add to Wallet');
-    
+
     await act(async () => {
       fireEvent.click(button);
     });

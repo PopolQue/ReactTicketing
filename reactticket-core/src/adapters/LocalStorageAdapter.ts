@@ -29,7 +29,7 @@ export class LocalStorageAdapter implements StorageAdapter {
 
   async deleteTicketType(eventId: string, ticketTypeId: string): Promise<void> {
     const types = await this.getTicketTypes(eventId);
-    const updated = types.filter(t => t.id !== ticketTypeId);
+    const updated = types.filter((t) => t.id !== ticketTypeId);
     localStorage.setItem(this.getStorageKey(eventId, 'ticketTypes'), JSON.stringify(updated));
   }
 
@@ -46,15 +46,15 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
   async getOrder(orderId: string): Promise<Order | null> {
     for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.endsWith('_orders')) {
-            const data = localStorage.getItem(key);
-            if (data) {
-                const orders: Order[] = JSON.parse(data);
-                const found = orders.find(o => o.id === orderId);
-                if (found) return found;
-            }
+      const key = localStorage.key(i);
+      if (key && key.endsWith('_orders')) {
+        const data = localStorage.getItem(key);
+        if (data) {
+          const orders: Order[] = JSON.parse(data);
+          const found = orders.find((o) => o.id === orderId);
+          if (found) return found;
         }
+      }
     }
     return null;
   }
@@ -62,21 +62,21 @@ export class LocalStorageAdapter implements StorageAdapter {
     const data = localStorage.getItem(this.getStorageKey(eventId, 'orders'));
     return data ? JSON.parse(data) : [];
   }
-  async updateOrderStatus(orderId: string, status: Order["status"]): Promise<void> {
+  async updateOrderStatus(orderId: string, status: Order['status']): Promise<void> {
     for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('tf_') && key.endsWith('_orders')) {
-            const data = localStorage.getItem(key);
-            if (data) {
-                const orders: Order[] = JSON.parse(data);
-                const index = orders.findIndex(o => o.id === orderId);
-                if (index > -1) {
-                    orders[index] = { ...orders[index], status };
-                    localStorage.setItem(key, JSON.stringify(orders));
-                    return;
-                }
-            }
+      const key = localStorage.key(i);
+      if (key && key.startsWith('tf_') && key.endsWith('_orders')) {
+        const data = localStorage.getItem(key);
+        if (data) {
+          const orders: Order[] = JSON.parse(data);
+          const index = orders.findIndex((o) => o.id === orderId);
+          if (index > -1) {
+            orders[index] = { ...orders[index], status };
+            localStorage.setItem(key, JSON.stringify(orders));
+            return;
+          }
         }
+      }
     }
   }
 
@@ -85,29 +85,29 @@ export class LocalStorageAdapter implements StorageAdapter {
     // This is tricky without a mapping of ticketId -> eventId
     // We'll search all events for now
     for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
-            const data = localStorage.getItem(key);
-            if (data) {
-                const tickets: IssuedTicket[] = JSON.parse(data);
-                const found = tickets.find(t => t.id === ticketId);
-                if (found) return found;
-            }
+      const key = localStorage.key(i);
+      if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
+        const data = localStorage.getItem(key);
+        if (data) {
+          const tickets: IssuedTicket[] = JSON.parse(data);
+          const found = tickets.find((t) => t.id === ticketId);
+          if (found) return found;
         }
+      }
     }
     return null;
   }
   async getTicketsByOrder(orderId: string): Promise<IssuedTicket[]> {
     const results: IssuedTicket[] = [];
     for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
-            const data = localStorage.getItem(key);
-            if (data) {
-                const tickets: IssuedTicket[] = JSON.parse(data);
-                results.push(...tickets.filter(t => t.orderId === orderId));
-            }
+      const key = localStorage.key(i);
+      if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
+        const data = localStorage.getItem(key);
+        if (data) {
+          const tickets: IssuedTicket[] = JSON.parse(data);
+          results.push(...tickets.filter((t) => t.orderId === orderId));
         }
+      }
     }
     return results;
   }
@@ -129,76 +129,82 @@ export class LocalStorageAdapter implements StorageAdapter {
     tickets.push(...newTickets);
     localStorage.setItem(key, JSON.stringify(tickets));
   }
-  async updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void> {
+  async updateTicketStatus(ticketId: string, status: IssuedTicket['status']): Promise<void> {
     // Need to find which event this ticket belongs to
     for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
-            const data = localStorage.getItem(key);
-            if (data) {
-                const tickets: IssuedTicket[] = JSON.parse(data);
-                const index = tickets.findIndex(t => t.id === ticketId);
-                if (index > -1) {
-                    tickets[index] = { ...tickets[index], status };
-                    localStorage.setItem(key, JSON.stringify(tickets));
-                    return;
-                }
-            }
+      const key = localStorage.key(i);
+      if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
+        const data = localStorage.getItem(key);
+        if (data) {
+          const tickets: IssuedTicket[] = JSON.parse(data);
+          const index = tickets.findIndex((t) => t.id === ticketId);
+          if (index > -1) {
+            tickets[index] = { ...tickets[index], status };
+            localStorage.setItem(key, JSON.stringify(tickets));
+            return;
+          }
         }
+      }
     }
   }
 
   async deliverTicket(ticketId: string, qrPayload: string): Promise<void> {
     for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
-            const data = localStorage.getItem(key);
-            if (data) {
-                const tickets: IssuedTicket[] = JSON.parse(data);
-                const index = tickets.findIndex(t => t.id === ticketId);
-                if (index > -1) {
-                    tickets[index] = { ...tickets[index], status: 'delivered', qrPayload };
-                    localStorage.setItem(key, JSON.stringify(tickets));
-                    return;
-                }
-            }
+      const key = localStorage.key(i);
+      if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
+        const data = localStorage.getItem(key);
+        if (data) {
+          const tickets: IssuedTicket[] = JSON.parse(data);
+          const index = tickets.findIndex((t) => t.id === ticketId);
+          if (index > -1) {
+            tickets[index] = { ...tickets[index], status: 'delivered', qrPayload };
+            localStorage.setItem(key, JSON.stringify(tickets));
+            return;
+          }
         }
+      }
     }
   }
 
-  async transferTicket(ticketId: string, toEmail: string, newPersonalization: import('../types/ticket.types').TicketPersonalization): Promise<void> {
+  async transferTicket(
+    ticketId: string,
+    toEmail: string,
+    newPersonalization: import('../types/ticket.types').TicketPersonalization
+  ): Promise<void> {
     for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
-            const data = localStorage.getItem(key);
-            if (data) {
-                const tickets: IssuedTicket[] = JSON.parse(data);
-                const index = tickets.findIndex(t => t.id === ticketId);
-                if (index > -1) {
-                    const ticket = tickets[index];
-                    const transferHistory = [
-                        ...(ticket.transferHistory || []),
-                        {
-                            fromEmail: ticket.personalization.email,
-                            toEmail: toEmail,
-                            at: new Date()
-                        }
-                    ];
-                    tickets[index] = { ...ticket, transferHistory, personalization: newPersonalization };
-                    localStorage.setItem(key, JSON.stringify(tickets));
-                    return;
-                }
-            }
+      const key = localStorage.key(i);
+      if (key && key.startsWith('tf_') && key.endsWith('_tickets')) {
+        const data = localStorage.getItem(key);
+        if (data) {
+          const tickets: IssuedTicket[] = JSON.parse(data);
+          const index = tickets.findIndex((t) => t.id === ticketId);
+          if (index > -1) {
+            const ticket = tickets[index];
+            const transferHistory = [
+              ...(ticket.transferHistory || []),
+              {
+                fromEmail: ticket.personalization.email,
+                toEmail: toEmail,
+                at: new Date(),
+              },
+            ];
+            tickets[index] = { ...ticket, transferHistory, personalization: newPersonalization };
+            localStorage.setItem(key, JSON.stringify(tickets));
+            return;
+          }
         }
+      }
     }
   }
   async countIssuedTickets(ticketTypeId: string, eventId: string): Promise<number> {
     const tickets = await this.getIssuedTickets(eventId);
-    const filtered = tickets.filter(t => t.ticketTypeId === ticketTypeId && t.status !== 'cancelled');
+    const filtered = tickets.filter(
+      (t) => t.ticketTypeId === ticketTypeId && t.status !== 'cancelled'
+    );
     return filtered.length;
   }
   async returnTicket(ticketId: string): Promise<void> {
-    await this.updateTicketStatus(ticketId, "cancelled");
+    await this.updateTicketStatus(ticketId, 'cancelled');
   }
   async buyResaleTicket(listingId: string, buyerId: string): Promise<void> {
     console.warn('buyResaleTicket not implemented completely in LocalStorageAdapter');
@@ -208,7 +214,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   async getPromoCode(code: string): Promise<PromoCode | null> {
     const batches = await this.listPromoBatches();
     for (const batch of batches) {
-      const codeFound = batch.codes.find(c => c.code === code);
+      const codeFound = batch.codes.find((c) => c.code === code);
       if (codeFound) return codeFound;
     }
     return null;
@@ -216,7 +222,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   async savePromoBatch(batch: PromoBatch): Promise<void> {
     const data = localStorage.getItem('tf_promo_batches');
     const batches: PromoBatch[] = data ? JSON.parse(data) : [];
-    const index = batches.findIndex(b => b.id === batch.id);
+    const index = batches.findIndex((b) => b.id === batch.id);
     if (index > -1) {
       batches[index] = batch;
     } else {
@@ -228,7 +234,7 @@ export class LocalStorageAdapter implements StorageAdapter {
     const batches = await this.listPromoBatches();
     let updated = false;
     for (const batch of batches) {
-      const codeFound = batch.codes.find(c => c.code === code);
+      const codeFound = batch.codes.find((c) => c.code === code);
       if (codeFound) {
         codeFound.usedCount++;
         updated = true;
@@ -267,22 +273,22 @@ export class LocalStorageAdapter implements StorageAdapter {
     const data = localStorage.getItem('tf_scan_events');
     const events: ScanEvent[] = data ? JSON.parse(data) : [];
     const eventTickets = await this.getIssuedTickets(eventId);
-    const validTicketIds = new Set(eventTickets.map(t => t.id));
-    return events.filter(e => validTicketIds.has(e.ticketId));
+    const validTicketIds = new Set(eventTickets.map((t) => t.id));
+    return events.filter((e) => validTicketIds.has(e.ticketId));
   }
 
   // Scan Accounts
   async getScanAccount(accountId: string): Promise<ScanAccount | null> {
     const accounts = await this.listAllScanAccounts();
-    return accounts.find(a => a.id === accountId) || null;
+    return accounts.find((a) => a.id === accountId) || null;
   }
   async getScanAccountByUsername(eventId: string, username: string): Promise<ScanAccount | null> {
     const accounts = await this.listScanAccounts(eventId);
-    return accounts.find(a => a.username === username) || null;
+    return accounts.find((a) => a.username === username) || null;
   }
   async listScanAccounts(eventId: string): Promise<ScanAccount[]> {
     const accounts = await this.listAllScanAccounts();
-    return accounts.filter(a => a.eventId === eventId);
+    return accounts.filter((a) => a.eventId === eventId);
   }
   private async listAllScanAccounts(): Promise<ScanAccount[]> {
     const data = localStorage.getItem('tf_scan_accounts');
@@ -290,7 +296,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
   async saveScanAccount(account: ScanAccount): Promise<void> {
     const accounts = await this.listAllScanAccounts();
-    const index = accounts.findIndex(a => a.id === account.id);
+    const index = accounts.findIndex((a) => a.id === account.id);
     if (index > -1) {
       accounts[index] = account;
     } else {
@@ -300,7 +306,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
   async updateScanAccount(accountId: string, patch: Partial<ScanAccount>): Promise<void> {
     const accounts = await this.listAllScanAccounts();
-    const index = accounts.findIndex(a => a.id === accountId);
+    const index = accounts.findIndex((a) => a.id === accountId);
     if (index > -1) {
       accounts[index] = { ...accounts[index], ...patch };
       localStorage.setItem('tf_scan_accounts', JSON.stringify(accounts));
@@ -308,12 +314,12 @@ export class LocalStorageAdapter implements StorageAdapter {
   }
   async deleteScanAccount(accountId: string): Promise<void> {
     const accounts = await this.listAllScanAccounts();
-    const updated = accounts.filter(a => a.id !== accountId);
+    const updated = accounts.filter((a) => a.id !== accountId);
     localStorage.setItem('tf_scan_accounts', JSON.stringify(updated));
   }
   async incrementScanAccountLoginTimestamp(accountId: string, at: Date): Promise<void> {
     const accounts = await this.listAllScanAccounts();
-    const index = accounts.findIndex(a => a.id === accountId);
+    const index = accounts.findIndex((a) => a.id === accountId);
     if (index > -1) {
       accounts[index] = { ...accounts[index], lastLoginAt: at };
       localStorage.setItem('tf_scan_accounts', JSON.stringify(accounts));
@@ -324,15 +330,18 @@ export class LocalStorageAdapter implements StorageAdapter {
   async createFriendship(userId: string, friendId: string): Promise<void> {
     const data = localStorage.getItem('tf_friendships');
     const list: any[] = data ? JSON.parse(data) : [];
-    const id = `f_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+    const id = `f_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     list.push({ id, userA: userId, userB: friendId, status: 'pending', createdAt: new Date() });
     localStorage.setItem('tf_friendships', JSON.stringify(list));
   }
 
-  async updateFriendshipStatus(friendshipId: string, status: 'pending' | 'accepted' | 'blocked'): Promise<void> {
+  async updateFriendshipStatus(
+    friendshipId: string,
+    status: 'pending' | 'accepted' | 'blocked'
+  ): Promise<void> {
     const data = localStorage.getItem('tf_friendships');
     const list: any[] = data ? JSON.parse(data) : [];
-    const idx = list.findIndex(f => f.id === friendshipId);
+    const idx = list.findIndex((f) => f.id === friendshipId);
     if (idx > -1) {
       list[idx] = { ...list[idx], status };
       localStorage.setItem('tf_friendships', JSON.stringify(list));
@@ -345,14 +354,16 @@ export class LocalStorageAdapter implements StorageAdapter {
     const data = localStorage.getItem('tf_friendships');
     const list: any[] = data ? JSON.parse(data) : [];
     // return accepted friendships involving userId
-    return list.filter(f => (f.userA === userId || f.userB === userId) && f.status === 'accepted');
+    return list.filter(
+      (f) => (f.userA === userId || f.userB === userId) && f.status === 'accepted'
+    );
   }
 
   // Ticket Transfers
   async createTransfer(ticketId: string, senderId: string, receiverId: string): Promise<void> {
     const data = localStorage.getItem('tf_transfers');
     const list: any[] = data ? JSON.parse(data) : [];
-    const id = `t_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+    const id = `t_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     list.push({ id, ticketId, senderId, receiverId, status: 'pending', createdAt: new Date() });
     localStorage.setItem('tf_transfers', JSON.stringify(list));
   }
@@ -360,7 +371,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   async finalizeTransfer(transferId: string): Promise<void> {
     const data = localStorage.getItem('tf_transfers');
     const list: any[] = data ? JSON.parse(data) : [];
-    const idx = list.findIndex(t => t.id === transferId);
+    const idx = list.findIndex((t) => t.id === transferId);
     if (idx === -1) throw new Error('transfer not found');
     const transfer = list[idx];
     if (transfer.status === 'finalized') return;
@@ -372,7 +383,8 @@ export class LocalStorageAdapter implements StorageAdapter {
     const ticket = await this.getTicket(transfer.ticketId);
     if (!ticket) throw new Error('ticket not found for transfer');
     // ponytail: treat receiverId as email if looks like one, otherwise store as id in personalization.email
-    const toEmail = typeof transfer.receiverId === 'string' ? transfer.receiverId : String(transfer.receiverId);
+    const toEmail =
+      typeof transfer.receiverId === 'string' ? transfer.receiverId : String(transfer.receiverId);
     const fromEmail = ticket.personalization?.email || ticket.buyerEmail || '';
     const transferRecord = { fromEmail, toEmail, at: new Date() };
 
@@ -383,14 +395,14 @@ export class LocalStorageAdapter implements StorageAdapter {
         const d = localStorage.getItem(key);
         if (!d) continue;
         const tickets: any[] = JSON.parse(d);
-        const ti = tickets.findIndex(t => t.id === transfer.ticketId);
+        const ti = tickets.findIndex((t) => t.id === transfer.ticketId);
         if (ti > -1) {
           const existing = tickets[ti];
           const updated = {
             ...existing,
             status: 'transferred',
             transferHistory: [...(existing.transferHistory || []), transferRecord],
-            personalization: { ...(existing.personalization || {}), email: toEmail }
+            personalization: { ...(existing.personalization || {}), email: toEmail },
           };
           tickets[ti] = updated;
           localStorage.setItem(key, JSON.stringify(tickets));
@@ -404,7 +416,7 @@ export class LocalStorageAdapter implements StorageAdapter {
   async createPost(post: { user_id: string; event_id: string; is_public: boolean }): Promise<void> {
     const data = localStorage.getItem('tf_posts');
     const list: any[] = data ? JSON.parse(data) : [];
-    const id = `p_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
+    const id = `p_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     list.push({ id, ...post, createdAt: new Date() });
     localStorage.setItem('tf_posts', JSON.stringify(list));
   }

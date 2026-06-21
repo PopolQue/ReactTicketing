@@ -24,7 +24,7 @@ export function useSupportTickets() {
   const updateTicketStatus = async (ticketId: string, status: string) => {
     const { error } = await supabase.from('support_tickets').update({ status }).eq('id', ticketId);
     if (!error) {
-      setTickets(prev => prev.map(t => t.id === ticketId ? { ...t, status } : t));
+      setTickets((prev) => prev.map((t) => (t.id === ticketId ? { ...t, status } : t)));
     }
     return { error };
   };
@@ -59,14 +59,19 @@ export function useSupportMessages(ticketId: string | undefined) {
 
   const sendMessage = async (message: string, isFromAdmin: boolean) => {
     if (!ticketId) return { error: new Error('No ticket ID') };
-    const { data, error } = await supabase.from('support_ticket_messages').insert([{
-      ticket_id: ticketId,
-      message,
-      is_from_admin: isFromAdmin
-    }]).select();
+    const { data, error } = await supabase
+      .from('support_ticket_messages')
+      .insert([
+        {
+          ticket_id: ticketId,
+          message,
+          is_from_admin: isFromAdmin,
+        },
+      ])
+      .select();
 
     if (!error && data) {
-      setMessages(prev => [...prev, data[0]]);
+      setMessages((prev) => [...prev, data[0]]);
     }
     return { error };
   };

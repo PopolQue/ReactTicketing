@@ -17,17 +17,17 @@ export const AddToWalletButton: React.FC<AddToWalletButtonProps> = ({ ticketId }
       // or just assume we have access to it.
       // Actually, Supabase is typically passed in or accessible via adapter.
       // For now, let's call the Edge Function directly if the client is exposed.
-      
+
       const response = await fetch('/api/generate-wallet-pass', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ ticketId })
+        body: JSON.stringify({ ticketId }),
       });
-      
+
       const data = await response.json();
-      
+
       if (!response.ok) throw new Error(data.message);
-      
+
       console.log('Wallet pass ready:', data);
     } catch (err) {
       console.error('Error generating wallet pass:', err);

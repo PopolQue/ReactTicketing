@@ -13,7 +13,7 @@ import { RestAdapter } from 'reactticket-core/adapters/RestAdapter';
 import jsQR from 'jsqr';
 
 // For production, always use RestAdapter or SupabaseAdapter
-const adapter = new RestAdapter("https://api.yourdomain.com");
+const adapter = new RestAdapter('https://api.yourdomain.com');
 
 export function ScannerRoute() {
   return (

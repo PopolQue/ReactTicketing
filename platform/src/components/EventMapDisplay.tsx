@@ -24,43 +24,52 @@ export function EventMapDisplay({ geometry, position, accentColor }: EventMapDis
 
   useEffect(() => {
     if (mapRef.current && geometry) {
-        // Fit bounds to geometry if possible
-        try {
-            const geoJsonLayer = L.geoJSON(geometry);
-            if (geoJsonLayer.getBounds().isValid()) {
-                mapRef.current.fitBounds(geoJsonLayer.getBounds(), { padding: [20, 20] });
-            }
-        } catch (e) {
-            console.error('Error fitting bounds:', e);
+      // Fit bounds to geometry if possible
+      try {
+        const geoJsonLayer = L.geoJSON(geometry);
+        if (geoJsonLayer.getBounds().isValid()) {
+          mapRef.current.fitBounds(geoJsonLayer.getBounds(), { padding: [20, 20] });
         }
+      } catch (e) {
+        console.error('Error fitting bounds:', e);
+      }
     }
   }, [geometry]);
 
   return (
-    <div style={{ height: '300px', width: '100%', borderRadius: '16px', overflow: 'hidden', marginTop: '24px', border: '1px solid rgba(255,255,255,0.1)' }}>
-      <MapContainer 
-        center={position} 
-        zoom={13} 
+    <div
+      style={{
+        height: '300px',
+        width: '100%',
+        borderRadius: '16px',
+        overflow: 'hidden',
+        marginTop: '24px',
+        border: '1px solid rgba(255,255,255,0.1)',
+      }}
+    >
+      <MapContainer
+        center={position}
+        zoom={13}
         style={{ height: '100%', width: '100%' }}
         ref={mapRef}
         zoomControl={false}
       >
         {/* Dark Matter style for a prettier, modern look */}
         <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
-        
+
         <Marker position={position}>
-            <Popup>Event Location</Popup>
+          <Popup>Event Location</Popup>
         </Marker>
 
         {geometry && (
-          <GeoJSON 
-            data={geometry} 
-            style={{ 
-                color: accentColor, 
-                weight: 3, 
-                fillOpacity: 0.15,
-                lineJoin: 'round'
-            }} 
+          <GeoJSON
+            data={geometry}
+            style={{
+              color: accentColor,
+              weight: 3,
+              fillOpacity: 0.15,
+              lineJoin: 'round',
+            }}
           />
         )}
       </MapContainer>

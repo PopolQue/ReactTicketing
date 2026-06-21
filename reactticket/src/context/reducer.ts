@@ -11,7 +11,10 @@ export type Action =
   | { type: 'SET_PROMO_CODE'; payload: string }
   | { type: 'CLEAR_PROMO' }
   | { type: 'SET_PROMO_DETAILS'; payload: PromoCode | null }
-  | { type: 'SET_PERSONALIZATION'; payload: { ticketTypeId: string; personalizations: TicketPersonalization[] } };
+  | {
+      type: 'SET_PERSONALIZATION';
+      payload: { ticketTypeId: string; personalizations: TicketPersonalization[] };
+    };
 
 export const reducer = (state: ReactTicketState, action: Action): ReactTicketState => {
   switch (action.type) {
@@ -23,7 +26,9 @@ export const reducer = (state: ReactTicketState, action: Action): ReactTicketSta
       const { ticketTypeId, quantity } = action.payload;
       const existingItem = state.cart.items.find((i: CartItem) => i.ticketTypeId === ticketTypeId);
       const items = existingItem
-        ? state.cart.items.map((i: CartItem) => i.ticketTypeId === ticketTypeId ? { ...i, quantity: i.quantity + quantity } : i)
+        ? state.cart.items.map((i: CartItem) =>
+            i.ticketTypeId === ticketTypeId ? { ...i, quantity: i.quantity + quantity } : i
+          )
         : [...state.cart.items, { ticketTypeId, quantity }];
       return { ...state, cart: { ...state.cart, items } };
     }
@@ -45,9 +50,9 @@ export const reducer = (state: ReactTicketState, action: Action): ReactTicketSta
           ...state.cart,
           personalizations: {
             ...state.cart.personalizations,
-            [action.payload.ticketTypeId]: action.payload.personalizations
-          }
-        }
+            [action.payload.ticketTypeId]: action.payload.personalizations,
+          },
+        },
       };
     default:
       return state;

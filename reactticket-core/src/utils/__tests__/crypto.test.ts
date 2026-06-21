@@ -25,7 +25,7 @@ describe('crypto utils', () => {
     it('should sign and verify token correctly', async () => {
       const header = { alg: 'HS256', typ: 'JWT' };
       const payload = { sub: '123' };
-      
+
       const token = await signToken(header, payload, mockKey);
       expect(typeof token).toBe('string');
       expect(token.split('.').length).toBe(3);
@@ -37,7 +37,7 @@ describe('crypto utils', () => {
     it('should return false for invalid token', async () => {
       const header = { alg: 'HS256', typ: 'JWT' };
       const payload = { sub: '123' };
-      
+
       const token = await signToken(header, payload, mockKey);
       const parts = token.split('.');
       const invalidToken = `${parts[0]}.${parts[1]}.invalid`;

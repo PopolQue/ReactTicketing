@@ -12,7 +12,7 @@ export default function ArtistEditProfile() {
     image_url: '',
     spotify_url: '',
     instagram_url: '',
-    soundcloud_url: ''
+    soundcloud_url: '',
   });
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export default function ArtistEditProfile() {
         image_url: claim.artists.image_url || '',
         spotify_url: claim.artists.spotify_url || '',
         instagram_url: claim.artists.instagram_url || '',
-        soundcloud_url: claim.artists.soundcloud_url || ''
+        soundcloud_url: claim.artists.soundcloud_url || '',
       });
     }
   }, [claim]);
@@ -31,7 +31,7 @@ export default function ArtistEditProfile() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!claim?.artist_id) return;
-    
+
     setLoading(true);
     await supabase.from('artists').update(formData).eq('id', claim.artist_id);
     setLoading(false);
@@ -45,64 +45,82 @@ export default function ArtistEditProfile() {
   return (
     <div className="glass-panel" style={{ padding: '32px' }}>
       <h2 style={{ margin: '0 0 24px 0' }}>{t('artist_edit_public_profile')}</h2>
-      
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+
+      <form
+        onSubmit={handleSubmit}
+        style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+      >
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('artist_edit_artist_bio')}</label>
-          <textarea 
-            className="input-field" 
-            rows={5} 
+          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>
+            {t('artist_edit_artist_bio')}
+          </label>
+          <textarea
+            className="input-field"
+            rows={5}
             value={formData.bio}
-            onChange={e => setFormData({...formData, bio: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, bio: e.target.value })}
             placeholder="Tell your fans about yourself..."
           ></textarea>
         </div>
-        
+
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('artist_edit_profile_image')}</label>
-          <input 
-            type="url" 
-            className="input-field" 
+          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>
+            {t('artist_edit_profile_image')}
+          </label>
+          <input
+            type="url"
+            className="input-field"
             value={formData.image_url}
-            onChange={e => setFormData({...formData, image_url: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
             placeholder="https://example.com/photo.jpg"
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('artist_edit_spotify_artist')}</label>
-          <input 
-            type="url" 
-            className="input-field" 
+          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>
+            {t('artist_edit_spotify_artist')}
+          </label>
+          <input
+            type="url"
+            className="input-field"
             value={formData.spotify_url}
-            onChange={e => setFormData({...formData, spotify_url: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, spotify_url: e.target.value })}
             placeholder="https://open.spotify.com/artist/..."
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('artist_edit_instagram')}</label>
-          <input 
-            type="url" 
-            className="input-field" 
+          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>
+            {t('artist_edit_instagram')}
+          </label>
+          <input
+            type="url"
+            className="input-field"
             value={formData.instagram_url}
-            onChange={e => setFormData({...formData, instagram_url: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, instagram_url: e.target.value })}
             placeholder="https://instagram.com/..."
           />
         </div>
 
         <div>
-          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>{t('artist_edit_soundcloud')}</label>
-          <input 
-            type="url" 
-            className="input-field" 
+          <label style={{ display: 'block', marginBottom: '8px', color: 'var(--text-secondary)' }}>
+            {t('artist_edit_soundcloud')}
+          </label>
+          <input
+            type="url"
+            className="input-field"
             value={formData.soundcloud_url}
-            onChange={e => setFormData({...formData, soundcloud_url: e.target.value})}
+            onChange={(e) => setFormData({ ...formData, soundcloud_url: e.target.value })}
             placeholder="https://soundcloud.com/..."
           />
         </div>
 
-        <button type="submit" disabled={loading} className="btn-primary" style={{ marginTop: '16px', alignSelf: 'flex-start' }}>
+        <button
+          type="submit"
+          disabled={loading}
+          className="btn-primary"
+          style={{ marginTop: '16px', alignSelf: 'flex-start' }}
+        >
           {loading ? 'Saving...' : 'Save Profile Changes'}
         </button>
       </form>

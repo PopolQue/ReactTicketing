@@ -14,7 +14,9 @@
   "scripts": {
     "build": "vite build",
     "test": "vitest run",
-    "size": "size-limit"
+    "size": "size-limit",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "devDependencies": {
     "@size-limit/preset-small-lib": "^12.1.0",

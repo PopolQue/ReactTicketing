@@ -7,28 +7,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      
+
       - uses: supabase/setup-cli@v2
         with:
           version: latest
-          
+
       - uses: actions/setup-node@v6
         with:
           node-version: 22
-          
+
       - name: Install dependencies
         run: |
           cd reactticket-core && npm install
           cd ../reactticket && npm install
           cd ../platform && npm install
           cd ../mobile-scanner && npm install
-          
+
       - name: Security Audit
         run: |
           cd reactticket-core && npm audit --audit-level=high
           cd ../reactticket && npm audit --audit-level=high
           cd ../platform && npm audit --audit-level=high
-          
+
       - name: Build Libraries
         run: |
           cd reactticket-core && npm run build
@@ -39,7 +39,7 @@ jobs:
           cd reactticket-core && npx vitest run --coverage
           cd ../reactticket && npx vitest run --coverage
           cd ../platform && npx vitest run --coverage
-          
+
       - name: Upload Core Coverage
         uses: actions/upload-artifact@v7
         with:
@@ -64,11 +64,11 @@ jobs:
           # Supabase CLI automatically applies migrations from supabase/migrations on start.
           # We can also check status.
           supabase status
-          
+
       - name: Install Playwright Browsers
         run: |
           cd platform && npx playwright install --with-deps
-          
+
       - name: Run Playwright e2e tests
         run: |
           cd platform

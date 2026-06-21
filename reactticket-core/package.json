@@ -12,7 +12,9 @@
   "scripts": {
     "build": "tsc",
     "postbuild": "cp src/utils/jsQR.* dist/utils/ || true",
-    "test": "vitest run"
+    "test": "vitest run",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "dependencies": {},
   "devDependencies": {

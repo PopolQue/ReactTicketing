@@ -22,7 +22,7 @@ describe('PromoCodeInput Component', () => {
     vi.spyOn(useVoucherModule, 'useVoucher').mockReturnValue({
       applyVoucher: mockApplyVoucher,
       isLoading: false,
-      error: null
+      error: null,
     } as any);
 
     render(<PromoCodeInput />);

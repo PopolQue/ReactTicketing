@@ -14,19 +14,19 @@ const adapter = new SupabaseAdapter(
 
 // 2. Define your Event Configuration
 const eventConfig = {
-  id: "your_event_id", // Replace with your actual event ID from Supabase
-  name: "Your Event Name",
-  organizerName: "Your Organizer Name",
+  id: 'your_event_id', // Replace with your actual event ID from Supabase
+  name: 'Your Event Name',
+  organizerName: 'Your Organizer Name',
   startDate: new Date(),
-  timezone: "Europe/Berlin",
+  timezone: 'Europe/Berlin',
   ticketTypes: [], // Will be fetched from Supabase
   settings: {
     maxOrderSize: 10,
     requireBuyerEmail: true,
-    adminKey: "your_admin_key_hash", // Generated hash
-    scanSessionSecret: "your_32_char_secret", // ponytail: replace before deploying
-    qrSigningSecret: "your_32_char_qr_secret", // ponytail: replace before deploying
-  }
+    adminKey: 'your_admin_key_hash', // Generated hash
+    scanSessionSecret: 'your_32_char_secret', // ponytail: replace before deploying
+    qrSigningSecret: 'your_32_char_qr_secret', // ponytail: replace before deploying
+  },
 };
 
 const authService = new AuthService(adapter, eventConfig.settings as any);
@@ -46,7 +46,7 @@ export default function App() {
           onCheckout={async (order: any) => {
             // Tickets are issued automatically by TicketService when linked to Supabase
             await ticketService.issueTickets(order.id);
-            return "confirmed";
+            return 'confirmed';
           }}
         />
       </div>

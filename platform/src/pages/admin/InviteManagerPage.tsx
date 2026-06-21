@@ -1,4 +1,4 @@
-import { InviteManager } from "../../components/invites/InviteManager";
+import { InviteManager } from '../../components/invites/InviteManager';
 
 export default function InviteManagerPage() {
   return (

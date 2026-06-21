@@ -10,18 +10,18 @@ afterEach(cleanup);
 describe('ScanDashboard Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     vi.spyOn(useReactTicketModule, 'useReactTicket').mockReturnValue({
       event: { id: 'evt_1' },
-      adapter: {}
+      adapter: {},
     } as any);
   });
 
   it('renders loading state', () => {
     vi.spyOn(useAnalyticsModule, 'useAnalytics').mockReturnValue({
-        summary: null,
-        isLoading: true,
-        error: null
+      summary: null,
+      isLoading: true,
+      error: null,
     } as any);
 
     render(<ScanDashboard />);
@@ -31,9 +31,9 @@ describe('ScanDashboard Component', () => {
   it('renders dashboard with data', () => {
     const mockSummary = { total: 100 };
     vi.spyOn(useAnalyticsModule, 'useAnalytics').mockReturnValue({
-        summary: mockSummary,
-        isLoading: false,
-        error: null
+      summary: mockSummary,
+      isLoading: false,
+      error: null,
     } as any);
 
     render(<ScanDashboard />);

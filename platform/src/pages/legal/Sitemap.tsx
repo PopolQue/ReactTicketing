@@ -114,7 +114,8 @@ const styles: Record<string, React.CSSProperties> = {
   linkItemHover: {
     background: 'rgba(255, 255, 255, 0.04)',
     color: 'var(--text-primary)',
-    textShadow: '0 0 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(69, 38, 38, 0.8), 0 0 24px rgba(69, 38, 38, 0.6)',
+    textShadow:
+      '0 0 8px rgba(255, 255, 255, 0.8), 0 0 16px rgba(69, 38, 38, 0.8), 0 0 24px rgba(69, 38, 38, 0.6)',
     border: '1px solid var(--border)',
   },
   linkDot: {
@@ -210,9 +211,7 @@ export default function Sitemap() {
       title: t('venuePortal'),
       iconId: 'venue-icon',
       iconBg: 'rgba(245, 158, 11, 0.15)',
-      links: [
-        { label: t('dashboard'), to: '/venue' },
-      ],
+      links: [{ label: t('dashboard'), to: '/venue' }],
     },
     {
       title: t('supportAdmin'),
@@ -248,9 +247,7 @@ export default function Sitemap() {
       <div style={styles.container}>
         <div style={styles.pageLabel}>{t('navigation')}</div>
         <h1 style={styles.title}>{t('sitemapTitle')}</h1>
-        <p style={styles.subtitle}>
-          {t('sitemapSubtitle')}
-        </p>
+        <p style={styles.subtitle}>{t('sitemapSubtitle')}</p>
 
         <div style={styles.grid}>
           {categories.map((cat) => (
@@ -258,7 +255,8 @@ export default function Sitemap() {
               <SitemapIcon id={cat.iconId} background={cat.iconBg} />
               <h2 style={styles.cardTitle}>{cat.title}</h2>
               <p style={styles.cardCount}>
-                {cat.links.length} {t('page')}{cat.links.length !== 1 ? 's' : ''}
+                {cat.links.length} {t('page')}
+                {cat.links.length !== 1 ? 's' : ''}
               </p>
               <ul style={styles.linkList}>
                 {cat.links.map((link) => (

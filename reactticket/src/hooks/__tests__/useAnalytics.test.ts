@@ -8,14 +8,14 @@ import { AuthService } from 'reactticket-core/services/AuthService';
 const mockGetAnalytics = vi.fn();
 
 vi.mock('reactticket-core/services/ScanService', () => {
-    class MockScanService {
-        getAnalytics = mockGetAnalytics;
-    }
-    return { ScanService: MockScanService };
+  class MockScanService {
+    getAnalytics = mockGetAnalytics;
+  }
+  return { ScanService: MockScanService };
 });
 vi.mock('reactticket-core/services/AuthService', () => {
-    class MockAuthService {}
-    return { AuthService: MockAuthService };
+  class MockAuthService {}
+  return { AuthService: MockAuthService };
 });
 
 describe('useAnalytics', () => {
@@ -23,22 +23,22 @@ describe('useAnalytics', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
-    
+
     vi.spyOn(useReactTicketModule, 'useReactTicket').mockReturnValue({
       event: mockEvent,
-      adapter: {}
+      adapter: {},
     } as any);
   });
 
   it('fetches analytics summary', async () => {
     const mockSummary = { totalAdmitted: 5 };
     mockGetAnalytics.mockResolvedValue(mockSummary);
-    
+
     const { result } = renderHook(() => useAnalytics('evt_1'));
-    
+
     // Initial load
     await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+      expect(result.current.isLoading).toBe(false);
     });
 
     expect(result.current.summary).toEqual(mockSummary);

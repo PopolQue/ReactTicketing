@@ -1,4 +1,4 @@
-import { StorageAdapter } from "../types/adapter.types";
+import { StorageAdapter } from '../types/adapter.types';
 
 export class FriendService {
   constructor(private adapter: StorageAdapter) {}

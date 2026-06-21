@@ -15,7 +15,9 @@ export default function Profile() {
   }, []);
 
   async function fetchProfile() {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
     setEmail(user.email || '');
 
@@ -23,7 +25,7 @@ export default function Profile() {
       .from('user_profiles')
       .select('username')
       .eq('id', user.id);
-      
+
     if (data && data.length > 0) setUsername(data[0].username);
   }
 
@@ -34,7 +36,9 @@ export default function Profile() {
       return;
     }
     setLoading(true);
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
 
     // Update Username
@@ -63,12 +67,46 @@ export default function Profile() {
   return (
     <div style={{ maxWidth: '500px', margin: '0 auto', padding: '40px' }}>
       <h1>Edit Profile</h1>
-      <form onSubmit={updateProfile} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-        <input className="input-field" value={username} onChange={e => setUsername(e.target.value)} placeholder="Username" />
-        <input className="input-field" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="Email" />
-        <input className="input-field" type="password" value={password} onChange={e => setPassword(e.target.value)} placeholder="New Password (optional)" minLength={8} pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;|<>?,./`~]).{8,}$" title="Must contain at least 8 characters, including uppercase, lowercase, numbers, and symbols" />
-        <input className="input-field" type="password" value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Confirm New Password" minLength={8} pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;|<>?,./`~]).{8,}$" title="Must contain at least 8 characters, including uppercase, lowercase, numbers, and symbols" />
-        <button className="btn-primary" disabled={loading}>{loading ? 'Updating...' : 'Save Changes'}</button>
+      <form
+        onSubmit={updateProfile}
+        style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}
+      >
+        <input
+          className="input-field"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
+          placeholder="Username"
+        />
+        <input
+          className="input-field"
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Email"
+        />
+        <input
+          className="input-field"
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="New Password (optional)"
+          minLength={8}
+          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;|<>?,./`~]).{8,}$"
+          title="Must contain at least 8 characters, including uppercase, lowercase, numbers, and symbols"
+        />
+        <input
+          className="input-field"
+          type="password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          placeholder="Confirm New Password"
+          minLength={8}
+          pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':&quot;|<>?,./`~]).{8,}$"
+          title="Must contain at least 8 characters, including uppercase, lowercase, numbers, and symbols"
+        />
+        <button className="btn-primary" disabled={loading}>
+          {loading ? 'Updating...' : 'Save Changes'}
+        </button>
       </form>
     </div>
   );

@@ -10,7 +10,9 @@
     "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
     "serve": "cross-env NODE_ENV=production node server.js",
     "test": "vitest",
-    "test:e2e": "playwright test"
+    "test:e2e": "playwright test",
+    "lint": "eslint .",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@posthog/react": "^1.10.2",

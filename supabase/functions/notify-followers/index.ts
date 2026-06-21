@@ -1,9 +1,9 @@
-import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const supabase = createClient(
-  Deno.env.get("SUPABASE_URL")!,
-  Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!
+  Deno.env.get('SUPABASE_URL')!,
+  Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
 );
 
 serve(async (req) => {
@@ -11,10 +11,10 @@ serve(async (req) => {
 
   // 1. Get all followers for this organizer
   const { data: followers, error: followerError } = await supabase
-    .from("entity_followers")
-    .select("user_id")
-    .eq("entity_id", organizerId)
-    .eq("entity_type", "organizer");
+    .from('entity_followers')
+    .select('user_id')
+    .eq('entity_id', organizerId)
+    .eq('entity_type', 'organizer');
 
   if (followerError) return new Response(JSON.stringify({ error: followerError }), { status: 500 });
 
@@ -22,12 +22,14 @@ serve(async (req) => {
   // In production, integrate with FCM/OneSignal/etc.
   const notifications = followers.map((f) => ({
     user_id: f.user_id,
-    title: "New Event Alert!",
+    title: 'New Event Alert!',
     body: `${eventName} is happening soon. Check it out!`,
-    data: { eventId }
+    data: { eventId },
   }));
 
-  console.log("Triggering notifications:", notifications);
+  console.log('Triggering notifications:', notifications);
 
-  return new Response(JSON.stringify({ success: true, count: notifications.length }), { status: 200 });
+  return new Response(JSON.stringify({ success: true, count: notifications.length }), {
+    status: 200,
+  });
 });

@@ -1,4 +1,4 @@
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from '../contexts/LanguageContext';
 import React, { useEffect, useState } from 'react';
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -6,22 +6,15 @@ interface Props {
   allowedRoles?: string[];
   requireAuth?: boolean;
 }
-export default function ProtectedRoute({
-  allowedRoles,
-  requireAuth = true
-}: Props) {
-  const {
-    t
-  } = useLanguage();
+export default function ProtectedRoute({ allowedRoles, requireAuth = true }: Props) {
+  const { t } = useLanguage();
   const [loading, setLoading] = useState(true);
   const [authorized, setAuthorized] = useState(false);
   const location = useLocation();
   useEffect(() => {
     async function checkAuth() {
       const {
-        data: {
-          user
-        }
+        data: { user },
       } = await supabase.auth.getUser();
       if (!user) {
         if (requireAuth) {
@@ -41,9 +34,11 @@ export default function ProtectedRoute({
       }
 
       // If specific roles are required, check the user_roles table
-      const {
-        data: roleData
-      } = await supabase.from('user_roles').select('role').eq('user_id', user.id).single();
+      const { data: roleData } = await supabase
+        .from('user_roles')
+        .select('role')
+        .eq('user_id', user.id)
+        .single();
       const userRole = roleData?.role || 'user';
       if (allowedRoles.includes(userRole)) {
         setAuthorized(true);
@@ -54,14 +49,27 @@ export default function ProtectedRoute({
     }
     checkAuth();
   }, [location.pathname]);
-  if (loading) return <div style={{
-    padding: '40px',
-    textAlign: 'center'
-  }}>{t("authenticating")}</div>;
+  if (loading)
+    return (
+      <div
+        style={{
+          padding: '40px',
+          textAlign: 'center',
+        }}
+      >
+        {t('authenticating')}
+      </div>
+    );
   if (!authorized) {
-    return <Navigate to="/auth" state={{
-      from: location
-    }} replace />;
+    return (
+      <Navigate
+        to="/auth"
+        state={{
+          from: location,
+        }}
+        replace
+      />
+    );
   }
   return <Outlet />;
 }

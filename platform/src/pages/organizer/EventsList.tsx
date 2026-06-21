@@ -19,7 +19,7 @@ export default function EventsList() {
         .select('*, venues(name, city, country)')
         .eq('organizer_id', activeEntity.id)
         .order('start_date', { ascending: false });
-        
+
       if (data) setEvents(data);
       setLoading(false);
     }
@@ -28,19 +28,27 @@ export default function EventsList() {
 
   return (
     <div className="events-list-page">
-      <div className="page-header" style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}>
-        <h2 style={{ margin: 0 }}>{t("organizer.events.title")}</h2>
+      <div
+        className="page-header"
+        style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '24px' }}
+      >
+        <h2 style={{ margin: 0 }}>{t('organizer.events.title')}</h2>
         <Link to="/organizer/events/new">
-          <button className="btn-primary">{t("organizer.events.createEvent")}</button>
+          <button className="btn-primary">{t('organizer.events.createEvent')}</button>
         </Link>
       </div>
-      
-      {loading ? <p style={{ color: 'var(--text-secondary)' }}>{t("organizer.events.loading")}</p> : (
-        <div className="events-grid" style={{ display: 'grid', gap: '16px', gridTemplateColumns: '1fr 1fr' }}>
+
+      {loading ? (
+        <p style={{ color: 'var(--text-secondary)' }}>{t('organizer.events.loading')}</p>
+      ) : (
+        <div
+          className="events-grid"
+          style={{ display: 'grid', gap: '16px', gridTemplateColumns: '1fr 1fr' }}
+        >
           {events.length === 0 ? (
-            <p style={{ color: 'var(--text-secondary)' }}>{t("organizer.events.noEvents")}</p>
+            <p style={{ color: 'var(--text-secondary)' }}>{t('organizer.events.noEvents')}</p>
           ) : (
-            events.map(event => {
+            events.map((event) => {
               const getEventStatusText = () => {
                 if (event.published) {
                   if (event.approval_status === 'approved') return 'Live';
@@ -49,7 +57,7 @@ export default function EventsList() {
                 }
                 return 'Draft';
               };
-              
+
               const getEventStatusColor = () => {
                 if (event.published) {
                   if (event.approval_status === 'approved') return '#10b981';
@@ -62,19 +70,47 @@ export default function EventsList() {
               const statusColor = getEventStatusColor();
 
               return (
-                <div key={event.id} className="event-card glass-panel" style={{ padding: '20px', borderLeft: `4px solid ${statusColor}` }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                <div
+                  key={event.id}
+                  className="event-card glass-panel"
+                  style={{ padding: '20px', borderLeft: `4px solid ${statusColor}` }}
+                >
+                  <div
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'flex-start',
+                    }}
+                  >
                     <h3 style={{ margin: '0 0 8px 0' }}>{event.name}</h3>
-                    <span style={{ fontSize: '0.8rem', padding: '4px 8px', borderRadius: '4px', backgroundColor: `${statusColor}33`, color: statusColor, fontWeight: 600 }}>
+                    <span
+                      style={{
+                        fontSize: '0.8rem',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        backgroundColor: `${statusColor}33`,
+                        color: statusColor,
+                        fontWeight: 600,
+                      }}
+                    >
                       {getEventStatusText()}
                     </span>
                   </div>
                   <p style={{ color: 'var(--text-secondary)', margin: '0 0 20px 0' }}>
-                    {new Date(event.start_date).toLocaleDateString()} • {event.venues?.name || event.venue}{event.venues?.city || event.city ? `, ${event.venues?.city || event.city}` : ''}{event.venues?.country || event.country ? `, ${event.venues?.country || event.country}` : ''}
+                    {new Date(event.start_date).toLocaleDateString()} •{' '}
+                    {event.venues?.name || event.venue}
+                    {event.venues?.city || event.city
+                      ? `, ${event.venues?.city || event.city}`
+                      : ''}
+                    {event.venues?.country || event.country
+                      ? `, ${event.venues?.country || event.country}`
+                      : ''}
                   </p>
                   <div style={{ display: 'flex', gap: '12px' }}>
                     <Link to={`/organizer/events/${event.id}`} style={{ width: '100%' }}>
-                      <button className="btn-secondary" style={{ width: '100%' }}>{t("organizer.events.manage")}</button>
+                      <button className="btn-secondary" style={{ width: '100%' }}>
+                        {t('organizer.events.manage')}
+                      </button>
                     </Link>
                   </div>
                 </div>

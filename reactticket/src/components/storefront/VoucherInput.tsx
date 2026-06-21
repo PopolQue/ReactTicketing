@@ -11,7 +11,7 @@ export const VoucherInput: React.FC = () => {
     if (!code) return;
     const success = await applyVoucher(code);
     if (success) {
-        setCode('');
+      setCode('');
     }
   };
 
@@ -25,10 +25,19 @@ export const VoucherInput: React.FC = () => {
         aria-label={t('store.voucher.label')}
         disabled={isLoading}
       />
-      <button onClick={handleApply} disabled={isLoading || !code} aria-busy={isLoading} aria-label={isLoading ? t('store.voucher.applying') : t('store.voucher.apply')}>
+      <button
+        onClick={handleApply}
+        disabled={isLoading || !code}
+        aria-busy={isLoading}
+        aria-label={isLoading ? t('store.voucher.applying') : t('store.voucher.apply')}
+      >
         {isLoading ? t('store.voucher.applying') : t('store.voucher.apply')}
       </button>
-      {error && <p className="error-message" role="alert">{error}</p>}
+      {error && (
+        <p className="error-message" role="alert">
+          {error}
+        </p>
+      )}
     </div>
   );
 };

@@ -16,7 +16,7 @@ export const Feed = () => {
   return (
     <div>
       <h3>Activity Feed</h3>
-      {posts.map(post => (
+      {posts.map((post) => (
         <div key={post.id} style={{ padding: '10px', borderBottom: '1px solid var(--border)' }}>
           User {post.user_id} is going to event {post.event_id}
         </div>

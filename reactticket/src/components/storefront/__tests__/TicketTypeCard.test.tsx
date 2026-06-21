@@ -29,7 +29,7 @@ describe('TicketTypeCard', () => {
     name: 'General Admission',
     pricing: { kind: 'paid', priceInCents: 2500, currency: 'USD' },
     maxPerOrder: 4,
-    capacity: 10
+    capacity: 10,
   } as any;
 
   it('renders loading state initially', () => {
@@ -51,7 +51,7 @@ describe('TicketTypeCard', () => {
   it('displays Sold Out if capacity is reached', async () => {
     const soldOutType = { ...mockType, capacity: 5 }; // We mocked countIssuedTickets to return 5
     render(<TicketTypeCard type={soldOutType} />);
-    
+
     await waitFor(() => {
       expect(screen.queryByRole('status', { name: 'Loading ticket type' })).toBeNull();
     });

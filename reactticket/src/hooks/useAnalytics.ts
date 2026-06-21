@@ -10,7 +10,10 @@ export const useAnalytics = (eventId: string) => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const authService = useMemo(() => new AuthService(adapter, event.settings), [adapter, event.settings]);
+  const authService = useMemo(
+    () => new AuthService(adapter, event.settings),
+    [adapter, event.settings]
+  );
   const scanService = useMemo(() => new ScanService(adapter, authService), [adapter, authService]);
 
   const refresh = useCallback(async () => {
@@ -20,7 +23,7 @@ export const useAnalytics = (eventId: string) => {
       const data = await scanService.getAnalytics(eventId);
       setSummary(data);
     } catch (e: any) {
-      setError(e.message || "Failed to load analytics");
+      setError(e.message || 'Failed to load analytics');
     } finally {
       setIsLoading(false);
     }
@@ -36,6 +39,6 @@ export const useAnalytics = (eventId: string) => {
     summary,
     refresh,
     isLoading,
-    error
+    error,
   };
 };

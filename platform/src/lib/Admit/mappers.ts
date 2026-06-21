@@ -1,4 +1,12 @@
-import type { TicketTypeConfig, IssuedTicket, Order, ScanAccount, ScanEvent, PromoCode, PromoBatch } from 'reactticket-core';
+import type {
+  TicketTypeConfig,
+  IssuedTicket,
+  Order,
+  ScanAccount,
+  ScanEvent,
+  PromoCode,
+  PromoBatch,
+} from 'reactticket-core';
 
 export function mapDbRowToTicketTypeConfig(row: any): TicketTypeConfig {
   return {
@@ -15,7 +23,7 @@ export function mapDbRowToTicketTypeConfig(row: any): TicketTypeConfig {
     validUntil: row.valid_until ? new Date(row.valid_until) : undefined,
     transferable: row.transferable,
     visible: row.visible,
-    archived: row.archived
+    archived: row.archived,
   };
 }
 
@@ -34,7 +42,7 @@ export function mapTicketTypeConfigToRow(eventId: string, config: TicketTypeConf
     valid_until: config.validUntil?.toISOString(),
     transferable: config.transferable,
     visible: config.visible,
-    archived: config.archived
+    archived: config.archived,
   };
 }
 
@@ -50,7 +58,7 @@ export function mapDbRowToScanAccount(row: any): ScanAccount {
     createdAt: new Date(row.created_at),
     createdByAdmin: row.created_by_admin,
     assignedLocation: row.assigned_location,
-    lastLoginAt: row.last_login_at ? new Date(row.last_login_at) : undefined
+    lastLoginAt: row.last_login_at ? new Date(row.last_login_at) : undefined,
   };
 }
 
@@ -66,7 +74,7 @@ export function mapScanAccountToRow(account: ScanAccount): any {
     created_at: account.createdAt?.toISOString(),
     created_by_admin: account.createdByAdmin,
     assigned_location: account.assignedLocation,
-    last_login_at: account.lastLoginAt?.toISOString()
+    last_login_at: account.lastLoginAt?.toISOString(),
   };
 }
 
@@ -93,7 +101,7 @@ export function mapDbRowToOrder(row: any): Order {
     discountCents: row.discount_cents,
     totalCents: row.total_cents,
     status: row.status,
-    createdAt: row.created_at ? new Date(row.created_at) : new Date()
+    createdAt: row.created_at ? new Date(row.created_at) : new Date(),
   };
 }
 
@@ -108,7 +116,7 @@ export function mapOrderToRow(order: Order): any {
     discount_cents: order.discountCents,
     total_cents: order.totalCents,
     status: order.status,
-    created_at: order.createdAt?.toISOString()
+    created_at: order.createdAt?.toISOString(),
   };
 }
 
@@ -127,7 +135,7 @@ export function mapDbRowToTicket(row: any): IssuedTicket {
     qrPayload: row.qr_payload,
     pricePaidCents: row.price_paid_cents,
     transferHistory: row.transfer_history,
-    ownerId: row.owner_id
+    ownerId: row.owner_id,
   };
 }
 
@@ -146,7 +154,7 @@ export function mapTicketToRow(ticket: IssuedTicket): any {
     qr_payload: ticket.qrPayload,
     price_paid_cents: ticket.pricePaidCents,
     transfer_history: ticket.transferHistory,
-    owner_id: ticket.ownerId
+    owner_id: ticket.ownerId,
   };
 }
 
@@ -160,7 +168,7 @@ export function mapDbRowToScanEvent(row: any): ScanEvent {
     result: row.result,
     payload: row.payload,
     clockSkewSeconds: row.clock_skew_seconds,
-    location: row.location
+    location: row.location,
   };
 }
 
@@ -174,7 +182,7 @@ export function mapScanEventToRow(scan: ScanEvent): any {
     result: scan.result,
     payload: scan.payload,
     clock_skew_seconds: scan.clockSkewSeconds,
-    location: scan.location
+    location: scan.location,
   };
 }
 
@@ -184,7 +192,7 @@ export function mapDbRowToPromoBatch(row: any): PromoBatch {
     eventId: row.event_id,
     config: row.config,
     codes: row.codes,
-    createdAt: new Date(row.created_at)
+    createdAt: new Date(row.created_at),
   };
 }
 
@@ -194,7 +202,7 @@ export function mapPromoBatchToRow(batch: PromoBatch): any {
     event_id: batch.eventId,
     config: batch.config,
     codes: batch.codes,
-    created_at: batch.createdAt.toISOString()
+    created_at: batch.createdAt.toISOString(),
   };
 }
 
@@ -219,7 +227,7 @@ export function mapEventToAdmitConfig(event: any): any {
       bgColor: event.theme_customization?.bgColor,
       accentColor: event.theme_customization?.accentColor,
       textColor: event.theme_customization?.textColor,
-      cardColor: event.theme_customization?.cardColor
-    }
+      cardColor: event.theme_customization?.cardColor,
+    },
   };
 }

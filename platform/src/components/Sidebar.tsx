@@ -2,7 +2,11 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
 export const Sidebar = () => {
-  const [activeEntity, setActiveEntity] = useState<{ id: string; name: string; type: string } | null>(null);
+  const [activeEntity, setActiveEntity] = useState<{
+    id: string;
+    name: string;
+    type: string;
+  } | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -73,16 +77,40 @@ export const Sidebar = () => {
   const navLinks = renderLinksForType(activeEntity?.type);
 
   return (
-    <nav style={{ width: '250px', padding: '20px', borderRight: '1px solid var(--border)', height: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <nav
+      style={{
+        width: '250px',
+        padding: '20px',
+        borderRight: '1px solid var(--border)',
+        height: '100vh',
+        display: 'flex',
+        flexDirection: 'column',
+      }}
+    >
       <div style={{ marginBottom: '24px' }}>
         <h3 style={{ margin: 0 }}>{activeEntity?.name || 'Admit'}</h3>
-        <small style={{ color: 'var(--text-secondary)' }}>{activeEntity ? activeEntity.type : 'Guest'}</small>
+        <small style={{ color: 'var(--text-secondary)' }}>
+          {activeEntity ? activeEntity.type : 'Guest'}
+        </small>
       </div>
 
       <ul style={{ listStyle: 'none', padding: 0, flex: 1 }}>
         {navLinks.map((link) => (
           <li key={link.name} style={{ marginBottom: '12px' }}>
-            <button onClick={() => navigate(link.path)} style={{ background: 'none', border: 'none', padding: '8px 0', width: '100%', textAlign: 'left', color: location.pathname === link.path ? 'var(--accent)' : 'var(--text-primary)', cursor: 'pointer' }}>{link.name}</button>
+            <button
+              onClick={() => navigate(link.path)}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: '8px 0',
+                width: '100%',
+                textAlign: 'left',
+                color: location.pathname === link.path ? 'var(--accent)' : 'var(--text-primary)',
+                cursor: 'pointer',
+              }}
+            >
+              {link.name}
+            </button>
           </li>
         ))}
 
@@ -90,7 +118,20 @@ export const Sidebar = () => {
 
         {commonLinks.map((link) => (
           <li key={link.name} style={{ marginBottom: '12px' }}>
-            <button onClick={() => navigate(link.path)} style={{ background: 'none', border: 'none', padding: '8px 0', width: '100%', textAlign: 'left', color: location.pathname === link.path ? 'var(--accent)' : 'var(--text-primary)', cursor: 'pointer' }}>{link.name}</button>
+            <button
+              onClick={() => navigate(link.path)}
+              style={{
+                background: 'none',
+                border: 'none',
+                padding: '8px 0',
+                width: '100%',
+                textAlign: 'left',
+                color: location.pathname === link.path ? 'var(--accent)' : 'var(--text-primary)',
+                cursor: 'pointer',
+              }}
+            >
+              {link.name}
+            </button>
           </li>
         ))}
       </ul>

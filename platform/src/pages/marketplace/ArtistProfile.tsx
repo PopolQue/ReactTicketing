@@ -6,7 +6,6 @@ import EventCard from '../../components/EventCard';
 import Skeleton from '../../components/Skeleton';
 import { useLanguage } from '../../contexts/LanguageContext';
 
-
 export default function ArtistProfile() {
   const { t } = useLanguage();
   const { id } = useParams();
@@ -30,9 +29,16 @@ export default function ArtistProfile() {
         // Filter out unpublished/unapproved events and sort by date
         const mappedEvents = eventArtists
           .map((ea: any) => ea.events)
-          .filter((e: any) => e.published && e.approval_status === 'approved' && new Date(e.start_date) >= new Date())
-          .sort((a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime());
-        
+          .filter(
+            (e: any) =>
+              e.published &&
+              e.approval_status === 'approved' &&
+              new Date(e.start_date) >= new Date()
+          )
+          .sort(
+            (a: any, b: any) => new Date(a.start_date).getTime() - new Date(b.start_date).getTime()
+          );
+
         setEvents(mappedEvents);
       }
       setLoading(false);
@@ -40,34 +46,81 @@ export default function ArtistProfile() {
     fetchProfile();
   }, [id]);
 
-  if (loading) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.artistProfile.loading')}</div>;
-  if (!artist) return <div style={{ padding: '60px', textAlign: 'center' }}>{t('marketplace.artistProfile.notFound')}</div>;
+  if (loading)
+    return (
+      <div style={{ padding: '60px', textAlign: 'center' }}>
+        {t('marketplace.artistProfile.loading')}
+      </div>
+    );
+  if (!artist)
+    return (
+      <div style={{ padding: '60px', textAlign: 'center' }}>
+        {t('marketplace.artistProfile.notFound')}
+      </div>
+    );
 
-  const imageUrl = artist.image_url || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80';
+  const imageUrl =
+    artist.image_url ||
+    'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?auto=format&fit=crop&w=1200&q=80';
 
   return (
     <div className="marketplace-page" style={{ minHeight: '100vh' }}>
-      
-
       <div style={{ position: 'relative', height: '300px', width: '100%', overflow: 'hidden' }}>
-        <div style={{ 
-          position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, 
-          backgroundImage: `url(${imageUrl})`, 
-          backgroundSize: 'cover', 
-          backgroundPosition: 'center',
-          filter: 'blur(20px) brightness(0.4)',
-          transform: 'scale(1.1)'
-        }} />
-        <div style={{ position: 'relative', zIndex: 1, maxWidth: '1000px', margin: '0 auto', padding: '40px', display: 'flex', alignItems: 'flex-end', height: '100%', gap: '32px', flexWrap: 'wrap' }}>
-          <img src={imageUrl} alt={artist.name} style={{ width: '200px', height: '200px', borderRadius: '50%', objectFit: 'cover', border: '4px solid rgba(255,255,255,0.1)', boxShadow: '0 20px 40px rgba(0,0,0,0.5)', flexShrink: 0 }} />
+        <div
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundImage: `url(${imageUrl})`,
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            filter: 'blur(20px) brightness(0.4)',
+            transform: 'scale(1.1)',
+          }}
+        />
+        <div
+          style={{
+            position: 'relative',
+            zIndex: 1,
+            maxWidth: '1000px',
+            margin: '0 auto',
+            padding: '40px',
+            display: 'flex',
+            alignItems: 'flex-end',
+            height: '100%',
+            gap: '32px',
+            flexWrap: 'wrap',
+          }}
+        >
+          <img
+            src={imageUrl}
+            alt={artist.name}
+            style={{
+              width: '200px',
+              height: '200px',
+              borderRadius: '50%',
+              objectFit: 'cover',
+              border: '4px solid rgba(255,255,255,0.1)',
+              boxShadow: '0 20px 40px rgba(0,0,0,0.5)',
+              flexShrink: 0,
+            }}
+          />
           <div style={{ paddingBottom: '20px', flex: '1 1 300px' }}>
-            <h1 style={{ fontSize: 'clamp(2rem, 8vw, 4rem)', margin: '0 0 8px 0', fontWeight: 800, letterSpacing: '-2px', textShadow: '0 4px 12px rgba(0,0,0,0.5)' }}>{artist.name}</h1>
+            <h1
+              style={{
+                fontSize: 'clamp(2rem, 8vw, 4rem)',
+                margin: '0 0 8px 0',
+                fontWeight: 800,
+                letterSpacing: '-2px',
+                textShadow: '0 4px 12px rgba(0,0,0,0.5)',
+              }}
+            >
+              {artist.name}
+            </h1>
             <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
-              <FollowButton 
-                entityId={id!} 
-                entityType="artist"
-                className="btn-primary"
-              />
+              <FollowButton entityId={id!} entityType="artist" className="btn-primary" />
             </div>
           </div>
         </div>
@@ -80,19 +133,37 @@ export default function ArtistProfile() {
             {artist.bio || t('marketplace.artistProfile.noBio')}
           </p>
           {artist.genres && artist.genres.length > 0 && (
-             <div style={{ marginTop: '24px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-               {artist.genres.map((g: string) => (
-                 <span key={g} style={{ padding: '4px 12px', backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: '12px', fontSize: '0.85rem' }}>{g}</span>
-               ))}
-             </div>
+            <div style={{ marginTop: '24px', display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+              {artist.genres.map((g: string) => (
+                <span
+                  key={g}
+                  style={{
+                    padding: '4px 12px',
+                    backgroundColor: 'rgba(255,255,255,0.1)',
+                    borderRadius: '12px',
+                    fontSize: '0.85rem',
+                  }}
+                >
+                  {g}
+                </span>
+              ))}
+            </div>
           )}
         </div>
 
         <h2 style={{ marginBottom: '24px' }}>{t('marketplace.artistProfile.upcomingEvents')}</h2>
         {events.length === 0 ? (
-          <p style={{ color: 'var(--text-secondary)' }}>{t('marketplace.artistProfile.noUpcomingEvents')}</p>
+          <p style={{ color: 'var(--text-secondary)' }}>
+            {t('marketplace.artistProfile.noUpcomingEvents')}
+          </p>
         ) : (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))', gap: '32px' }}>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(320px, 1fr))',
+              gap: '32px',
+            }}
+          >
             {events.map((event) => (
               <EventCard key={event.id} event={event} />
             ))}

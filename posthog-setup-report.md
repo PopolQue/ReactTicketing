@@ -3,19 +3,19 @@
 
 The wizard has completed a deep integration of PostHog analytics into the ReactTicketing platform. The platform is a React Router v6 SSR app with an Express server, Supabase auth, and Stripe payments. PostHog was initialized client-side via `entry-client.tsx` with `PostHogProvider` from `@posthog/react`, and server-side via a per-request `posthog-node` client instantiated in the Express `/api/create-payment-intent` handler. Tracing headers (`X-POSTHOG-SESSION-ID`, `X-POSTHOG-DISTINCT-ID`) automatically correlate client and server events. Error tracking was added to the global `ErrorBoundary` class component using the posthog-js singleton. Eleven events are now captured across the full user lifecycle — from discovery and login through ticket purchase and organizer event creation.
 
-| Event Name | Description | File |
-|---|---|---|
-| `user_logged_in` | User successfully logs in via email/password or SSO | `platform/src/features/auth/LoginForm.tsx` |
-| `user_signed_up` | User completes signup via phone OTP verification or SSO | `platform/src/features/auth/SignUpForm.tsx` |
-| `event_viewed` | User views an event details page (top of ticket purchase funnel) | `platform/src/pages/marketplace/EventDetails.tsx` |
-| `external_ticket_link_clicked` | User clicks to get tickets from an external source | `platform/src/pages/marketplace/EventDetails.tsx` |
-| `event_searched` | User submits a search query on the Discover page | `platform/src/pages/marketplace/Discover.tsx` |
-| `checkout_started` | User opens the checkout flow for a ticketed event | `platform/src/pages/marketplace/EventDetails.tsx` |
-| `checkout_step_completed` | User completes ticket personalization and proceeds to payment | `platform/src/features/marketplace/CheckoutFlow.tsx` |
-| `promo_code_applied` | User successfully applies a promo code during checkout | `platform/src/hooks/usePromoCode.ts` |
-| `order_completed` | User completes a ticket purchase order successfully | `platform/src/features/marketplace/CheckoutFlow.tsx`, `platform/src/pages/marketplace/EventDetails.tsx` |
-| `event_created` | Organizer successfully creates a new event | `platform/src/hooks/useEventForm.ts` |
-| `payment_intent_created` | Server-side: Stripe payment intent created for a ticket order | `platform/server.js` |
+| Event Name                     | Description                                                      | File                                                                                                    |
+| ------------------------------ | ---------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------- |
+| `user_logged_in`               | User successfully logs in via email/password or SSO              | `platform/src/features/auth/LoginForm.tsx`                                                              |
+| `user_signed_up`               | User completes signup via phone OTP verification or SSO          | `platform/src/features/auth/SignUpForm.tsx`                                                             |
+| `event_viewed`                 | User views an event details page (top of ticket purchase funnel) | `platform/src/pages/marketplace/EventDetails.tsx`                                                       |
+| `external_ticket_link_clicked` | User clicks to get tickets from an external source               | `platform/src/pages/marketplace/EventDetails.tsx`                                                       |
+| `event_searched`               | User submits a search query on the Discover page                 | `platform/src/pages/marketplace/Discover.tsx`                                                           |
+| `checkout_started`             | User opens the checkout flow for a ticketed event                | `platform/src/pages/marketplace/EventDetails.tsx`                                                       |
+| `checkout_step_completed`      | User completes ticket personalization and proceeds to payment    | `platform/src/features/marketplace/CheckoutFlow.tsx`                                                    |
+| `promo_code_applied`           | User successfully applies a promo code during checkout           | `platform/src/hooks/usePromoCode.ts`                                                                    |
+| `order_completed`              | User completes a ticket purchase order successfully              | `platform/src/features/marketplace/CheckoutFlow.tsx`, `platform/src/pages/marketplace/EventDetails.tsx` |
+| `event_created`                | Organizer successfully creates a new event                       | `platform/src/hooks/useEventForm.ts`                                                                    |
+| `payment_intent_created`       | Server-side: Stripe payment intent created for a ticket order    | `platform/server.js`                                                                                    |
 
 ## Next steps
 

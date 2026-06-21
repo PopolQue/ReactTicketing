@@ -9,7 +9,10 @@ import { useScanAuth } from '../../hooks/useScanAuth';
 
 export const AdminPanel: React.FC = () => {
   const { authSession, event, dispatch, adapter } = useReactTicket();
-  const authService = useMemo(() => new AuthService(adapter, event.settings), [adapter, event.settings]);
+  const authService = useMemo(
+    () => new AuthService(adapter, event.settings),
+    [adapter, event.settings]
+  );
   const { logout } = useScanAuth(event.id);
   const [password, setPassword] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(authSession?.role === 'admin');
@@ -22,7 +25,7 @@ export const AdminPanel: React.FC = () => {
       setIsAuthenticated(true);
       dispatch({
         type: 'SET_AUTH_SESSION',
-        payload: { isAdmin: true, role: 'admin' }
+        payload: { isAdmin: true, role: 'admin' },
       });
     } else {
       alert('Invalid password');
@@ -32,15 +35,21 @@ export const AdminPanel: React.FC = () => {
   };
 
   const handleLogout = () => {
-      logout();
-      setIsAuthenticated(false);
-  }
+    logout();
+    setIsAuthenticated(false);
+  };
 
-  const safeString = (val: any) => typeof val === 'object' ? JSON.stringify(val) : String(val ?? '');
+  const safeString = (val: any) =>
+    typeof val === 'object' ? JSON.stringify(val) : String(val ?? '');
 
   if (!isAuthenticated) {
     return (
-      <div className="admin-login" style={{padding: '20px'}} role="region" aria-label="Admin Login">
+      <div
+        className="admin-login"
+        style={{ padding: '20px' }}
+        role="region"
+        aria-label="Admin Login"
+      >
         <h2 id="admin-auth-heading">Admin Authentication</h2>
         <input
           type="password"
@@ -51,8 +60,13 @@ export const AdminPanel: React.FC = () => {
           disabled={isSubmitting}
           onKeyPress={(e) => e.key === 'Enter' && handleLogin()}
         />
-        <button type="button" onClick={handleLogin} disabled={isSubmitting} aria-busy={isSubmitting}>
-            {isSubmitting ? 'Logging in...' : 'Login'}
+        <button
+          type="button"
+          onClick={handleLogin}
+          disabled={isSubmitting}
+          aria-busy={isSubmitting}
+        >
+          {isSubmitting ? 'Logging in...' : 'Login'}
         </button>
       </div>
     );
@@ -61,8 +75,10 @@ export const AdminPanel: React.FC = () => {
   return (
     <div className="ReactTicket-root admin-panel" role="region" aria-label="Admin Panel">
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h1>Admin Panel</h1>
-          <button type="button" onClick={handleLogout} aria-label="Logout from Admin Panel">Logout</button>
+        <h1>Admin Panel</h1>
+        <button type="button" onClick={handleLogout} aria-label="Logout from Admin Panel">
+          Logout
+        </button>
       </div>
       <CapacityOverview />
       <TicketTypeEditor />

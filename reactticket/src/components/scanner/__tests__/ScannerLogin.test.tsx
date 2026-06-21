@@ -18,7 +18,7 @@ describe('ScannerLogin', () => {
       adapter: {} as any,
       authService: {} as any,
       scanService: {} as any,
-      ticketService: {} as any
+      ticketService: {} as any,
     } as any);
 
     vi.spyOn(useScanAuthModule, 'useScanAuth').mockReturnValue({
@@ -27,7 +27,7 @@ describe('ScannerLogin', () => {
       isLocked: false,
       lockRemainingSeconds: 0,
       session: null,
-      error: null
+      error: null,
     } as any);
   });
 
@@ -35,19 +35,21 @@ describe('ScannerLogin', () => {
     render(<ScannerLogin />);
     expect(screen.getByPlaceholderText('Username')).toBeDefined();
     expect(screen.getByPlaceholderText('PIN')).toBeDefined();
-    expect((screen.getByRole('button', { name: 'Sign in' }) as HTMLButtonElement).disabled).toBe(true);
+    expect((screen.getByRole('button', { name: 'Sign in' }) as HTMLButtonElement).disabled).toBe(
+      true
+    );
   });
 
   it('updates username and pin correctly', () => {
     render(<ScannerLogin />);
-    
+
     const usernameInput = screen.getByPlaceholderText('Username') as HTMLInputElement;
     fireEvent.change(usernameInput, { target: { value: 'scanner1' } });
     expect(usernameInput.value).toBe('scanner1');
 
     const pinInput = screen.getByPlaceholderText('PIN') as HTMLInputElement;
     fireEvent.change(pinInput, { target: { value: '1234' } });
-    
+
     expect(pinInput.value).toBe('1234');
 
     const button = screen.getByRole('button', { name: 'Sign in' }) as HTMLButtonElement;
@@ -56,7 +58,7 @@ describe('ScannerLogin', () => {
 
   it('calls login on submit', async () => {
     render(<ScannerLogin />);
-    
+
     const usernameInput = screen.getByPlaceholderText('Username');
     fireEvent.change(usernameInput, { target: { value: 'scanner1' } });
 
@@ -74,7 +76,7 @@ describe('ScannerLogin', () => {
   it('shows error message on failed login', async () => {
     mockLogin.mockRejectedValueOnce(new Error('Invalid credentials'));
     render(<ScannerLogin />);
-    
+
     const usernameInput = screen.getByPlaceholderText('Username');
     fireEvent.change(usernameInput, { target: { value: 'scanner1' } });
 
@@ -96,7 +98,7 @@ describe('ScannerLogin', () => {
       isLocked: true,
       lockRemainingSeconds: 30,
       session: null,
-      error: null
+      error: null,
     } as any);
 
     render(<ScannerLogin />);

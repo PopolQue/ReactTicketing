@@ -12,7 +12,9 @@ export function useFollowEntity(entityId: string, entityType: 'artist' | 'venue'
     if (!entityId) return;
 
     async function fetchFollowState() {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       // Get total count (using exact head count)
       const { count, error: countError } = await supabase
@@ -34,10 +36,10 @@ export function useFollowEntity(entityId: string, entityType: 'artist' | 'venue'
           .eq('entity_id', entityId)
           .eq('user_id', user.id)
           .single();
-        
+
         if (data) setIsFollowing(true);
       }
-      
+
       setLoading(false);
     }
 
@@ -45,7 +47,9 @@ export function useFollowEntity(entityId: string, entityType: 'artist' | 'venue'
   }, [entityId, entityType]);
 
   const toggleFollow = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       showToast('Please log in to follow this ' + entityType, 'error');
       return;
@@ -64,24 +68,24 @@ export function useFollowEntity(entityId: string, entityType: 'artist' | 'venue'
 
       if (!error) {
         setIsFollowing(false);
-        setFollowerCount(prev => Math.max(0, prev - 1));
+        setFollowerCount((prev) => Math.max(0, prev - 1));
         showToast('Unfollowed', 'success');
       } else {
         showToast('Error unfollowing', 'error');
       }
     } else {
       // Follow
-      const { error } = await supabase
-        .from('entity_followers')
-        .insert([{
+      const { error } = await supabase.from('entity_followers').insert([
+        {
           entity_type: entityType,
           entity_id: entityId,
-          user_id: user.id
-        }]);
+          user_id: user.id,
+        },
+      ]);
 
       if (!error) {
         setIsFollowing(true);
-        setFollowerCount(prev => prev + 1);
+        setFollowerCount((prev) => prev + 1);
         showToast('Following!', 'success');
       } else {
         // If unique constraint violation, they already follow
@@ -92,7 +96,7 @@ export function useFollowEntity(entityId: string, entityType: 'artist' | 'venue'
         }
       }
     }
-    
+
     setLoading(false);
   };
 

@@ -23,10 +23,10 @@ describe('ScanDashboard Component', () => {
 
   it('renders loading state', () => {
     vi.spyOn(useAnalyticsModule, 'useAnalytics').mockReturnValue({
-        summary: null,
-        isLoading: true,
-        error: null,
-        refresh: vi.fn()
+      summary: null,
+      isLoading: true,
+      error: null,
+      refresh: vi.fn(),
     } as any);
 
     render(<ScanDashboard />);
@@ -35,19 +35,19 @@ describe('ScanDashboard Component', () => {
 
   it('renders dashboard with data', () => {
     vi.spyOn(useAnalyticsModule, 'useAnalytics').mockReturnValue({
-        summary: {
-            totalAdmitted: 10,
-            totalIssued: 100,
-            duplicateScanCount: 1,
-            invalidScanCount: 2,
-            scanVelocity: [],
-            admissionRateByTicketType: {},
-            scansPerAccount: {},
-            clockSkewAnomalies: 0
-        },
-        isLoading: false,
-        error: null,
-        refresh: vi.fn()
+      summary: {
+        totalAdmitted: 10,
+        totalIssued: 100,
+        duplicateScanCount: 1,
+        invalidScanCount: 2,
+        scanVelocity: [],
+        admissionRateByTicketType: {},
+        scansPerAccount: {},
+        clockSkewAnomalies: 0,
+      },
+      isLoading: false,
+      error: null,
+      refresh: vi.fn(),
     } as any);
 
     render(<ScanDashboard />);

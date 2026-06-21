@@ -11,7 +11,7 @@ import React from 'react';
 import { ReactTicket } from 'reactticket';
 import { RestAdapter } from 'reactticket-core/adapters/RestAdapter';
 
-const adapter = new RestAdapter("https://api.yourdomain.com");
+const adapter = new RestAdapter('https://api.yourdomain.com');
 
 export function AdminRoute() {
   return (
@@ -27,7 +27,7 @@ export function AdminRoute() {
 
 ## Features
 
-* **Ticket Overview**: See global sales and remaining capacity.
-* **Ticket Type Editor**: Update prices, limits, and descriptions on the fly.
-* **Scan Account Manager**: Generate secure PINs for your staff to use on the scanner devices.
-* **Promo Code Manager**: Create discount codes and track their usage.
+- **Ticket Overview**: See global sales and remaining capacity.
+- **Ticket Type Editor**: Update prices, limits, and descriptions on the fly.
+- **Scan Account Manager**: Generate secure PINs for your staff to use on the scanner devices.
+- **Promo Code Manager**: Create discount codes and track their usage.

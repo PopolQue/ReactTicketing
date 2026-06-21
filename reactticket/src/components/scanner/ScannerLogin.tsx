@@ -35,15 +35,15 @@ export const ScannerLogin: React.FC = () => {
       const pinAsString = new TextDecoder().decode(pinBuffer.current.slice(0, pinLength.current));
       await login(username, pinAsString);
     } catch (err: any) {
-      setError(err.message || "Invalid login credentials.");
+      setError(err.message || 'Invalid login credentials.');
       pinBuffer.current.fill(0);
       pinLength.current = 0;
-      setClearSignal(s => s + 1);
+      setClearSignal((s) => s + 1);
     } finally {
       setIsSubmitting(false);
     }
   };
-  
+
   useEffect(() => {
     return () => {
       pinBuffer.current.fill(0);
@@ -53,7 +53,11 @@ export const ScannerLogin: React.FC = () => {
   return (
     <div className="ReactTicket-root scanner-login" role="region" aria-label="Scanner Login">
       <h2>Scanner Login</h2>
-      {error && <p className="error-message" role="alert">{error}</p>}
+      {error && (
+        <p className="error-message" role="alert">
+          {error}
+        </p>
+      )}
       {isLocked ? (
         <p aria-live="assertive">Locked — retry in {lockRemainingSeconds}s</p>
       ) : (

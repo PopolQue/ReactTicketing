@@ -17,7 +17,7 @@ it('should complete checkout flow', () => {
   cy.visit('/tickets');
   cy.get('.rt-add-to-cart').click();
   cy.get('.rt-checkout-btn').click();
-  
+
   // Your custom checkout flow assertion
   cy.url().should('include', '/payment');
 });

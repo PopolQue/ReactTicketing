@@ -29,11 +29,13 @@ export const AddFriendModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: 
   const sendRequest = async (friendId: string) => {
     if (sendingId) return; // Prevent double submission
     setSendingId(friendId);
-    
-    const { data: { user } } = await supabase.auth.getUser();
+
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
-        setSendingId(null);
-        return;
+      setSendingId(null);
+      return;
     }
 
     const { error } = await supabase
@@ -57,18 +59,28 @@ export const AddFriendModal = ({ isOpen, onClose }: { isOpen: boolean; onClose: 
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search by username..."
         />
-        <button className="btn-primary" onClick={searchUsers}>{loading ? 'Searching...' : 'Search'}</button>
+        <button className="btn-primary" onClick={searchUsers}>
+          {loading ? 'Searching...' : 'Search'}
+        </button>
       </div>
       <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
-        {results.map(user => (
-          <div key={user.id} style={{ display: 'flex', justifyContent: 'space-between', padding: '8px', borderBottom: '1px solid var(--border)' }}>
+        {results.map((user) => (
+          <div
+            key={user.id}
+            style={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              padding: '8px',
+              borderBottom: '1px solid var(--border)',
+            }}
+          >
             <span>{user.username}</span>
-            <button 
-              className="btn-secondary" 
-              disabled={sendingId === user.id} 
+            <button
+              className="btn-secondary"
+              disabled={sendingId === user.id}
               onClick={() => sendRequest(user.id)}
             >
-                {sendingId === user.id ? 'Sending...' : 'Add'}
+              {sendingId === user.id ? 'Sending...' : 'Add'}
             </button>
           </div>
         ))}

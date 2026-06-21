@@ -12,14 +12,14 @@ describe('PromoBatchList Component', () => {
       name: 'Summer Sale',
       discount: { kind: 'percent' },
       expiresAt: new Date('2026-06-30'),
-      codes: [{ code: 'SUMMER-1', active: true, usedCount: 0 }]
-    }
+      codes: [{ code: 'SUMMER-1', active: true, usedCount: 0 }],
+    },
   ] as any;
 
   it('calls toggleBatchArchive when archive button is clicked', () => {
     const toggleBatchArchive = vi.fn();
     render(
-      <PromoBatchList 
+      <PromoBatchList
         batches={mockBatches}
         showArchived={false}
         setShowArchived={vi.fn()}
@@ -32,7 +32,7 @@ describe('PromoBatchList Component', () => {
         toggleCodeActive={vi.fn()}
       />
     );
-    
+
     const archiveButton = screen.getByRole('button', { name: 'Archive Summer Sale' });
     fireEvent.click(archiveButton);
     expect(toggleBatchArchive).toHaveBeenCalledWith('b1');
@@ -41,7 +41,7 @@ describe('PromoBatchList Component', () => {
   it('calls setShowArchived when Show Archived checkbox is toggled', () => {
     const setShowArchived = vi.fn();
     render(
-      <PromoBatchList 
+      <PromoBatchList
         batches={mockBatches}
         showArchived={false}
         setShowArchived={setShowArchived}
@@ -54,7 +54,7 @@ describe('PromoBatchList Component', () => {
         toggleCodeActive={vi.fn()}
       />
     );
-    
+
     const checkbox = screen.getByLabelText('Show Archived');
     fireEvent.click(checkbox);
     expect(setShowArchived).toHaveBeenCalledWith(true);
@@ -63,7 +63,7 @@ describe('PromoBatchList Component', () => {
   it('calls toggleBatch on keydown Enter or Space', () => {
     const toggleBatch = vi.fn();
     render(
-      <PromoBatchList 
+      <PromoBatchList
         batches={mockBatches}
         showArchived={false}
         setShowArchived={vi.fn()}
@@ -76,7 +76,7 @@ describe('PromoBatchList Component', () => {
         toggleCodeActive={vi.fn()}
       />
     );
-    
+
     const header = screen.getByLabelText('Promo batch: Summer Sale');
     fireEvent.keyDown(header, { key: 'Enter' });
     expect(toggleBatch).toHaveBeenCalledWith('b1');
@@ -89,7 +89,7 @@ describe('PromoBatchList Component', () => {
   it('calls exportCSV when Export CSV button is clicked', () => {
     const exportCSV = vi.fn();
     render(
-      <PromoBatchList 
+      <PromoBatchList
         batches={mockBatches}
         showArchived={false}
         setShowArchived={vi.fn()}
@@ -102,7 +102,7 @@ describe('PromoBatchList Component', () => {
         toggleCodeActive={vi.fn()}
       />
     );
-    
+
     const exportButton = screen.getByRole('button', { name: 'Export CSV for Summer Sale' });
     fireEvent.click(exportButton);
     expect(exportCSV).toHaveBeenCalledWith(mockBatches[0]);
@@ -112,7 +112,7 @@ describe('PromoBatchList Component', () => {
     const markAsSent = vi.fn();
     const toggleCodeActive = vi.fn();
     render(
-      <PromoBatchList 
+      <PromoBatchList
         batches={mockBatches}
         showArchived={false}
         setShowArchived={vi.fn()}
@@ -125,7 +125,7 @@ describe('PromoBatchList Component', () => {
         toggleCodeActive={toggleCodeActive}
       />
     );
-    
+
     const markSentBtn = screen.getByRole('button', { name: 'Mark code SUMMER-1 as sent' });
     fireEvent.click(markSentBtn);
     expect(markAsSent).toHaveBeenCalledWith('b1', 'SUMMER-1');
@@ -138,7 +138,7 @@ describe('PromoBatchList Component', () => {
   it('calls toggleBatchActive when Reactivate/Deprecate batch button is clicked', () => {
     const toggleBatchActive = vi.fn();
     render(
-      <PromoBatchList 
+      <PromoBatchList
         batches={mockBatches}
         showArchived={false}
         setShowArchived={vi.fn()}
@@ -151,7 +151,7 @@ describe('PromoBatchList Component', () => {
         toggleCodeActive={vi.fn()}
       />
     );
-    
+
     // Batch has active codes, so it shows 'Deprecate'
     const deactivateBtn = screen.getByRole('button', { name: 'Deprecate Summer Sale' });
     fireEvent.click(deactivateBtn);

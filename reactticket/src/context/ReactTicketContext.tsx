@@ -2,7 +2,12 @@ import React, { createContext, useReducer, ReactNode } from 'react';
 import { EventConfig } from 'reactticket-core/types/event.types';
 import { StorageAdapter } from 'reactticket-core/types/adapter.types';
 import { AdminSession, ScanSession } from 'reactticket-core/types/auth.types';
-import { TicketTypeConfig, Order, TicketPersonalization, IssuedTicket } from 'reactticket-core/types/ticket.types';
+import {
+  TicketTypeConfig,
+  Order,
+  TicketPersonalization,
+  IssuedTicket,
+} from 'reactticket-core/types/ticket.types';
 import { ScanAccount, ScanEvent } from 'reactticket-core/types/scanAccount.types';
 import { PromoCode } from 'reactticket-core/types/promo.types';
 import { reducer } from './reducer';
@@ -33,12 +38,15 @@ export interface ReactTicketContextValue {
   scanAccounts: ScanAccount[];
   scanState: ScanState;
   dispatch: React.Dispatch<any>;
-  onCheckout: (order: Order) => Promise<"confirmed" | "cancelled">;
+  onCheckout: (order: Order) => Promise<'confirmed' | 'cancelled'>;
   onCheckoutComplete?: (order: Order) => void;
   onTicketIssued?: (ticket: IssuedTicket, assets: any) => void;
 }
 
-export type ReactTicketState = Omit<ReactTicketContextValue, 'dispatch' | 'onCheckout' | 'onTicketIssued' | 'onCheckoutComplete'>;
+export type ReactTicketState = Omit<
+  ReactTicketContextValue,
+  'dispatch' | 'onCheckout' | 'onTicketIssued' | 'onCheckoutComplete'
+>;
 
 export const ReactTicketContext = createContext<ReactTicketContextValue | undefined>(undefined);
 
@@ -49,15 +57,15 @@ export const ReactTicketProvider = ({
   onCheckout,
   onCheckoutComplete,
   onTicketIssued,
-  authSession
+  authSession,
 }: {
-  children: ReactNode,
-  event: EventConfig,
-  adapter: StorageAdapter,
-  onCheckout: (order: Order) => Promise<"confirmed" | "cancelled">,
-  onCheckoutComplete?: (order: Order) => void,
-  onTicketIssued?: (ticket: IssuedTicket, assets: any) => void,
-  authSession?: any,
+  children: ReactNode;
+  event: EventConfig;
+  adapter: StorageAdapter;
+  onCheckout: (order: Order) => Promise<'confirmed' | 'cancelled'>;
+  onCheckoutComplete?: (order: Order) => void;
+  onTicketIssued?: (ticket: IssuedTicket, assets: any) => void;
+  authSession?: any;
 }) => {
   const getInitialState = () => {
     const initialState = {
@@ -68,7 +76,7 @@ export const ReactTicketProvider = ({
       promoDetails: null,
       ticketTypes: [],
       scanAccounts: [],
-      scanState: { isScanning: false, lastResult: null }
+      scanState: { isScanning: false, lastResult: null },
     };
     try {
       const storedCart = sessionStorage.getItem(`tf_cart_${event.id}`);
@@ -79,7 +87,7 @@ export const ReactTicketProvider = ({
         }
       }
     } catch (e) {
-      console.warn("Failed to read cart from sessionStorage", e);
+      console.warn('Failed to read cart from sessionStorage', e);
     }
     return initialState;
   };
@@ -90,12 +98,14 @@ export const ReactTicketProvider = ({
     try {
       sessionStorage.setItem(`tf_cart_${event.id}`, JSON.stringify(state.cart));
     } catch (e) {
-      console.warn("Failed to save cart to sessionStorage", e);
+      console.warn('Failed to save cart to sessionStorage', e);
     }
   }, [state.cart, event.id]);
 
   return (
-    <ReactTicketContext.Provider value={{ ...state, dispatch, onCheckout, onCheckoutComplete, onTicketIssued }}>
+    <ReactTicketContext.Provider
+      value={{ ...state, dispatch, onCheckout, onCheckoutComplete, onTicketIssued }}
+    >
       {children}
     </ReactTicketContext.Provider>
   );

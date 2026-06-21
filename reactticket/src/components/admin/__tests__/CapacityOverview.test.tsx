@@ -9,17 +9,27 @@ import { useReactTicket } from '../../../hooks/useReactTicket';
 
 const mockContext = {
   event: { id: 'evt_1', settings: { scanSessionSecret: 's', qrSigningSecret: 'q' } },
-  adapter: { 
+  adapter: {
     name: 'memory',
     countIssuedTickets: vi.fn().mockImplementation((id: string) => {
       if (id === 't1') return Promise.resolve(10);
       if (id === 't2') return Promise.resolve(50);
       return Promise.resolve(0);
-    })
+    }),
   },
   ticketTypes: [
-    { id: 't1', name: 'Standard', pricing: { kind: 'paid', priceInCents: 1000, currency: 'EUR' }, capacity: 100 },
-    { id: 't2', name: 'VIP', pricing: { kind: 'paid', priceInCents: 2000, currency: 'EUR' }, capacity: 50 }
+    {
+      id: 't1',
+      name: 'Standard',
+      pricing: { kind: 'paid', priceInCents: 1000, currency: 'EUR' },
+      capacity: 100,
+    },
+    {
+      id: 't2',
+      name: 'VIP',
+      pricing: { kind: 'paid', priceInCents: 2000, currency: 'EUR' },
+      capacity: 50,
+    },
   ],
   onCheckout: vi.fn(),
 } as any;
@@ -36,19 +46,18 @@ describe('CapacityOverview Component', () => {
 
     // Check progress bars/sold counts
     await waitFor(() => {
-        expect(screen.getByText('Standard')).toBeDefined();
-        expect(screen.getByText('VIP')).toBeDefined();
-        expect(screen.getByText('10 / 100')).toBeDefined();
-        expect(screen.getByText('50 / 50')).toBeDefined();
+      expect(screen.getByText('Standard')).toBeDefined();
+      expect(screen.getByText('VIP')).toBeDefined();
+      expect(screen.getByText('10 / 100')).toBeDefined();
+      expect(screen.getByText('50 / 50')).toBeDefined();
     });
   });
 });
 
 const TestComponent = () => {
-    const { dispatch } = useReactTicket();
-    useEffect(() => {
-        dispatch({ type: 'SET_TICKET_TYPES', payload: mockContext.ticketTypes });
-    }, [dispatch]);
-    return <CapacityOverview />;
-}
-
+  const { dispatch } = useReactTicket();
+  useEffect(() => {
+    dispatch({ type: 'SET_TICKET_TYPES', payload: mockContext.ticketTypes });
+  }, [dispatch]);
+  return <CapacityOverview />;
+};

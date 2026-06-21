@@ -60,7 +60,7 @@ export class RestAdapter implements StorageAdapter {
   async getOrder(orderId: string): Promise<Order | null> {
     return this.request<Order>(`/orders/${orderId}`);
   }
-  async updateOrderStatus(orderId: string, status: Order["status"]): Promise<void> {
+  async updateOrderStatus(orderId: string, status: Order['status']): Promise<void> {
     await this.request(`/orders/${orderId}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ status }),
@@ -89,7 +89,7 @@ export class RestAdapter implements StorageAdapter {
       body: JSON.stringify(tickets),
     });
   }
-  async updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void> {
+  async updateTicketStatus(ticketId: string, status: IssuedTicket['status']): Promise<void> {
     await this.request(`/tickets/${ticketId}/status`, {
       method: 'PATCH',
       body: JSON.stringify({ status }),
@@ -101,7 +101,11 @@ export class RestAdapter implements StorageAdapter {
       body: JSON.stringify({ qrPayload }),
     });
   }
-  async transferTicket(ticketId: string, toEmail: string, newPersonalization: import('../types/ticket.types').TicketPersonalization): Promise<void> {
+  async transferTicket(
+    ticketId: string,
+    toEmail: string,
+    newPersonalization: import('../types/ticket.types').TicketPersonalization
+  ): Promise<void> {
     await this.request(`/tickets/${ticketId}/transfer`, {
       method: 'POST',
       body: JSON.stringify({ toEmail, newPersonalization }),
@@ -197,7 +201,10 @@ export class RestAdapter implements StorageAdapter {
       body: JSON.stringify({ userId, friendId }),
     });
   }
-  async updateFriendshipStatus(friendshipId: string, status: 'pending' | 'accepted' | 'blocked'): Promise<void> {
+  async updateFriendshipStatus(
+    friendshipId: string,
+    status: 'pending' | 'accepted' | 'blocked'
+  ): Promise<void> {
     await this.request(`/friendships/${friendshipId}`, {
       method: 'PATCH',
       body: JSON.stringify({ status }),

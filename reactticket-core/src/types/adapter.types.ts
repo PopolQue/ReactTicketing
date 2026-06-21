@@ -13,7 +13,7 @@ export interface StorageAdapter {
   createOrder(order: Order): Promise<void>;
   createCheckoutTransaction?(order: Order, tickets: IssuedTicket[]): Promise<void>;
   getOrder(orderId: string): Promise<Order | null>;
-  updateOrderStatus(orderId: string, status: Order["status"]): Promise<void>;
+  updateOrderStatus(orderId: string, status: Order['status']): Promise<void>;
 
   // Tickets
   getTicket(ticketId: string): Promise<IssuedTicket | null>;
@@ -21,9 +21,13 @@ export interface StorageAdapter {
   getIssuedTickets(eventId: string): Promise<IssuedTicket[]>;
   saveTicket(ticket: IssuedTicket): Promise<void>;
   saveTickets(tickets: IssuedTicket[]): Promise<void>;
-  updateTicketStatus(ticketId: string, status: IssuedTicket["status"]): Promise<void>;
+  updateTicketStatus(ticketId: string, status: IssuedTicket['status']): Promise<void>;
   deliverTicket(ticketId: string, qrPayload: string): Promise<void>;
-  transferTicket(ticketId: string, toEmail: string, newPersonalization: TicketPersonalization): Promise<void>;
+  transferTicket(
+    ticketId: string,
+    toEmail: string,
+    newPersonalization: TicketPersonalization
+  ): Promise<void>;
   countIssuedTickets(ticketTypeId: string, eventId: string): Promise<number>;
   returnTicket(ticketId: string): Promise<void>;
   buyResaleTicket(listingId: string, buyerId: string): Promise<void>;
@@ -52,7 +56,10 @@ export interface StorageAdapter {
 
   // Friendships
   createFriendship(userId: string, friendId: string): Promise<void>;
-  updateFriendshipStatus(friendshipId: string, status: 'pending' | 'accepted' | 'blocked'): Promise<void>;
+  updateFriendshipStatus(
+    friendshipId: string,
+    status: 'pending' | 'accepted' | 'blocked'
+  ): Promise<void>;
   getFriends(userId: string): Promise<any[]>;
 
   // Ticket Transfers
@@ -63,7 +70,12 @@ export interface StorageAdapter {
   createPost(post: { user_id: string; event_id: string; is_public: boolean }): Promise<void>;
 
   // Optional RPC overrides for atomicity
-  validateTicketRpc?(ticketId: string, accountId: string, token: string, scannedAt: Date): Promise<any>;
+  validateTicketRpc?(
+    ticketId: string,
+    accountId: string,
+    token: string,
+    scannedAt: Date
+  ): Promise<any>;
 
   // Server-side HMAC operations — when available, keeps signing secrets off the client
   verifyQRPayload?(qrPayload: string): Promise<boolean>;

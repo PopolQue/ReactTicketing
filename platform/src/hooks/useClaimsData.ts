@@ -16,25 +16,29 @@ export function useClaimsData() {
   const [myClaims, setMyClaims] = useState<any[]>([]);
 
   const fetchMyClaims = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) return;
-    
+
     const { data } = await supabase
       .from('entity_claims')
       .select('*')
       .eq('user_id', user.id)
       .order('created_at', { ascending: false });
-      
+
     if (data) {
       // Enrich with entity names
-      const enriched = await Promise.all(data.map(async (claim) => {
-        const { data: entityData } = await supabase
-          .from(claim.entity_type)
-          .select('name')
-          .eq('id', claim.entity_id)
-          .single();
-        return { ...claim, entity: entityData };
-      }));
+      const enriched = await Promise.all(
+        data.map(async (claim) => {
+          const { data: entityData } = await supabase
+            .from(claim.entity_type)
+            .select('name')
+            .eq('id', claim.entity_id)
+            .single();
+          return { ...claim, entity: entityData };
+        })
+      );
       setMyClaims(enriched);
     }
   };
@@ -54,7 +58,7 @@ export function useClaimsData() {
       .ilike('name', `%${searchQuery}%`)
       .is('claimed_by_user_id', null)
       .limit(10);
-      
+
     if (data) setSearchResults(data);
   };
 
@@ -63,7 +67,9 @@ export function useClaimsData() {
     if (!selectedEntity) return;
     setSubmitting(true);
 
-    const { data: { user } } = await supabase.auth.getUser();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
     if (!user) {
       // Must be logged in to claim
       navigate('/auth');
@@ -72,41 +78,48 @@ export function useClaimsData() {
 
     try {
       // Verify URL using Edge Function
-      const { data: verificationData, error: verificationError } = await supabase.functions.invoke('verify-url', {
-        body: { url: proofUrl }
-      });
+      const { data: verificationData, error: verificationError } = await supabase.functions.invoke(
+        'verify-url',
+        {
+          body: { url: proofUrl },
+        }
+      );
 
       if (verificationError) {
-        console.error("URL Verification Error:", verificationError);
+        console.error('URL Verification Error:', verificationError);
         // We log the error but allow submission if the Edge Function itself is unreachable/failing
       } else if (verificationData && verificationData.exists === false) {
-        setClaimStatus(`Error: The provided URL (${verificationData.isSocial ? 'Social Media Account' : 'Website'}) does not exist or cannot be found.`);
+        setClaimStatus(
+          `Error: The provided URL (${verificationData.isSocial ? 'Social Media Account' : 'Website'}) does not exist or cannot be found.`
+        );
         setSubmitting(false);
         return;
       }
     } catch (err) {
-      console.error("Failed to call verification function", err);
+      console.error('Failed to call verification function', err);
     }
 
-    const { error } = await supabase.from('entity_claims').insert([{
-      entity_type: entityType,
-      entity_id: selectedEntity.id,
-      user_id: user.id,
-      proof_url: proofUrl,
-      status: 'pending'
-    }]);
+    const { error } = await supabase.from('entity_claims').insert([
+      {
+        entity_type: entityType,
+        entity_id: selectedEntity.id,
+        user_id: user.id,
+        proof_url: proofUrl,
+        status: 'pending',
+      },
+    ]);
 
     setSubmitting(false);
 
     if (!error) {
-      setClaimStatus("Success! Your claim has been submitted and is pending admin review.");
+      setClaimStatus('Success! Your claim has been submitted and is pending admin review.');
       setSelectedEntity(null);
       setSearchQuery('');
       setSearchResults([]);
       setProofUrl('');
       fetchMyClaims();
     } else {
-      setClaimStatus("Error submitting claim. Please try again.");
+      setClaimStatus('Error submitting claim. Please try again.');
     }
   };
 
@@ -136,6 +149,6 @@ export function useClaimsData() {
     submitClaim,
     clearSearch,
     myClaims,
-    markProofSubmitted
+    markProofSubmitted,
   };
 }

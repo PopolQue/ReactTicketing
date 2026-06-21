@@ -1,4 +1,4 @@
-import { StorageAdapter } from "../types/adapter.types";
+import { StorageAdapter } from '../types/adapter.types';
 
 export class TransferService {
   constructor(private adapter: StorageAdapter) {}
@@ -7,7 +7,7 @@ export class TransferService {
     // Logic for creating a pending transfer record
     return this.adapter.createTransfer(ticketId, senderId, receiverId);
   }
-  
+
   async confirmTransfer(transferId: string) {
     // Logic for finalizing the transfer (atomic update)
     return this.adapter.finalizeTransfer(transferId);

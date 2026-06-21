@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
-import { 
-  mapDbRowToTicketTypeConfig, 
-  mapTicketTypeConfigToRow, 
-  mapDbRowToScanAccount, 
+import {
+  mapDbRowToTicketTypeConfig,
+  mapTicketTypeConfigToRow,
+  mapDbRowToScanAccount,
   mapScanAccountToRow,
   mapScanAccountPatchToRow,
   mapDbRowToOrder,
@@ -13,7 +13,7 @@ import {
   mapScanEventToRow,
   mapDbRowToPromoBatch,
   mapPromoBatchToRow,
-  mapEventToAdmitConfig
+  mapEventToAdmitConfig,
 } from '../mappers';
 import type { TicketTypeConfig, ScanAccount } from 'reactticket-core';
 
@@ -36,7 +36,7 @@ describe('Admit Mappers', () => {
     };
 
     const eventId = 'ev_123';
-    
+
     // Config -> Row
     const row = mapTicketTypeConfigToRow(eventId, config);
     expect(row).toEqual({
@@ -81,7 +81,7 @@ describe('Admit Mappers', () => {
 
     const row = mapScanAccountToRow(account);
     const mappedBack = mapDbRowToScanAccount(row);
-    
+
     expect(mappedBack).toEqual(account);
   });
 
@@ -103,7 +103,15 @@ describe('Admit Mappers', () => {
     const order = {
       id: 'o_1',
       eventId: 'ev_123',
-      items: [{ ticketTypeId: 'tt_1', quantity: 2, unitPriceBeforeDiscountCents: 1000, unitPriceCents: 1000, personalizations: [] }],
+      items: [
+        {
+          ticketTypeId: 'tt_1',
+          quantity: 2,
+          unitPriceBeforeDiscountCents: 1000,
+          unitPriceCents: 1000,
+          personalizations: [],
+        },
+      ],
       buyerEmail: 'buyer@email.com',
       promoCode: 'DISCOUNT',
       subtotalCents: 2000,
@@ -123,7 +131,13 @@ describe('Admit Mappers', () => {
       eventId: 'ev_123',
       ticketTypeId: 'tt_1',
       orderId: 'o_1',
-      personalization: { name: 'John', surname: 'Doe', email: 'john@doe.com', country: 'US', city: 'NY' },
+      personalization: {
+        name: 'John',
+        surname: 'Doe',
+        email: 'john@doe.com',
+        country: 'US',
+        city: 'NY',
+      },
       buyerEmail: 'buyer@email.com',
       issuedAt: new Date('2026-06-01T00:00:00.000Z'),
       validFrom: new Date('2026-06-01T00:00:00.000Z'),
@@ -132,7 +146,7 @@ describe('Admit Mappers', () => {
       qrPayload: 'qr_payload_string',
       pricePaidCents: 1000,
       transferHistory: [],
-      ownerId: 'owner_123'
+      ownerId: 'owner_123',
     };
     const row = mapTicketToRow(ticket);
     const mappedBack = mapDbRowToTicket(row);
@@ -149,7 +163,7 @@ describe('Admit Mappers', () => {
       result: 'admitted' as const,
       payload: 'qr_payload',
       clockSkewSeconds: 2,
-      location: 'Gate A'
+      location: 'Gate A',
     };
     const row = mapScanEventToRow(scan);
     const mappedBack = mapDbRowToScanEvent(row);
@@ -181,7 +195,12 @@ describe('Admit Mappers', () => {
       organizers: { name: 'Admit Org' },
       timezone: 'GMT',
       settings: { maxOrderSize: 5 },
-      theme_customization: { bgColor: '#000', accentColor: '#fff', textColor: '#ccc', cardColor: '#222' }
+      theme_customization: {
+        bgColor: '#000',
+        accentColor: '#fff',
+        textColor: '#ccc',
+        cardColor: '#222',
+      },
     };
     const config = mapEventToAdmitConfig(event);
     expect(config).toEqual({
@@ -204,8 +223,8 @@ describe('Admit Mappers', () => {
         bgColor: '#000',
         accentColor: '#fff',
         textColor: '#ccc',
-        cardColor: '#222'
-      }
+        cardColor: '#222',
+      },
     });
   });
 });

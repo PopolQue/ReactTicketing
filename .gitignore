@@ -43,3 +43,6 @@ reactticket-core/merged_repository.md
 supabase/merge_files.py
 supabase/merged_repository.md
 platform/merged_repository.md
+.prettierignore
+.gitignore
+.prettierrc

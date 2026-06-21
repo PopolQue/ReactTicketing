@@ -1,4 +1,4 @@
-import { useLanguage } from "../contexts/LanguageContext";
+import { useLanguage } from '../contexts/LanguageContext';
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, it, expect, vi } from 'vitest';
@@ -8,17 +8,21 @@ const ThrowError = () => {
 };
 describe('ErrorBoundary Component', () => {
   it('renders children when there is no error', () => {
-    render(<ErrorBoundary>
+    render(
+      <ErrorBoundary>
         <div data-testid="safe-child">Safe Child</div>
-      </ErrorBoundary>);
+      </ErrorBoundary>
+    );
     expect(screen.getByTestId('safe-child')).toBeInTheDocument();
   });
   it('catches error and renders fallback UI', () => {
     // Suppress console.error for this expected error
     const spy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    render(<ErrorBoundary>
+    render(
+      <ErrorBoundary>
         <ThrowError />
-      </ErrorBoundary>);
+      </ErrorBoundary>
+    );
     expect(screen.getByText('Something went wrong')).toBeInTheDocument();
     spy.mockRestore();
   });

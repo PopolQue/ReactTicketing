@@ -12,11 +12,11 @@ vi.spyOn(QRGenerator, 'generate').mockReturnValue('data:image/png;base64,mocked'
 describe('QRCode Component', () => {
   it('renders the QR image when dataUri is available', async () => {
     render(<QRCode payload="test-payload" />);
-    
+
     await waitFor(() => {
-        expect(screen.getByRole('img', { name: 'Ticket QR Code' })).toBeDefined();
+      expect(screen.getByRole('img', { name: 'Ticket QR Code' })).toBeDefined();
     });
-    
+
     const img = screen.getByRole('img', { name: 'Ticket QR Code' }) as HTMLImageElement;
     expect(img.src).toBe('data:image/png;base64,mocked');
   });

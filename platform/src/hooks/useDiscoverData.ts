@@ -11,7 +11,7 @@ export function useDiscoverData(activeTab: TabType) {
     async function fetchData() {
       setLoading(true);
       setResults([]);
-      
+
       try {
         if (activeTab === 'events') {
           const { data } = await supabase
@@ -21,23 +21,24 @@ export function useDiscoverData(activeTab: TabType) {
             .eq('approval_status', 'approved')
             .order('start_date', { ascending: true })
             .limit(50);
-            
+
           if (data) setResults(data);
-        } 
-        else if (activeTab === 'artists') {
+        } else if (activeTab === 'artists') {
           const { data } = await supabase.from('artists').select('*').limit(50);
           if (data) setResults(data);
-        }
-        else if (activeTab === 'venues') {
-          const { data } = await supabase.from('venues').select('*').order('is_verified', { ascending: false }).limit(50);
+        } else if (activeTab === 'venues') {
+          const { data } = await supabase
+            .from('venues')
+            .select('*')
+            .order('is_verified', { ascending: false })
+            .limit(50);
           if (data) setResults(data);
-        }
-        else if (activeTab === 'organizers') {
+        } else if (activeTab === 'organizers') {
           const { data } = await supabase.from('organizers').select('*').limit(50);
           if (data) setResults(data);
         }
       } catch (e) {
-        console.error("Error fetching data:", e);
+        console.error('Error fetching data:', e);
       } finally {
         setLoading(false);
       }
