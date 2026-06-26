@@ -28,7 +28,7 @@
     "leaflet": "^1.9.4",
     "leaflet-draw": "^1.0.4",
     "lucide-react": "^1.18.0",
-    "posthog-js": "^1.391.2",
+    "posthog-js": "^1.393.5",
     "posthog-node": "^5.38.2",
     "react": "19.2.7",
     "react-dom": "19.2.7",
