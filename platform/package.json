@@ -37,7 +37,7 @@
     "reactticket": "file:../reactticket",
     "reactticket-core": "file:../reactticket-core",
     "sirv": "^3.0.2",
-    "stripe": "^22.2.1"
+    "stripe": "^22.3.0"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
