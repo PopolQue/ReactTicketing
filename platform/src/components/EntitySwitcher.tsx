@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { DropdownMenu } from './DropdownMenu';
-import { ChevronDown, Building2, User, MapPin, PenTool, Heart } from 'lucide-react';
+import { ChevronDown, Building2, User, MapPin, PenTool, Heart, LogOut } from 'lucide-react';
 
 export type Entity = {
   id: string;
@@ -115,6 +115,15 @@ export default React.memo(function EntitySwitcher({
     // REMOVED: Automatic navigation logic
   };
 
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    localStorage.removeItem('active_entity_id');
+    localStorage.removeItem('active_entity');
+    window.dispatchEvent(new CustomEvent('activeEntityChanged', { detail: null }));
+    if (onEntityChange) onEntityChange(null);
+    navigate('/');
+  };
+
   const getIcon = (type: Entity['type']) => {
     switch (type) {
       case 'organizer':
@@ -200,6 +209,42 @@ export default React.memo(function EntitySwitcher({
           </div>
         );
       })}
+      <div
+        style={{
+          marginTop: '12px',
+          paddingTop: '12px',
+          borderTop: '1px solid var(--border)',
+        }}
+      >
+        <button
+          onClick={handleLogout}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px',
+            width: '100%',
+            background: 'none',
+            border: 'none',
+            padding: '8px',
+            cursor: 'pointer',
+            textAlign: 'left',
+            borderRadius: '4px',
+            color: 'var(--text-primary)',
+            transition: 'background-color 0.2s, color 0.2s',
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.backgroundColor = 'rgba(255, 77, 79, 0.1)';
+            e.currentTarget.style.color = '#ff4d4f';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.backgroundColor = 'transparent';
+            e.currentTarget.style.color = 'var(--text-primary)';
+          }}
+        >
+          <LogOut size={16} />
+          {t('nav.logout')}
+        </button>
+      </div>
     </DropdownMenu>
   );
 });
