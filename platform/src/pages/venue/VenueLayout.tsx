@@ -21,10 +21,12 @@ export default function VenueLayout() {
         className="glass-panel"
         style={{ width: '250px', padding: '24px', display: 'flex', flexDirection: 'column' }}
       >
-        <h2 style={{ margin: '0 0 32px 0' }}>
-          {t('venue_layout_title').split(' ')[0]}
-          <span style={{ color: 'var(--accent)' }}>{t('venue_layout_title').split(' ').pop()}</span>
-        </h2>
+        <div style={{ marginBottom: '24px' }}>
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <h2 style={{ margin: 0, cursor: 'pointer' }}>Admit</h2>
+          </Link>
+          <small style={{ color: 'var(--text-secondary)' }}>Venue Portal</small>
+        </div>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px', flex: 1 }}>
           <button

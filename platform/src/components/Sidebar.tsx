@@ -88,10 +88,19 @@ export const Sidebar = () => {
       }}
     >
       <div style={{ marginBottom: '24px' }}>
-        <h3 style={{ margin: 0 }}>{activeEntity?.name || 'Admit'}</h3>
-        <small style={{ color: 'var(--text-secondary)' }}>
-          {activeEntity ? activeEntity.type : 'Guest'}
-        </small>
+        <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+          <h2 style={{ margin: 0, cursor: 'pointer' }}>Admit</h2>
+        </Link>
+        {activeEntity && (
+          <div style={{ marginTop: '8px' }}>
+            <span style={{ fontWeight: 600, display: 'block', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
+              {activeEntity.name}
+            </span>
+            <small style={{ color: 'var(--text-secondary)', textTransform: 'capitalize' }}>
+              {activeEntity.type}
+            </small>
+          </div>
+        )}
       </div>
 
       <ul style={{ listStyle: 'none', padding: 0, flex: 1 }}>

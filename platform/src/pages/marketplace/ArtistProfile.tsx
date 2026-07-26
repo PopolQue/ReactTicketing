@@ -16,7 +16,7 @@ export default function ArtistProfile() {
   useEffect(() => {
     async function fetchProfile() {
       // Fetch Artist
-      const { data: artistData } = await supabase.from('artists').select('*').eq('id', id).single();
+      const { data: artistData } = await supabase.from('artists').select('*').eq('id', id).maybeSingle();
       if (artistData) setArtist(artistData);
 
       // Fetch Upcoming Events

@@ -3,7 +3,16 @@
   "version": "1.0.0",
   "description": "Core ticketing business logic",
   "main": "dist/index.js",
+  "module": "dist/index.js",
   "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./*": "./dist/*"
+  },
   "type": "module",
   "license": "MIT",
   "engines": {

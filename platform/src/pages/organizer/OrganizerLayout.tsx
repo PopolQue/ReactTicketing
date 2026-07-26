@@ -218,7 +218,14 @@ export default function OrganizerLayout() {
       <div className="org-layout" style={{ flex: 1, height: 'auto' }}>
         <aside className="org-sidebar glass-panel">
           <div className="org-logo">
-            <h2>{activeEntity?.name || 'Admit'}</h2>
+            <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+              <h2 style={{ margin: 0, cursor: 'pointer' }}>Admit</h2>
+            </Link>
+            {activeEntity && (
+              <div style={{ marginTop: '6px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+                {activeEntity.name}
+              </div>
+            )}
           </div>
           {renderSidebarNav()}
         </aside>

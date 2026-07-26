@@ -16,7 +16,7 @@ export default function VenueProfile() {
   useEffect(() => {
     async function fetchProfile() {
       // Fetch Venue
-      const { data: venueData } = await supabase.from('venues').select('*').eq('id', id).single();
+      const { data: venueData } = await supabase.from('venues').select('*').eq('id', id).maybeSingle();
       if (venueData) setVenue(venueData);
 
       // Fetch Upcoming Events

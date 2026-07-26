@@ -52,9 +52,12 @@ export default function AdminLayout() {
           flexDirection: 'column',
         }}
       >
-        <h2 style={{ fontSize: '1.2rem', marginBottom: '32px', color: 'var(--accent)' }}>
-          {t('admin_layout_title')}
-        </h2>
+        <div style={{ marginBottom: '24px' }}>
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <h2 style={{ margin: 0, cursor: 'pointer' }}>Admit</h2>
+          </Link>
+          <small style={{ color: 'var(--accent)', fontWeight: 600 }}>{t('admin_layout_title')}</small>
+        </div>
 
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
           <Link

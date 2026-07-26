@@ -35,7 +35,7 @@ export function useFollowEntity(entityId: string, entityType: 'artist' | 'venue'
           .eq('entity_type', entityType)
           .eq('entity_id', entityId)
           .eq('user_id', user.id)
-          .single();
+          .maybeSingle();
 
         if (data) setIsFollowing(true);
       }

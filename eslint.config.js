@@ -13,6 +13,8 @@ export default tseslint.config(
       '**/build/**',
       '**/.fallow/**',
       '**/.claude/**',
+      '**/.agents/**',
+      '**/coverage/**',
       'supabase/**',
     ],
   },

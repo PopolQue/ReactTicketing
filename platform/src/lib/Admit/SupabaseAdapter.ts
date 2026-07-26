@@ -144,7 +144,7 @@ export class SupabaseAdapter implements StorageAdapter {
       .from('tickets')
       .select('*')
       .eq('id', ticketId)
-      .single();
+      .maybeSingle();
     if (getErr) throw getErr;
 
     const history = ticket.transfer_history || [];
@@ -166,13 +166,11 @@ export class SupabaseAdapter implements StorageAdapter {
   }
 
   async returnTicket(ticketId: string): Promise<void> {
-    const { error } = await this.supabase
-      .from('resale_listings')
-      .insert({
-        ticket_id: ticketId,
-        seller_id: (await this.supabase.auth.getUser()).data.user?.id,
-        asking_price_cents: 0,
-      }); // Note: actual logic will depend on phase-shift or waitlist
+    const { error } = await this.supabase.from('resale_listings').insert({
+      ticket_id: ticketId,
+      seller_id: (await this.supabase.auth.getUser()).data.user?.id,
+      asking_price_cents: 0,
+    }); // Note: actual logic will depend on phase-shift or waitlist
     if (error) throw error;
   }
 

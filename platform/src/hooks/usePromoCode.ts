@@ -17,7 +17,7 @@ export function usePromoCode(eventId: string) {
       .eq('event_id', eventId)
       .eq('code', promoCode.toUpperCase())
       .eq('active', true)
-      .single();
+      .maybeSingle();
 
     if (error || !data) {
       setPromoError('Invalid or expired promo code');

@@ -4,6 +4,11 @@ import { PromoCode, PromoBatch } from '../types/promo.types';
 import { ScanEvent } from '../types/scan.types';
 import { ScanAccount } from '../types/scanAccount.types';
 
+/**
+ * @deprecated For local development, testing, and offline browser demos ONLY.
+ * Do not use in production environments where persistent backend storage,
+ * central authorization, and secure server-side validation are required.
+ */
 export class LocalStorageAdapter implements StorageAdapter {
   readonly name = 'LocalStorageAdapter';
 

@@ -24,7 +24,7 @@ export default function VenueSettings() {
     async function fetchVenue() {
       if (!activeEntity) return;
 
-      const { data } = await supabase.from('venues').select('*').eq('id', activeEntity.id).single();
+      const { data } = await supabase.from('venues').select('*').eq('id', activeEntity.id).maybeSingle();
 
       if (data) {
         setFormData({

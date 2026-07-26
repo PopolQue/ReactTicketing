@@ -11,7 +11,7 @@ vi.mock('../lib/supabase', () => ({
 }));
 
 const mockSingle = vi.fn();
-const mockEq3 = vi.fn().mockReturnValue({ single: mockSingle });
+const mockEq3 = vi.fn().mockReturnValue({ single: mockSingle, maybeSingle: mockSingle });
 const mockEq2 = vi.fn().mockReturnValue({ eq: mockEq3 });
 const mockEq1 = vi.fn().mockReturnValue({ eq: mockEq2 });
 const mockSelect = vi.fn().mockReturnValue({ eq: mockEq1 });

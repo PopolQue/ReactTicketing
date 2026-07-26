@@ -31,7 +31,7 @@ export default function VenueSelector({ selectedVenueId, onVenueChange }: VenueS
         .from('venues')
         .select('*')
         .eq('id', selectedVenueId)
-        .single()
+        .maybeSingle()
         .then(({ data }) => {
           if (data) {
             setSelectedVenue(data);

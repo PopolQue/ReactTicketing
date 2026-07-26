@@ -15,7 +15,7 @@ export default function OrganizerProfile() {
   useEffect(() => {
     async function fetchProfile() {
       // Fetch Organizer
-      const { data: orgData } = await supabase.from('organizers').select('*').eq('id', id).single();
+      const { data: orgData } = await supabase.from('organizers').select('*').eq('id', id).maybeSingle();
       if (orgData) setOrganizer(orgData);
 
       // Fetch Upcoming Events

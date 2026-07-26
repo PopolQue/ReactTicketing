@@ -19,7 +19,7 @@ export function useEventData(eventId: string | undefined) {
         .from('events')
         .select(`*, organizers(name, marketing_pixels)`)
         .eq('id', eventId)
-        .single();
+        .maybeSingle();
 
       if (data) {
         setEvent(data);

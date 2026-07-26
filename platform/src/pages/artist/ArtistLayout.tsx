@@ -197,7 +197,16 @@ export default function ArtistLayout() {
         className="glass-panel"
         style={{ width: '250px', padding: '24px', display: 'flex', flexDirection: 'column' }}
       >
-        <h2 style={{ margin: '0 0 32px 0' }}>{activeEntity?.name || t('nav.title')}</h2>
+        <div style={{ marginBottom: '32px' }}>
+          <Link to="/" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <h2 style={{ margin: 0, cursor: 'pointer' }}>Admit</h2>
+          </Link>
+          {activeEntity && (
+            <div style={{ marginTop: '6px', fontSize: '0.85rem', color: 'var(--text-secondary)' }}>
+              {activeEntity.name}
+            </div>
+          )}
+        </div>
         {renderSidebarNav()}
 
         <button

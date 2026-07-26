@@ -46,7 +46,7 @@ export default React.memo(function EntitySwitcher({
       .from('user_profiles')
       .select('id, username')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
     console.log('Fan profile fetch:', { profile, profileError });
     if (profile) fetchedEntities.push({ id: profile.id, name: profile.username, type: 'fan' });
 

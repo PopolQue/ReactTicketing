@@ -13,7 +13,7 @@ export function useEvent(id: string | undefined) {
       .from('events')
       .select('*, organizers(name)')
       .eq('id', id)
-      .single();
+      .maybeSingle();
 
     if (error) {
       setError(error.message);

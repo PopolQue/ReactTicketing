@@ -26,7 +26,7 @@ export function useAuthRedirect() {
         .select('id')
         .eq('claimed_by_user_id', user.id)
         .limit(1)
-        .single();
+        .maybeSingle();
       console.log('DEBUG: Is organizer:', !!profile);
       if (profile) {
         navigate('/organizer');
@@ -39,7 +39,7 @@ export function useAuthRedirect() {
         .eq('user_id', user.id)
         .eq('entity_type', 'artist')
         .limit(1)
-        .single();
+        .maybeSingle();
       console.log('DEBUG: Is artist:', !!artistClaim);
       if (artistClaim) {
         navigate('/artist');

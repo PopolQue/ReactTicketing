@@ -38,7 +38,7 @@ export default function ProtectedRoute({ allowedRoles, requireAuth = true }: Pro
         .from('user_roles')
         .select('role')
         .eq('user_id', user.id)
-        .single();
+        .maybeSingle();
       const userRole = roleData?.role || 'user';
       if (allowedRoles.includes(userRole)) {
         setAuthorized(true);

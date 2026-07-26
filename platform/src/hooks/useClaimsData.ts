@@ -35,7 +35,7 @@ export function useClaimsData() {
             .from(claim.entity_type)
             .select('name')
             .eq('id', claim.entity_id)
-            .single();
+            .maybeSingle();
           return { ...claim, entity: entityData };
         })
       );
