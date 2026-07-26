@@ -14,6 +14,8 @@ export * from './services/ScanAccountService';
 export * from './services/ScanService';
 export * from './services/TicketService';
 export * from './services/TransferService';
+export * from './services/WaitlistService';
+export * from './services/WebhookService';
 
 // Utilities
 export * from './utils/crypto';

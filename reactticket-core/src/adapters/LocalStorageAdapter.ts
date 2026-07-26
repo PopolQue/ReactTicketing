@@ -425,4 +425,46 @@ export class LocalStorageAdapter implements StorageAdapter {
     list.push({ id, ...post, createdAt: new Date() });
     localStorage.setItem('tf_posts', JSON.stringify(list));
   }
+
+  // Waitlist
+  async joinWaitlist(
+    entry: Omit<import('../types/ticket.types').WaitlistEntry, 'id' | 'createdAt' | 'status'>
+  ): Promise<import('../types/ticket.types').WaitlistEntry> {
+    const data = localStorage.getItem('tf_waitlists');
+    const list: any[] = data ? JSON.parse(data) : [];
+    const id = `wl_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
+    const newEntry = {
+      id,
+      ...entry,
+      status: 'pending',
+      createdAt: new Date(),
+    };
+    list.push(newEntry);
+    localStorage.setItem('tf_waitlists', JSON.stringify(list));
+    return newEntry as import('../types/ticket.types').WaitlistEntry;
+  }
+
+  async getWaitlistEntries(
+    eventId: string,
+    ticketTypeId?: string
+  ): Promise<import('../types/ticket.types').WaitlistEntry[]> {
+    const data = localStorage.getItem('tf_waitlists');
+    const list: any[] = data ? JSON.parse(data) : [];
+    return list.filter(
+      (e) => e.eventId === eventId && (!ticketTypeId || e.ticketTypeId === ticketTypeId)
+    );
+  }
+
+  async updateWaitlistStatus(
+    waitlistId: string,
+    status: import('../types/ticket.types').WaitlistEntry['status']
+  ): Promise<void> {
+    const data = localStorage.getItem('tf_waitlists');
+    const list: any[] = data ? JSON.parse(data) : [];
+    const idx = list.findIndex((e) => e.id === waitlistId);
+    if (idx > -1) {
+      list[idx] = { ...list[idx], status, notifiedAt: status === 'notified' ? new Date() : list[idx].notifiedAt };
+      localStorage.setItem('tf_waitlists', JSON.stringify(list));
+    }
+  }
 }

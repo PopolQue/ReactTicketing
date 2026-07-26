@@ -83,3 +83,15 @@ export interface OrderItem {
   unitPriceCents: number;
   personalizations: TicketPersonalization[];
 }
+
+export interface WaitlistEntry {
+  id: string;
+  eventId: string;
+  ticketTypeId: string;
+  userEmail: string;
+  userName?: string;
+  quantity: number;
+  status: 'pending' | 'notified' | 'claimed' | 'expired';
+  createdAt: Date;
+  notifiedAt?: Date;
+}

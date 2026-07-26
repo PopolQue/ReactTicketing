@@ -158,6 +158,28 @@ export class AuthService {
       throw new Error('Invalid credentials');
     }
 
+    // Check shift window if configured
+    if (account.shifts && account.shifts.length > 0) {
+      const now = new Date();
+      const currentDay = now.getDay();
+      const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+      const inActiveShift = account.shifts.some((shift) => {
+        if (shift.daysOfWeek && shift.daysOfWeek.length > 0 && !shift.daysOfWeek.includes(currentDay)) {
+          return false;
+        }
+        const [startH, startM] = shift.startTime.split(':').map(Number);
+        const [endH, endM] = shift.endTime.split(':').map(Number);
+        const startTotal = startH * 60 + (startM || 0);
+        const endTotal = endH * 60 + (endM || 0);
+        return currentMinutes >= startTotal && currentMinutes <= endTotal;
+      });
+
+      if (!inActiveShift) {
+        throw new Error('Shift window closed: Account is not authorized at this time');
+      }
+    }
+
     let isLegacyBcrypt = false;
     let isValidHash = false;
 

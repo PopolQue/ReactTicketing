@@ -48,7 +48,7 @@ export default function BlogFeed() {
       setLoading(false);
     }
     fetchPublishedBlogs();
-    document.title = 'Community Blog | Ticketeer';
+    document.title = 'Community Blog | Admit';
   }, []);
 
   return (

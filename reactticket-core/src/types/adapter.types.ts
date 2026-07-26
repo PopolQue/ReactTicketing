@@ -69,6 +69,11 @@ export interface StorageAdapter {
   // Posts
   createPost(post: { user_id: string; event_id: string; is_public: boolean }): Promise<void>;
 
+  // Waitlist
+  joinWaitlist?(entry: Omit<import('./ticket.types').WaitlistEntry, 'id' | 'createdAt' | 'status'>): Promise<import('./ticket.types').WaitlistEntry>;
+  getWaitlistEntries?(eventId: string, ticketTypeId?: string): Promise<import('./ticket.types').WaitlistEntry[]>;
+  updateWaitlistStatus?(waitlistId: string, status: import('./ticket.types').WaitlistEntry['status']): Promise<void>;
+
   // Optional RPC overrides for atomicity
   validateTicketRpc?(
     ticketId: string,

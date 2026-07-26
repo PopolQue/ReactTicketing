@@ -3,6 +3,7 @@ import { TicketTypeConfig } from 'reactticket-core/types/ticket.types';
 import { useCart } from '../../hooks/useCart';
 import { useReactTicket } from '../../hooks/useReactTicket';
 import { QuantitySelector } from './QuantitySelector';
+import { WaitlistModal } from './WaitlistModal';
 import { formatCurrency } from 'reactticket-core/utils/formatCurrency';
 import { useI18n } from '../../context/I18nContext';
 
@@ -13,6 +14,7 @@ export const TicketTypeCard = React.memo(({ type }: { type: TicketTypeConfig }) 
   const [soldOut, setSoldOut] = useState(false);
   const [remainingCapacity, setRemainingCapacity] = useState(type.maxPerOrder || 10);
   const [loading, setLoading] = useState(true);
+  const [showWaitlist, setShowWaitlist] = useState(false);
 
   useEffect(() => {
     const checkCapacity = async () => {
@@ -102,7 +104,7 @@ export const TicketTypeCard = React.memo(({ type }: { type: TicketTypeConfig }) 
         alignItems: 'center',
         background: soldOut ? '#f1f5f9' : 'white',
         marginBottom: '15px',
-        opacity: soldOut ? 0.7 : 1,
+        opacity: soldOut ? 0.85 : 1,
       }}
       role="region"
       aria-label={`Ticket type: ${type.name}`}
@@ -115,13 +117,31 @@ export const TicketTypeCard = React.memo(({ type }: { type: TicketTypeConfig }) 
           {price}
         </p>
       </div>
-      {!soldOut && (
+      {soldOut ? (
+        <button
+          onClick={() => setShowWaitlist(true)}
+          style={{
+            padding: '8px 16px',
+            borderRadius: '6px',
+            border: '1px solid #0284c7',
+            color: '#0284c7',
+            background: 'white',
+            fontWeight: 600,
+            cursor: 'pointer',
+          }}
+        >
+          Join Waitlist
+        </button>
+      ) : (
         <QuantitySelector
           value={quantity}
           onChange={handleQuantityChange}
           max={remainingCapacity}
           itemName={type.name}
         />
+      )}
+      {showWaitlist && (
+        <WaitlistModal type={type} onClose={() => setShowWaitlist(false)} />
       )}
     </div>
   );

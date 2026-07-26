@@ -35,7 +35,7 @@ export default function BlogPost() {
 
       setBlog(data);
       setLoading(false);
-      if (data) document.title = `${data.title} | Ticketeer Blog`;
+      if (data) document.title = `${data.title} | Admit Blog`;
     }
     fetchBlog();
   }, [slug]);

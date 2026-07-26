@@ -38,7 +38,7 @@ export default function ResaleMarket() {
     }
 
     fetchListings();
-    document.title = 'Secondary Market | Ticketeer';
+    document.title = 'Secondary Market | Admit';
   }, []);
 
   const initBuyTicket = async (listing: Listing) => {

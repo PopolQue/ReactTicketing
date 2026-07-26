@@ -1,4 +1,5 @@
 export * from './components/ReactTicket';
+export * from './components/storefront/SeatMap';
 export * from './hooks/useReactTicket';
 export * from './hooks/useCart';
 
