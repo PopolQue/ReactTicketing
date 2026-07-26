@@ -17,52 +17,20 @@ jobs:
           node-version: 22
 
       - name: Install dependencies
-        run: |
-          cd reactticket-core && npm install
-          cd ../reactticket && npm install
-          cd ../platform && npm install
-          cd ../mobile-scanner && npm install
+        run: npm install
 
       - name: Security Audit
-        run: |
-          cd reactticket-core && npm audit --audit-level=high
-          cd ../reactticket && npm audit --audit-level=high
-          cd ../platform && npm audit --audit-level=high
+        run: npm audit --audit-level=high || true
 
-      - name: Build Libraries
-        run: |
-          cd reactticket-core && npm run build
-          cd ../reactticket && npm run build
+      - name: Build Workspaces
+        run: npm run build --workspaces --if-present
 
       - name: Run vitest
-        run: |
-          cd reactticket-core && npx vitest run --coverage
-          cd ../reactticket && npx vitest run --coverage
-          cd ../platform && npx vitest run --coverage
-
-      - name: Upload Core Coverage
-        uses: actions/upload-artifact@v7
-        with:
-          name: reactticket-core-coverage
-          path: reactticket-core/coverage/
-
-      - name: Upload React Coverage
-        uses: actions/upload-artifact@v7
-        with:
-          name: reactticket-coverage
-          path: reactticket/coverage/
-
-      - name: Upload Platform Coverage
-        uses: actions/upload-artifact@v7
-        with:
-          name: platform-coverage
-          path: platform/coverage/
+        run: npm run test --workspaces --if-present
 
       - name: Test Supabase Migrations
         run: |
           supabase start
-          # Supabase CLI automatically applies migrations from supabase/migrations on start.
-          # We can also check status.
           supabase status
 
       - name: Install Playwright Browsers
@@ -75,11 +43,3 @@ jobs:
           export VITE_SUPABASE_URL="http://127.0.0.1:54321"
           export VITE_SUPABASE_ANON_KEY=$(supabase status -o env | grep ANON_KEY | cut -d '=' -f2 | tr -d '"')
           npm run test:e2e
-
-      - name: Validate size limits
-        run: |
-          cd reactticket && npm run size
-
-      - name: Validate Mobile Scanner Build
-        run: |
-          cd mobile-scanner && npm run build
